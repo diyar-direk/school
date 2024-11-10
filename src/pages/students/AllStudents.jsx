@@ -179,7 +179,12 @@ const AllStudents = () => {
           </td>
         )}
 
-        <td>{`${e.firstName} ${e.lastName}`}</td>
+        <td>
+          <Link
+            to={`/dashboard/student_profile/${e._id}`}
+            className="name"
+          >{`${e.firstName} ${e.lastName}`}</Link>
+        </td>
         <td> {e.contactInfo.phone} </td>
         <td> {e.gender} </td>
         <td>{e.yearLevel}</td>
@@ -217,7 +222,10 @@ const AllStudents = () => {
                 {language.students && language.students.update}
               </Link>
             )}
-            <Link to={`/student_profile/${e._id}`} className="flex visit">
+            <Link
+              to={`/dashboard/student_profile/${e._id}`}
+              className="flex visit"
+            >
               <i className="fa-solid fa-circle-user"></i>{" "}
               {language.students && language.students.visit}
             </Link>

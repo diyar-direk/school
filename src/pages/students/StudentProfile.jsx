@@ -28,6 +28,7 @@ const StudentProfile = () => {
   const context = useContext(Context);
   const language = context && context.selectedLang;
   const token = context && context.userDetails.token;
+  const isAdmin = context && context.userDetails.isAdmin;
 
   const { id } = useParams();
 
@@ -80,17 +81,21 @@ const StudentProfile = () => {
           <div className="profile">
             <div className="image">
               <i className="photo fa-solid fa-user"></i>
-              <Link to={`/update_student/${id}`} className="center gap-10">
-                {language.students && language.students.edit_btn}
-                <i className="fa-regular fa-pen-to-square"></i>
-              </Link>
-            </div>
-            <div className="info">
-              <h2 className="name">
-                <Link to={`/update_student/${id}`}>
+              {isAdmin && (
+                <Link to={`/update_student/${id}`} className="center gap-10">
+                  {language.students && language.students.edit_btn}
                   <i className="fa-regular fa-pen-to-square"></i>
                 </Link>
-              </h2>
+              )}
+            </div>
+            <div className="info">
+              {isAdmin && (
+                <h2 className="name">
+                  <Link to={`/update_student/${id}`}>
+                    <i className="fa-regular fa-pen-to-square"></i>
+                  </Link>
+                </h2>
+              )}
 
               <div className="flex">
                 <h2>{language.students && language.students.first_name} :</h2>
@@ -159,16 +164,16 @@ const StudentProfile = () => {
                   {language.students && language.students.years_repeated} :
                 </h2>
                 <p>
-                  {data.yearRepeated
-                    .map(
-                      (e) =>
-                        `${language.students && language.students.year} : ${
-                          e.yearLevel
-                        } ; ${
-                          language.students && language.students.repeated_count
-                        }: ${e.yearCount}`
-                    )
-                    .join(<br />)}
+                  {data.yearRepeated.map((e, index) => (
+                    <React.Fragment key={index}>
+                      {`${language.students?.year || "Year"} : ${
+                        e.yearLevel
+                      }; ${
+                        language.students?.repeated_count || "Repeated Count"
+                      }: ${e.yearCount}`}
+                      <br />
+                    </React.Fragment>
+                  ))}
                 </p>
               </div>
             </div>

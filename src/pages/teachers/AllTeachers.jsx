@@ -8,6 +8,7 @@ const AllTeachers = () => {
   const language = context && context.selectedLang;
   const token = context && context.userDetails.token;
   const isAdmin = context && context.userDetails.isAdmin;
+  const id = context && context.userDetails.userDetails._id;
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [dataLength, setDataLength] = useState(0);
@@ -199,7 +200,11 @@ const AllTeachers = () => {
           </td>
         )}
 
-        <td>{`${e.firstName} ${e.lastName}`}</td>
+        <td>
+          <Link className="name" to={`/dashboard/teacher_profile/${e._id}`}>
+            {`${e.firstName} ${e.lastName}`} {id === e._id && "(me)"}
+          </Link>
+        </td>
         <td> {e.gender} </td>
         <td>
           {e.classes.map((el) => {
@@ -244,7 +249,10 @@ const AllTeachers = () => {
                 {language.teachers && language.teachers.update}
               </Link>
             )}
-            <Link to={`/teacher_profile/${e._id}`} className="flex visit">
+            <Link
+              to={`/dashboard/teacher_profile/${e._id}`}
+              className="flex visit"
+            >
               <i className="fa-solid fa-circle-user"></i>
               {language.teachers && language.teachers.visit}
             </Link>

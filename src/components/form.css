@@ -5,7 +5,9 @@ form.login {
   border-radius: 10px;
   overflow: hidden;
 }
-
+form.user {
+  margin-bottom: 30px;
+}
 form.login img {
   width: 100%;
   height: 100%;
@@ -37,6 +39,9 @@ form.login > .flex > div.forms > .inp {
   gap: 5px;
   padding: 5px 10px;
   margin: 20px 0;
+}
+form.login > .flex > div.forms > .inp > i {
+  color: var(--font-color);
 }
 form.login > .flex > div.forms > .inp input {
   color: var(--font-color);
@@ -168,17 +173,6 @@ form.dashboard-form .flex-direction .inp {
   opacity: 1;
 }
 
-form.dashboard-form .error {
-  padding: 15px;
-  text-align: center;
-  width: 400px;
-  background-color: #ce06061c;
-  color: #ce0606;
-  margin-top: 20px;
-  font-weight: 500;
-  border-radius: 10px;
-  text-transform: capitalize;
-}
 .subjects form.dashboard-form .error {
   width: auto;
 }
@@ -243,7 +237,11 @@ i.password {
 form.exam-result {
   margin-bottom: 30px;
 }
-
+form.login .error {
+  width: 100%;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
 @keyframes rotate {
   100% {
     rotate: 365deg;

@@ -44,7 +44,8 @@ nav .search .results p {
 nav .search .results:hover a {
   opacity: 0.5;
 }
-nav .search .results a:hover {
+nav .search .results a:hover,
+nav .search .results a:nth-child(1) {
   opacity: 1;
   font-weight: bold;
 }
@@ -296,6 +297,9 @@ aside > div > div > .links > article a:hover {
 .log-out {
   color: var(--font-color);
   gap: 5px;
+}
+.log-out.aside {
+  padding-bottom: 20px;
 }
 .log-out:hover {
   color: var(--main-color);

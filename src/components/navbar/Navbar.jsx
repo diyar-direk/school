@@ -8,6 +8,13 @@ const Navbar = () => {
   const language = context && context.selectedLang;
   const isAdmin = context && context.userDetails.isAdmin;
   const isStudent = context && context.userDetails.isStudent;
+  const isTeacher = context && context.userDetails.isTeacher;
+  const id = context && context.userDetails.userDetails._id;
+  const ProfilePath = isAdmin
+    ? "/dashboard"
+    : isTeacher
+    ? `/dashboard/teacher_profile/${id}`
+    : `/dashboard/student_profile/${id}`;
   const name =
     context &&
     context.userDetails.userDetails.firstName +
@@ -57,9 +64,8 @@ const Navbar = () => {
     const allDivs = document.querySelectorAll(
       "aside >div> div > .links > .center"
     );
-    allDivs.forEach((e, i) => {
-      +ele.target.dataset.index !== i &&
-        e.parentElement.classList.remove("active");
+    allDivs.forEach((e) => {
+      ele.target !== e && e.parentElement.classList.remove("active");
     });
     ele.target.parentElement.classList.toggle("active");
     if (document.querySelector("aside.closed")) {
@@ -112,6 +118,7 @@ const Navbar = () => {
     { name: "time table", path: "time_table" },
     { name: "all subjects", path: "subjects" },
     { name: "all classes", path: "classes" },
+    { name: "my profile", path: ProfilePath },
   ];
   if (!isStudent) {
     pages.push(
@@ -121,6 +128,10 @@ const Navbar = () => {
   }
   if (isAdmin) {
     pages.push(
+      { name: "all admins", path: "all_admins" },
+      { name: "all users", path: "all_users" },
+      { name: "add users", path: "add_user" },
+      { name: "add admins", path: "add_admin" },
       { name: "add teacher", path: "add_teacher" },
       { name: "add student", path: "add_student" },
       { name: "add exam", path: "add_exam" },
@@ -191,8 +202,8 @@ const Navbar = () => {
             ></button>
             {form.length > 1 && <div className="results">{search()}</div>}
           </form>
-          <div className="setting  center">
-            <Link to={"teacher_profile"} className="info center">
+          <div className="setting center">
+            <Link to={ProfilePath} className="info center">
               <i className="center photo fa-solid fa-user"></i>
               <article>
                 <h4>{name}</h4>
@@ -212,7 +223,7 @@ const Navbar = () => {
                     .querySelector("nav .setting .lang + div.languages")
                     .classList.toggle("active-div");
                 }}
-                className="lang center "
+                className="lang center"
               >
                 <i className="fa-solid fa-earth-americas"></i>
                 <span className="lang-span">EN</span>
@@ -245,47 +256,83 @@ const Navbar = () => {
 
         <div className="flex-direction flex between gap-20">
           <div className="flex-direction flex gap-10">
-            <div className="links">
-              <div data-index="0" onClick={openDiv} className="center">
-                <i className="fa-solid fa-people-group"></i>
-                <h1 className="flex-1">
-                  {language.navBar && language.navBar.teachers}
-                </h1>
-                <i className="arrow fa-solid fa-chevron-right"></i>
+            <NavLink to={ProfilePath} className="w-100 justify-start center">
+              <i className="fa-regular fa-circle-user"></i>
+              <h1>my profile</h1>
+            </NavLink>
+
+            {isAdmin && (
+              <div className="links">
+                <div onClick={openDiv} className="center">
+                  <i className="fa-solid fa-user-group"></i>
+                  <h1 className="flex-1">admins</h1>
+                  <i className="arrow fa-solid fa-chevron-right"></i>
+                </div>
+                <article>
+                  <NavLink to={"all_admins"}>all admins</NavLink>
+                  <NavLink to={"add_admin"}>add admin</NavLink>
+                </article>
               </div>
-              <article>
-                <NavLink to={"all_teachers"}>
-                  {language.navBar && language.navBar.all_teachers}
-                </NavLink>
-                {isAdmin && (
-                  <NavLink to={"add_teacher"}>
-                    {language.navBar && language.navBar.add_teacher}
-                  </NavLink>
-                )}
-              </article>
-            </div>
-            <div className="links">
-              <div data-index="1" onClick={openDiv} className="center">
-                <i className="fa-solid fa-children"></i>
-                <h1 className="flex-1">
-                  {language.navBar && language.navBar.students}
-                </h1>
-                <i className="arrow fa-solid fa-chevron-right"></i>
+            )}
+            {isAdmin && (
+              <div className="links">
+                <div onClick={openDiv} className="center">
+                  <i className="fa-solid fa-users"></i>
+                  <h1 className="flex-1">users</h1>
+                  <i className="arrow fa-solid fa-chevron-right"></i>
+                </div>
+                <article>
+                  <NavLink to={"all_users"}>all users</NavLink>
+                  <NavLink to={"add_user"}>add user</NavLink>
+                </article>
               </div>
-              <article>
-                <NavLink to={"all_students"}>
-                  {language.navBar && language.navBar.all_students}
-                </NavLink>
-                {isAdmin && (
-                  <NavLink to={"add_student"}>
-                    {language.navBar && language.navBar.add_student}
+            )}
+
+            {!isStudent && (
+              <div className="links">
+                <div onClick={openDiv} className="center">
+                  <i className="fa-solid fa-people-group"></i>
+                  <h1 className="flex-1">
+                    {language.navBar && language.navBar.teachers}
+                  </h1>
+                  <i className="arrow fa-solid fa-chevron-right"></i>
+                </div>
+                <article>
+                  <NavLink to={"all_teachers"}>
+                    {language.navBar && language.navBar.all_teachers}
                   </NavLink>
-                )}
-              </article>
-            </div>
+                  {isAdmin && (
+                    <NavLink to={"add_teacher"}>
+                      {language.navBar && language.navBar.add_teacher}
+                    </NavLink>
+                  )}
+                </article>
+              </div>
+            )}
+            {!isStudent && (
+              <div className="links">
+                <div onClick={openDiv} className="center">
+                  <i className="fa-solid fa-children"></i>
+                  <h1 className="flex-1">
+                    {language.navBar && language.navBar.students}
+                  </h1>
+                  <i className="arrow fa-solid fa-chevron-right"></i>
+                </div>
+                <article>
+                  <NavLink to={"all_students"}>
+                    {language.navBar && language.navBar.all_students}
+                  </NavLink>
+                  {isAdmin && (
+                    <NavLink to={"add_student"}>
+                      {language.navBar && language.navBar.add_student}
+                    </NavLink>
+                  )}
+                </article>
+              </div>
+            )}
 
             <div className="links">
-              <div data-index="2" onClick={openDiv} className="center">
+              <div onClick={openDiv} className="center">
                 <i className="fa-solid fa-list-check"></i>
                 <h1 className="flex-1">
                   {language.navBar && language.navBar.exam}
@@ -313,7 +360,7 @@ const Navbar = () => {
             </div>
 
             <div className="links">
-              <div data-index="3" onClick={openDiv} className="center">
+              <div onClick={openDiv} className="center">
                 <i className="fa-regular fa-calendar-days"></i>
                 <h1 className="flex-1">
                   {language.navBar && language.navBar.activities}
@@ -321,9 +368,11 @@ const Navbar = () => {
                 <i className="arrow fa-solid fa-chevron-right"></i>
               </div>
               <article>
-                <NavLink to={"attendence"}>
-                  {language.navBar && language.navBar.attendance}
-                </NavLink>
+                {!isStudent && (
+                  <NavLink to={"attendence"}>
+                    {language.navBar && language.navBar.attendance}
+                  </NavLink>
+                )}
                 <NavLink to={"time_table"}>
                   {language.navBar && language.navBar.time_table}
                 </NavLink>
@@ -338,7 +387,12 @@ const Navbar = () => {
               <h1>{language.navBar && language.navBar.classes}</h1>
             </NavLink>
           </div>
-          <Link replace onClick={logOut} to={"/"} className="log-out center">
+          <Link
+            replace
+            onClick={logOut}
+            to={"/"}
+            className="log-out center aside"
+          >
             <i className="fa-solid fa-right-from-bracket"></i> <h3>log out</h3>
           </Link>
         </div>

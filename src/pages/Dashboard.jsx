@@ -58,7 +58,7 @@ const Dashboard = () => {
       }
     }
     dashboard && fetchData();
-  }, []);
+  }, [location.pathname]);
 
   return (
     <>
@@ -96,7 +96,7 @@ const Dashboard = () => {
                   </div>
                 </article>
                 <article className="center">
-                  <i class="fa-solid fa-children student"></i>
+                  <i className="fa-solid fa-children student"></i>
                   <div className="flex-1">
                     <h2 className="flex gap-10">
                       <p>

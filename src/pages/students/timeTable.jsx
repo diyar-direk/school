@@ -8,7 +8,8 @@ const TimeTable = () => {
   const context = useContext(Context);
   const token = context && context.userDetails.token;
   const isAdmin = context && context.userDetails.isAdmin;
-
+  const isStudent = context && context.userDetails.isStudent;
+  const userDetails = context && context.userDetails.userDetails;
   const date = new Date();
   const [data, setData] = useState([]);
   const [dayNumber, setDayNumber] = useState(date.getUTCDay() || 0);
@@ -59,6 +60,7 @@ const TimeTable = () => {
       }
     }
   }
+
   useEffect(() => {
     getData();
 
@@ -245,23 +247,35 @@ const TimeTable = () => {
     return h2;
   }
   useEffect(() => {
-    setForm({ ...form, classId: "" });
-    setClassesName("");
-    if (form.yearLevel) {
-      axios
-        .get(
-          `http://localhost:8000/api/classes?yearLevel=${form.yearLevel}&active=true`,
-          {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          }
-        )
-        .then((res) => {
-          setClasses(res.data.data);
-        });
+    if (!isStudent) {
+      setForm({ ...form, classId: "" });
+      setClassesName("");
+      if (form.yearLevel) {
+        axios
+          .get(
+            `http://localhost:8000/api/classes?yearLevel=${form.yearLevel}&active=true`,
+            {
+              headers: {
+                Authorization: "Bearer " + token,
+              },
+            }
+          )
+          .then((res) => {
+            setClasses(res.data.data);
+          });
+      }
     }
   }, [form.yearLevel]);
+
+  useEffect(() => {
+    if (isStudent) {
+      setForm({
+        ...form,
+        yearLevel: userDetails.yearLevel,
+        classId: userDetails.classId,
+      });
+    }
+  }, [isStudent]);
 
   return (
     <main>
@@ -330,52 +344,54 @@ const TimeTable = () => {
           </div>
         )}
         <div className="container">
-          <form className="exam-result dashboard-form">
-            <div className="flex wrap ">
-              <div className="flex flex-direction">
-                <label>
-                  {language.timeTable && language.timeTable.year_level}
-                </label>
-                <div className="selecte">
-                  <div onClick={handleClick} className="inp">
-                    {form.yearLevel
-                      ? form.yearLevel
-                      : `${
-                          language.timeTable &&
-                          language.timeTable.year_level_placeholder
-                        }`}
-                  </div>
-                  <article className="grid-3">{createYearLeve()}</article>
-                </div>
-              </div>
-
-              {form.yearLevel && (
-                <>
-                  <div className="flex flex-direction">
-                    <label>classes</label>
-                    <div className="selecte">
-                      <div onClick={handleClick} className="inp">
-                        {classesName ? classesName : "please select classes"}
-                      </div>
-                      <article>
-                        {classes.map((e, i) => {
-                          return (
-                            <h2
-                              onClick={(event) => selectClasses(event, e._id)}
-                              data-classes={`${e.yearLevel} : ${e.name}`}
-                              key={i}
-                            >
-                              {`${e.yearLevel} : ${e.name}`}
-                            </h2>
-                          );
-                        })}
-                      </article>
+          {!isStudent && (
+            <form className="exam-result dashboard-form">
+              <div className="flex wrap ">
+                <div className="flex flex-direction">
+                  <label>
+                    {language.timeTable && language.timeTable.year_level}
+                  </label>
+                  <div className="selecte">
+                    <div onClick={handleClick} className="inp">
+                      {form.yearLevel
+                        ? form.yearLevel
+                        : `${
+                            language.timeTable &&
+                            language.timeTable.year_level_placeholder
+                          }`}
                     </div>
+                    <article className="grid-3">{createYearLeve()}</article>
                   </div>
-                </>
-              )}
-            </div>
-          </form>
+                </div>
+
+                {form.yearLevel && (
+                  <>
+                    <div className="flex flex-direction">
+                      <label>classes</label>
+                      <div className="selecte">
+                        <div onClick={handleClick} className="inp">
+                          {classesName ? classesName : "please select classes"}
+                        </div>
+                        <article>
+                          {classes.map((e, i) => {
+                            return (
+                              <h2
+                                onClick={(event) => selectClasses(event, e._id)}
+                                data-classes={`${e.yearLevel} : ${e.name}`}
+                                key={i}
+                              >
+                                {`${e.yearLevel} : ${e.name}`}
+                              </h2>
+                            );
+                          })}
+                        </article>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </form>
+          )}
 
           {form.classId && (
             <div className="tabel-container">

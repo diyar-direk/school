@@ -246,6 +246,17 @@ body.arabic {
   z-index: 1 !important;
 }
 
+.error {
+  padding: 15px;
+  text-align: center;
+  width: 400px;
+  background-color: #ce06061c;
+  color: #ce0606;
+  margin-top: 20px;
+  font-weight: 500;
+  border-radius: 10px;
+  text-transform: capitalize;
+}
 .error-404 {
   text-transform: capitalize;
   color: var(--font-color);

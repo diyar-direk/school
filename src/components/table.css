@@ -40,6 +40,15 @@ div.table .delete-all {
 div.table .delete-all:hover {
   background-color: #ce0606;
 }
+div.table .admin .delete {
+  cursor: pointer;
+  color: #e60404;
+  font-size: 16px;
+}
+div.table .admin .update {
+  color: #4400ff;
+  font-size: 16px;
+}
 div.table .delete-all i {
   font-size: 14px;
 }
@@ -128,6 +137,13 @@ table .table-loading {
   font-size: 25px;
   letter-spacing: 1px;
   color: var(--font-color);
+}
+
+table a.name {
+  color: var(--font-color);
+}
+table a.name:hover {
+  text-decoration: underline;
 }
 
 div.table tbody tr:not(table.time-table tbody tr):nth-child(odd) {

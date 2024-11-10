@@ -24,6 +24,11 @@ import Auth from "./Auth/Auth";
 import Refresh from "./Auth/Refersh";
 import AdminAuth from "./Auth/AdminAuth";
 import TeacherAuth from "./Auth/TeacherAuth";
+import AllAdmins from "./Auth/AllAdmins";
+import AddAdmin from "./Auth/AddAdmin";
+import UpdateAdmin from "./Auth/UpdateAdmin";
+import AllUsers from "./Auth/AllUsers";
+import AddUser from "./Auth/AddUser";
 
 function App() {
   const location = useLocation();
@@ -42,6 +47,11 @@ function App() {
               <Route path="*" element={<NotFound />} />
 
               <Route element={<AdminAuth />}>
+                <Route path="all_admins" element={<AllAdmins />} />
+                <Route path="add_admin" element={<AddAdmin />} />
+                <Route path="all_users" element={<AllUsers />} />
+                <Route path="add_user" element={<AddUser />} />
+                <Route path="update_admin/:id" element={<UpdateAdmin />} />
                 <Route path="add_teacher" element={<AddTeacher />} />
                 <Route path="add_student" element={<AddStudent />} />
                 <Route path="add_exam_result" element={<AddExamResult />} />

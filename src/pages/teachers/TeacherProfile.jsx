@@ -17,20 +17,19 @@ const TeacherProfile = () => {
   });
 
   const { id } = useParams();
+
   const context = useContext(Context);
   const token = context && context.userDetails.token;
+  const isAdmin = context && context.userDetails.isAdmin;
 
   const language = context && context.selectedLang;
   useEffect(() => {
     axios
-      .get(
-        `http://localhost:8000/api/teachers/${context.userDetails.userDetails._id}`,
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
-      )
+      .get(`http://localhost:8000/api/teachers/${id}`, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
       .then((res) => {
         const data = res.data.teacher;
         setData({
@@ -55,17 +54,21 @@ const TeacherProfile = () => {
           <div className="profile">
             <div className="image">
               <i className=" photo fa-solid fa-user"></i>
-              <Link to={`/update_teacher/${id}`} className="center gap-10">
-                {language.teachers && language.teachers.edit_btn}
-                <i className="fa-regular fa-pen-to-square"></i>
-              </Link>
-            </div>
-            <div className="info">
-              <h2 className="name">
-                <Link to={`/update_teacher/${id}`}>
+              {isAdmin && (
+                <Link to={`/update_teacher/${id}`} className="center gap-10">
+                  {language.teachers && language.teachers.edit_btn}
                   <i className="fa-regular fa-pen-to-square"></i>
                 </Link>
-              </h2>
+              )}
+            </div>
+            <div className="info">
+              {isAdmin && (
+                <h2 className="name">
+                  <Link to={`/update_teacher/${id}`}>
+                    <i className="fa-regular fa-pen-to-square"></i>
+                  </Link>
+                </h2>
+              )}
 
               <div className="flex">
                 <h2>{language.teachers && language.teachers.first_name}:</h2>

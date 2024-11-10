@@ -7,6 +7,8 @@ const ExamResult = () => {
   const context = useContext(Context);
   const token = context && context.userDetails.token;
   const isAdmin = context && context.userDetails.isAdmin;
+  const isStudent = context && context.userDetails.isStudent;
+  const userDetails = context && context.userDetails.userDetails;
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -242,26 +244,28 @@ const ExamResult = () => {
     setDataNames({ ...dataNames, studentName: e.target.dataset.student });
   }
   useEffect(() => {
-    setForm({ ...form, classId: "" });
-    setDataNames({ ...dataNames, classesName: "" });
-    if (form.yearLevel) {
-      axios
-        .get(
-          `http://localhost:8000/api/classes?yearLevel=${form.yearLevel}&active=true`,
-          {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          }
-        )
-        .then((res) => {
-          setClasses(res.data.data);
-        });
+    if (!isStudent) {
+      setForm({ ...form, classId: "" });
+      setDataNames({ ...dataNames, classesName: "" });
+      if (form.yearLevel) {
+        axios
+          .get(
+            `http://localhost:8000/api/classes?yearLevel=${form.yearLevel}&active=true`,
+            {
+              headers: {
+                Authorization: "Bearer " + token,
+              },
+            }
+          )
+          .then((res) => {
+            setClasses(res.data.data);
+          });
+      }
     }
   }, [form.yearLevel]);
 
   useEffect(() => {
-    if (form.classId) {
+    if (form.classId && !isStudent) {
       axios
         .get(
           `http://localhost:8000/api/students?classId=${form.classId}&active=true`,
@@ -276,6 +280,16 @@ const ExamResult = () => {
         });
     }
   }, [form.classId]);
+
+  useEffect(() => {
+    if (isStudent) {
+      setForm({
+        yearLevel: userDetails.yearLevel,
+        classId: userDetails.classId,
+        student: userDetails._id,
+      });
+    }
+  }, []);
 
   return (
     <main>
@@ -312,92 +326,94 @@ const ExamResult = () => {
               </div>
             </div>
           )}
-          <form className="exam-result dashboard-form">
-            <div className="flex wrap ">
-              <div className="flex flex-direction">
-                <label>
-                  {language.examResult && language.examResult.year_level}
-                </label>
-                <div className="selecte">
-                  <div onClick={handleClick} className="inp">
-                    {form.yearLevel
-                      ? form.yearLevel
-                      : `${
-                          language.examResult &&
-                          language.examResult.year_level_placeholder
-                        }`}
+          {!isStudent && (
+            <form className="exam-result dashboard-form">
+              <div className="flex wrap ">
+                <div className="flex flex-direction">
+                  <label>
+                    {language.examResult && language.examResult.year_level}
+                  </label>
+                  <div className="selecte">
+                    <div onClick={handleClick} className="inp">
+                      {form.yearLevel
+                        ? form.yearLevel
+                        : `${
+                            language.examResult &&
+                            language.examResult.year_level_placeholder
+                          }`}
+                    </div>
+                    <article className="grid-3">{createYearLeve()}</article>
                   </div>
-                  <article className="grid-3">{createYearLeve()}</article>
                 </div>
+
+                {form.yearLevel && (
+                  <>
+                    <div className="flex flex-direction">
+                      <label>
+                        {language.examResult && language.examResult.class}
+                      </label>
+                      <div className="selecte">
+                        <div onClick={handleClick} className="inp">
+                          {dataNames.classesName
+                            ? dataNames.classesName
+                            : `${
+                                language.examResult &&
+                                language.examResult.class_placeholder
+                              }`}
+                        </div>
+                        <article>
+                          {classes.map((e, i) => {
+                            return (
+                              <h2
+                                onClick={(event) => selectClasses(event, e._id)}
+                                data-classes={`${e.yearLevel} : ${e.name}`}
+                                key={i}
+                              >
+                                {`${e.yearLevel} : ${e.name}`}
+                              </h2>
+                            );
+                          })}
+                        </article>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {form.classId && (
+                  <>
+                    <div className="flex flex-direction">
+                      <label>
+                        {language.examResult && language.examResult.student}
+                      </label>
+                      <div className="selecte">
+                        <div onClick={handleClick} className="inp">
+                          {dataNames.studentName
+                            ? dataNames.studentName
+                            : `${
+                                language.examResult &&
+                                language.examResult.student_Placeholder
+                              }`}
+                        </div>
+                        <article>
+                          {students.map((e, i) => {
+                            return (
+                              <h2
+                                onClick={(event) => selectStudent(event, e._id)}
+                                data-student={`${e.firstName} ${e.middleName} ${e.lastName}`}
+                                key={i}
+                              >
+                                {`${e.firstName} ${e.middleName} ${e.lastName}`}
+                              </h2>
+                            );
+                          })}
+                        </article>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
-
-              {form.yearLevel && (
-                <>
-                  <div className="flex flex-direction">
-                    <label>
-                      {language.examResult && language.examResult.class}
-                    </label>
-                    <div className="selecte">
-                      <div onClick={handleClick} className="inp">
-                        {dataNames.classesName
-                          ? dataNames.classesName
-                          : `${
-                              language.examResult &&
-                              language.examResult.class_placeholder
-                            }`}
-                      </div>
-                      <article>
-                        {classes.map((e, i) => {
-                          return (
-                            <h2
-                              onClick={(event) => selectClasses(event, e._id)}
-                              data-classes={`${e.yearLevel} : ${e.name}`}
-                              key={i}
-                            >
-                              {`${e.yearLevel} : ${e.name}`}
-                            </h2>
-                          );
-                        })}
-                      </article>
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {form.classId && (
-                <>
-                  <div className="flex flex-direction">
-                    <label>
-                      {language.examResult && language.examResult.student}
-                    </label>
-                    <div className="selecte">
-                      <div onClick={handleClick} className="inp">
-                        {dataNames.studentName
-                          ? dataNames.studentName
-                          : `${
-                              language.examResult &&
-                              language.examResult.student_Placeholder
-                            }`}
-                      </div>
-                      <article>
-                        {students.map((e, i) => {
-                          return (
-                            <h2
-                              onClick={(event) => selectStudent(event, e._id)}
-                              data-student={`${e.firstName} ${e.middleName} ${e.lastName}`}
-                              key={i}
-                            >
-                              {`${e.firstName} ${e.middleName} ${e.lastName}`}
-                            </h2>
-                          );
-                        })}
-                      </article>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-          </form>
+            </form>
+          )}
 
           {form.student && (
             <div className="tabel-container">
