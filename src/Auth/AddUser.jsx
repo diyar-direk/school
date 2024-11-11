@@ -61,26 +61,26 @@ const AddUser = () => {
     if (passwordConfirmation !== form.password)
       setDataError("the password most be same");
     else if (!form.role) setDataError("please choose a role");
+    else if (!form.profileId) setDataError("please choose a user");
     else {
       try {
         setFormLoading(true);
-        const data = await axios.post(
-          "http://localhost:8000/api2/admins",
-          form,
-          {
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          }
-        );
+
+        const data = await axios.post("http://localhost:8000/api/users", form, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
 
         if (data.status === 201) {
           responseFun(true);
           setForm({
-            firstName: "",
-            lastName: "",
-            email: "",
+            username: "",
+            password: "",
+            role: "",
+            profileId: "",
           });
+          setPasswordConfirmation("");
         }
       } catch (error) {
         console.log(error);
@@ -91,31 +91,35 @@ const AddUser = () => {
       }
     }
   };
+
   function updateData(e) {
-    setSearchData([]);
-    setLoading(true);
-    const pages = document.querySelectorAll("div.table .pagination h3");
-    pages.forEach((e) => e.classList.remove("active"));
-    e.target.classList.add("active");
-    setActivePage(+e.target.dataset.page);
+    if (activePage !== +e.target.dataset.page) {
+      setSearchData([]);
+      setLoading(true);
+      const pages = document.querySelectorAll("div.table .pagination h3");
+      pages.forEach((e) => e.classList.remove("active"));
+      e.target.classList.add("active");
+      setActivePage(+e.target.dataset.page);
+    }
   }
 
   const fetchData = async () => {
     setSearchData([]);
     setForm({ ...form, profileId: "" });
     setLoading(true);
+    const role = form.role.toLowerCase() + "s";
     try {
-      let url = `http://localhost:8000/api/${form.role}?limit=${divsCount}&page=${activePage}&active=true`;
-      if (form.role !== "admins" && gender) url += `&gender=${gender}`;
-      if (form.role !== "admins" && yearLevel) url += `&yearLevel=${yearLevel}`;
+      let url = `http://localhost:8000/api/${role}?limit=${divsCount}&page=${activePage}&active=true`;
+      if (form.role !== "Admin" && gender) url += `&gender=${gender}`;
+      if (form.role !== "Admin" && yearLevel) url += `&yearLevel=${yearLevel}`;
       const res = await axios.get(url, {
         headers: {
           Authorization: "Bearer " + token,
         },
       });
 
-      if (form.role === "admins") setDataLength(res.data.numberOfAdmins);
-      else if (form.role === "teachers")
+      if (form.role === "Admin") setDataLength(res.data.numberOfAdmins);
+      else if (form.role === "Teacher")
         setDataLength(res.data.numberOfActiveTeachers);
       else setDataLength(res.data.numberOfActiveStudents);
 
@@ -155,6 +159,7 @@ const AddUser = () => {
     allTr.forEach((ele) => ele.classList.remove("active"));
     e.target.parentNode.classList.add("active");
     setForm({ ...form, profileId: id });
+    setDataError(false);
   };
 
   const tableData = searchData?.map((e) => {
@@ -170,16 +175,16 @@ const AddUser = () => {
         <td>
           {e.firstName} {e.middleName && e.middleName} {e.lastName}
         </td>
-        {form.role !== "admins" && <td> {e.gender} </td>}
-        {form.role === "students" && <td> {e.yearLevel} </td>}
-        {form.role === "teachers" && (
+        {form.role !== "Admin" && <td> {e.gender} </td>}
+        {form.role === "Student" && <td> {e.yearLevel} </td>}
+        {form.role === "Teacher" && (
           <td>
             {Array.isArray(e.yearLevel) ? e.yearLevel.join(" , ") : e.yearLevel}
           </td>
         )}
 
-        <td> {form.role === "students" ? e.contactInfo?.email : e.email} </td>
-        <td> {form.role.slice(0, form.role.length - 1)} </td>
+        <td> {form.role === "Student" ? e.contactInfo?.email : e.email} </td>
+        <td> {form.role} </td>
       </tr>
     );
   });
@@ -222,7 +227,7 @@ const AddUser = () => {
                 <input
                   required
                   onInput={handleForm}
-                  value={form.firstName}
+                  value={form.username}
                   type="text"
                   id="username"
                   className="inp"
@@ -235,7 +240,7 @@ const AddUser = () => {
                 <input
                   required
                   onInput={handleForm}
-                  value={form.lastName}
+                  value={form.password}
                   type="password"
                   id="password"
                   className="inp"
@@ -264,7 +269,7 @@ const AddUser = () => {
                   </div>
                   <article>
                     <h2
-                      data-role="admins"
+                      data-role="Admin"
                       onClick={(e) => {
                         setDataError(false);
                         setForm({ ...form, role: e.target.dataset.role });
@@ -273,7 +278,7 @@ const AddUser = () => {
                       Admin
                     </h2>
                     <h2
-                      data-role="teachers"
+                      data-role="Teacher"
                       onClick={(e) => {
                         setDataError(false);
                         setForm({ ...form, role: e.target.dataset.role });
@@ -282,7 +287,7 @@ const AddUser = () => {
                       teacher
                     </h2>
                     <h2
-                      data-role="students"
+                      data-role="Student"
                       onClick={(e) => {
                         setDataError(false);
                         setForm({ ...form, role: e.target.dataset.role });
@@ -301,7 +306,8 @@ const AddUser = () => {
           {form.role && (
             <div className="tabel-container">
               <div className="table">
-                {form.role !== "admins" && (
+                <h2>please select a user to creat</h2>
+                {form.role !== "Admin" && (
                   <form className="flex search gap-20">
                     <div className="flex flex-direction">
                       <div className="selecte">
@@ -362,10 +368,10 @@ const AddUser = () => {
                     <tr>
                       <td></td>
                       <th>{language.teachers && language.teachers.name}</th>
-                      {form.role !== "admins" && (
+                      {form.role !== "Admin" && (
                         <th>{language.teachers && language.teachers.gender}</th>
                       )}
-                      {form.role !== "admins" && <th>year level</th>}
+                      {form.role !== "Admin" && <th>year level</th>}
                       <th>email</th>
                       <th>role</th>
                     </tr>

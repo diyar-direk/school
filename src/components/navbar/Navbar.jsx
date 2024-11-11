@@ -264,19 +264,6 @@ const Navbar = () => {
             {isAdmin && (
               <div className="links">
                 <div onClick={openDiv} className="center">
-                  <i className="fa-solid fa-user-group"></i>
-                  <h1 className="flex-1">admins</h1>
-                  <i className="arrow fa-solid fa-chevron-right"></i>
-                </div>
-                <article>
-                  <NavLink to={"all_admins"}>all admins</NavLink>
-                  <NavLink to={"add_admin"}>add admin</NavLink>
-                </article>
-              </div>
-            )}
-            {isAdmin && (
-              <div className="links">
-                <div onClick={openDiv} className="center">
                   <i className="fa-solid fa-users"></i>
                   <h1 className="flex-1">users</h1>
                   <i className="arrow fa-solid fa-chevron-right"></i>
@@ -284,6 +271,20 @@ const Navbar = () => {
                 <article>
                   <NavLink to={"all_users"}>all users</NavLink>
                   <NavLink to={"add_user"}>add user</NavLink>
+                </article>
+              </div>
+            )}
+
+            {isAdmin && (
+              <div className="links">
+                <div onClick={openDiv} className="center">
+                  <i className="fa-solid fa-user-group"></i>
+                  <h1 className="flex-1">admins</h1>
+                  <i className="arrow fa-solid fa-chevron-right"></i>
+                </div>
+                <article>
+                  <NavLink to={"all_admins"}>all admins</NavLink>
+                  <NavLink to={"add_admin"}>add admin</NavLink>
                 </article>
               </div>
             )}
@@ -386,6 +387,18 @@ const Navbar = () => {
               <i className="fa-solid fa-school-flag"></i>
               <h1>{language.navBar && language.navBar.classes}</h1>
             </NavLink>
+
+            <div className="links">
+              <div onClick={openDiv} className="center">
+                <i className="fa-solid fa-pencil"></i>
+                <h1 className="flex-1">quiz</h1>
+                <i className="arrow fa-solid fa-chevron-right"></i>
+              </div>
+              <article>
+                <NavLink to={"all_quizes"}>all quizes</NavLink>
+                {isAdmin && <NavLink to={"add_quize"}>add quize</NavLink>}
+              </article>
+            </div>
           </div>
           <Link
             replace
