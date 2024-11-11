@@ -46,7 +46,7 @@ const Dashboard = () => {
           teachersFemale: teachers.data.numberOfFemaleTeachers,
           teachersMale: teachers.data.numberOfMaleTeachers,
           studentsMale: students.data.numberOfFemaleStudents,
-          studentsFemale: students.data.numberOfFemaleStudents,
+          studentsFemale: students.data.numberOfMaleStudents,
           email: context.userDetails.userDetails.email,
           firstName: context.userDetails.userDetails.firstName,
           lastName: context.userDetails.userDetails.lastName,

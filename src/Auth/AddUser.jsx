@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import "../components/form.css";
+import "../components/table.css";
 import axios from "axios";
 import { Context } from "../context/Context";
 import SendData from "../components/response/SendData";
@@ -8,11 +9,14 @@ import FormLoading from "../components/FormLoading";
 const AddUser = () => {
   const context = useContext(Context);
   const token = context && context.userDetails.token;
+
   const [form, setForm] = useState({
     username: "",
     password: "",
     role: "",
+    profileId: "",
   });
+
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const language = context && context.selectedLang;
   const [loading, setLoading] = useState(false);
@@ -98,6 +102,7 @@ const AddUser = () => {
 
   const fetchData = async () => {
     setSearchData([]);
+    setForm({ ...form, profileId: "" });
     setLoading(true);
     try {
       let url = `http://localhost:8000/api/${form.role}?limit=${divsCount}&page=${activePage}&active=true`;
@@ -145,9 +150,23 @@ const AddUser = () => {
     form.role && fetchData();
   }, [form.role, activePage, gender, yearLevel]);
 
+  const selectUser = (e, id) => {
+    const allTr = document.querySelectorAll("tr.select-user.active");
+    allTr.forEach((ele) => ele.classList.remove("active"));
+    e.target.parentNode.classList.add("active");
+    setForm({ ...form, profileId: id });
+  };
+
   const tableData = searchData?.map((e) => {
     return (
-      <tr key={e._id}>
+      <tr
+        onClick={(target) => selectUser(target, e._id)}
+        className="select-user"
+        key={e._id}
+      >
+        <td>
+          <div className="radio active"></div>
+        </td>
         <td>
           {e.firstName} {e.middleName && e.middleName} {e.lastName}
         </td>
@@ -160,7 +179,7 @@ const AddUser = () => {
         )}
 
         <td> {form.role === "students" ? e.contactInfo?.email : e.email} </td>
-        <td> {form.role} </td>
+        <td> {form.role.slice(0, form.role.length - 1)} </td>
       </tr>
     );
   });
@@ -276,9 +295,7 @@ const AddUser = () => {
               </div>
             </div>
             {DataError && <p className="error">{DataError}</p>}
-            <button className="btn">
-              {language.exams && language.exams.save_btn}
-            </button>
+            <button className="btn">create</button>
           </form>
 
           {form.role && (
@@ -343,6 +360,7 @@ const AddUser = () => {
                 >
                   <thead>
                     <tr>
+                      <td></td>
                       <th>{language.teachers && language.teachers.name}</th>
                       {form.role !== "admins" && (
                         <th>{language.teachers && language.teachers.gender}</th>
