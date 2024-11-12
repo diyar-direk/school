@@ -8,8 +8,16 @@ import { Context } from "../../context/Context";
 const AddQuiz = () => {
   const context = useContext(Context);
   const token = context && context.userDetails.token;
-  const [multiQuestionsCount, setMultiQuestionsCount] = useState(0);
-  const [multiQuestions, setMultiQuestions] = useState([]);
+  const [multiQuestionsCount, setMultiQuestionsCount] = useState(1);
+  const [multiQuestions, setMultiQuestions] = useState({
+    answers: [{ name: "", is: false }],
+    question: "",
+  });
+
+  const [arrayOfMultiQuestions, setArrayOfMultiQuestions] = useState([]);
+
+  const [multiSelect, setMultiSelect] = useState(false);
+  const [T_RSelect, setT_RSelect] = useState(false);
   const [T_RQuestions, setT_RQuestions] = useState([]);
   const [form, setForm] = useState({
     classId: "",
@@ -168,9 +176,10 @@ const AddQuiz = () => {
   };
 
   const handleInputChange = (e, index) => {
-    const updatedQuestions = [...multiQuestions];
+    const updatedQuestions = [...multiQuestions.answers];
     updatedQuestions[index].name = e.target.value;
-    setMultiQuestions(updatedQuestions);
+
+    setMultiQuestions({ ...multiQuestions, answers: updatedQuestions });
   };
 
   const createInp = (length) => {
@@ -178,25 +187,61 @@ const AddQuiz = () => {
 
     for (let i = 0; i < length; i++) {
       inp.push(
-        <div className="flex flex-direction">
+        <div key={i} className="flex flex-direction">
           <label htmlFor={`answor-${i + 1}`}>answor {i + 1}</label>
           <div className="center gap-10 justify-start">
             <input
               required
               onInput={(e) => handleInputChange(e, i)}
-              value={multiQuestions[i].name}
+              value={multiQuestions.answers[i].name}
               type="text"
               id={`answor-${i + 1}`}
               className="inp"
               placeholder="write exam ansowr"
             />
             <i
-              data-icon={`answor-${i + 1}`}
+              onClick={(e) => {
+                const allTrues = document.querySelectorAll("form .true");
+                allTrues.forEach((ele, i) => {
+                  if (ele !== e.target) {
+                    ele.classList.remove("active");
+                    ele.nextElementSibling.classList.add("active");
+                    const updatedQuestions = [...multiQuestions.answers];
+                    updatedQuestions[i].is = false;
+
+                    setMultiQuestions({
+                      ...multiQuestions,
+                      answers: updatedQuestions,
+                    });
+                  }
+                  setDataError(false);
+                });
+                e.target.classList.add("active");
+                e.target.nextSibling.classList.remove("active");
+                const updatedQuestions = [...multiQuestions.answers];
+                updatedQuestions[i].is = true;
+
+                setMultiQuestions({
+                  ...multiQuestions,
+                  answers: updatedQuestions,
+                });
+              }}
               className="fa-solid fa-check true"
             ></i>
             <i
+              onClick={(e) => {
+                e.target.classList.add("active");
+                e.target.previousElementSibling.classList.remove("active");
+                const updatedQuestions = [...multiQuestions.answers];
+                updatedQuestions[i].is = false;
+
+                setMultiQuestions({
+                  ...multiQuestions,
+                  answers: updatedQuestions,
+                });
+              }}
               data-icon={`answor-${i + 1}`}
-              className="false fa-solid fa-xmark"
+              className="false active fa-solid fa-xmark"
             ></i>
           </div>
         </div>
@@ -204,6 +249,19 @@ const AddQuiz = () => {
     }
 
     return inp;
+  };
+
+  const handleQuizForm = async (e) => {
+    e.preventDefault();
+    const fltr = multiQuestions.answers.filter((e) => e.is);
+    if (fltr.length === 0) setDataError("you hsave to select right question");
+    else {
+      setMultiSelect(false);
+      setT_RSelect(false);
+      setMultiQuestionsCount(1);
+      setMultiQuestions({ question: "", answers: [{ name: "", is: false }] });
+      setArrayOfMultiQuestions((prev) => [...prev, multiQuestions]);
+    }
   };
 
   return (
@@ -345,39 +403,68 @@ const AddQuiz = () => {
               </div>
             </div>
           </form>
-          <form className="relative quize dashboard-form">
-            <div className="flex wrap">
-              <div className="flex flex-direction">
-                <label htmlFor="title">exam title</label>
-                <input
-                  required
-                  type="text"
-                  id="title"
-                  className="inp"
-                  placeholder="write exam title"
-                />
+          <form
+            onSubmit={handleQuizForm}
+            className="relative quize dashboard-form"
+          >
+            {(multiSelect || T_RSelect) && (
+              <div className="flex wrap">
+                <div className="flex flex-direction">
+                  <label htmlFor="question">question title</label>
+                  <input
+                    required
+                    onInput={(e) =>
+                      setMultiQuestions({
+                        ...multiQuestions,
+                        question: e.target.value,
+                      })
+                    }
+                    value={multiQuestions.question}
+                    type="text"
+                    id="question"
+                    className="inp"
+                    placeholder="write question title"
+                  />
+                </div>
+                {createInp(multiQuestionsCount)}
               </div>
-              {createInp(multiQuestionsCount)}
-            </div>
-            <span
-              onClick={() => {
-                setMultiQuestions((prev) => [
-                  ...prev,
-                  { name: "diyar", is: "" },
-                ]);
-                setMultiQuestionsCount((e) => e + 1);
-              }}
-              className="add-question"
-            >
-              + add answor
-            </span>
-
-            <div className="flex gap-20">
-              <span className="add-question">
-                + add multiple choice question
+            )}
+            {multiSelect && (
+              <span
+                onClick={() => {
+                  setMultiQuestions({
+                    ...multiQuestions,
+                    answers: [
+                      ...multiQuestions.answers,
+                      { name: "", is: false },
+                    ],
+                  });
+                  setMultiQuestionsCount((e) => e + 1);
+                }}
+                className="add-question"
+              >
+                + add answor
               </span>
-              <span className="add-question">+ add true false question</span>
-            </div>
+            )}
+
+            {!multiSelect && !T_RSelect && (
+              <div className="flex gap-20">
+                <span
+                  className="add-question"
+                  onClick={() => {
+                    setT_RSelect(false);
+                    setMultiSelect(true);
+                  }}
+                >
+                  + add multiple choice question
+                </span>
+                <span className="add-question">+ add true false question</span>
+              </div>
+            )}
+            {DataError && <p className="error"> {DataError} </p>}
+            {(multiSelect || T_RSelect) && (
+              <button className="btn">save</button>
+            )}
           </form>
         </div>
       </div>

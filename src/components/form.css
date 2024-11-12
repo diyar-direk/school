@@ -274,6 +274,7 @@ form.quize i {
   cursor: pointer;
   border: 1px dashed;
 }
+
 form.quize i.true {
   color: forestgreen;
 }
@@ -282,11 +283,13 @@ form.quize i.false {
 }
 form.quize i.true.active,
 form.quize i.true:hover {
+  border: solid 1px transparent;
   background-color: forestgreen;
   color: white;
 }
 form.quize i.false.active,
 form.quize i.false:hover {
+  border: solid 1px transparent;
   color: white;
   background-color: brown;
 }
