@@ -495,7 +495,9 @@ const AddQuiz = () => {
                           correctAnswer: true,
                         });
                       }}
-                      className="fa-solid fa-check true"
+                      className={`${
+                        T_RQuestions.correctAnswer ? "active" : ""
+                      } fa-solid fa-check true`}
                     ></i>
                     <i
                       onClick={(e) => {
@@ -508,7 +510,9 @@ const AddQuiz = () => {
                           correctAnswer: false,
                         });
                       }}
-                      className="false active fa-solid fa-xmark"
+                      className={`false ${
+                        !T_RQuestions.correctAnswer ? "active" : ""
+                      } fa-solid fa-xmark`}
                     ></i>
                   </div>
                 </div>
@@ -559,7 +563,7 @@ const AddQuiz = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {arrayOfMultiQuestions.map((e) => {
+                        {arrayOfMultiQuestions.map((e, i) => {
                           const correctAnswer = e.choices.filter(
                             (ele) => ele.isCorrect
                           );
@@ -568,14 +572,22 @@ const AddQuiz = () => {
                           );
 
                           return (
-                            <tr>
+                            <tr key={i}>
                               <td> {e.text} </td>
                               <td>{nextJoin(wrongAnswer)}</td>
                               <td> {correctAnswer[0].text} </td>
                               <td>
-                                <div className="admin gap-10 flex">
-                                  <i className="fa-solid fa-trash delete"></i>
-                                  <i className="fa-regular fa-pen-to-square update"></i>
+                                <div className="admin gap-10 center">
+                                  <i
+                                    onClick={() => {
+                                      const fltr = arrayOfMultiQuestions.filter(
+                                        (item) => item !== e
+                                      );
+                                      setArrayOfMultiQuestions(fltr);
+                                    }}
+                                    className="fa-solid fa-trash delete"
+                                  ></i>
+                                  <i className="fa-regular fa-pen-to-square update c-pointer"></i>
                                 </div>
                               </td>
                             </tr>
@@ -598,15 +610,34 @@ const AddQuiz = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {arrayOfT_RQuestions.map((e) => {
+                        {arrayOfT_RQuestions.map((e, i) => {
                           return (
-                            <tr>
+                            <tr key={i}>
                               <td> {e.text} </td>
                               <td>{e.correctAnswer ? "true" : "false"}</td>
                               <td>
-                                <div className="admin gap-10 flex">
-                                  <i className="fa-solid fa-trash delete"></i>
-                                  <i className="fa-regular fa-pen-to-square update"></i>
+                                <div className="admin gap-10 center">
+                                  <i
+                                    onClick={() => {
+                                      const fltr = arrayOfT_RQuestions.filter(
+                                        (item) => item !== e
+                                      );
+                                      setArrayOfT_RQuestions(fltr);
+                                    }}
+                                    className="fa-solid fa-trash delete"
+                                  ></i>
+                                  <i
+                                    onClick={() => {
+                                      setT_RQuestions(e);
+                                      const fltr = arrayOfT_RQuestions.filter(
+                                        (item) => item !== e
+                                      );
+                                      setArrayOfT_RQuestions(fltr);
+                                      setT_RSelect(true);
+                                      setMultiSelect(false);
+                                    }}
+                                    className="fa-regular fa-pen-to-square update c-pointer"
+                                  ></i>
                                 </div>
                               </td>
                             </tr>
