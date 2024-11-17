@@ -34,15 +34,17 @@ const Classes = () => {
   });
 
   function updateData(e) {
-    setSearchData([]);
-    setSelectedItems([]);
-    setLoading(true);
-    const check = document.querySelector("th .checkbox.active");
-    check && check.classList.remove("active");
-    const pages = document.querySelectorAll("div.table .pagination h3");
-    pages.forEach((e) => e.classList.remove("active"));
-    e.target.classList.add("active");
-    setActivePage(+e.target.dataset.page);
+    if (activePage !== +e.target.dataset.page) {
+      setSearchData([]);
+      setSelectedItems([]);
+      setLoading(true);
+      const check = document.querySelector("th .checkbox.active");
+      check && check.classList.remove("active");
+      const pages = document.querySelectorAll("div.table .pagination h3");
+      pages.forEach((e) => e.classList.remove("active"));
+      e.target.classList.add("active");
+      setActivePage(+e.target.dataset.page);
+    }
   }
   const createPags = (dataCount, dataLength) => {
     const pages = Math.ceil(dataLength / dataCount);

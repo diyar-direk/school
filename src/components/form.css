@@ -93,6 +93,7 @@ form.dashboard-form .flex-direction .inp {
   font-size: 18px;
   background-color: var(--section-color);
   color: var(--font-color);
+  width: 100%;
 }
 
 .selecte {
@@ -179,6 +180,9 @@ form.dashboard-form .flex-direction .inp {
 form.dashboard-form .btn {
   margin-top: 20px;
 }
+form.dashboard-form .btn.question {
+  width: auto;
+}
 form.dashboard-form button {
   margin-top: 30px;
   font-size: 23px;
@@ -191,7 +195,7 @@ i.password {
 /* form loading  */
 
 .form-loading {
-  position: absolute;
+  position: fixed;
   display: flex;
   align-items: center;
   top: 0;
@@ -242,6 +246,70 @@ form.login .error {
   margin-top: 0;
   margin-bottom: 10px;
 }
+form.quize {
+  margin: 30px 0;
+}
+
+.add-question {
+  display: block;
+  margin-top: 20px;
+  border-radius: 6px;
+  background: var(--section-color);
+  width: fit-content;
+  padding: 10px;
+  text-transform: capitalize;
+  font-weight: bold;
+  color: var(--font-color);
+  cursor: pointer;
+}
+.add-question:hover {
+  background-color: var(--main-color);
+  color: white;
+}
+form.quize i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  height: 100%;
+  padding: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  border: 1px dashed;
+}
+form.quize i.delete {
+  position: absolute;
+  height: fit-content;
+  right: 0;
+  padding: 8px;
+  font-size: 11px;
+  color: brown;
+  border: dashed 1px brown;
+}
+form.quize i.delete:hover {
+  color: white;
+  background-color: brown;
+  border: dashed 1px var(--body-color);
+}
+form.quize i.true {
+  color: forestgreen;
+}
+form.quize i.false {
+  color: brown;
+}
+form.quize i.true.active,
+form.quize i.true:hover {
+  border: solid 1px transparent;
+  background-color: forestgreen;
+  color: white;
+}
+form.quize i.false.active,
+form.quize i.false:hover {
+  border: solid 1px transparent;
+  color: white;
+  background-color: brown;
+}
+
 @keyframes rotate {
   100% {
     rotate: 365deg;

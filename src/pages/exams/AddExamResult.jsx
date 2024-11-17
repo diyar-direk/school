@@ -14,6 +14,7 @@ const AddExamResult = () => {
     exam: "",
     student: "",
     score: "",
+    type: "Exam",
   });
   const language = context && context.selectedLang;
   const [loading, setLoading] = useState(false);
@@ -160,6 +161,8 @@ const AddExamResult = () => {
     else if (!form.exam) setDataError("please choose a exam");
     else if (!form.student) setDataError("please choose a student");
     else {
+      console.log(form);
+      
       try {
         const data = await axios.post(
           "http://localhost:8000/api/exam-results",

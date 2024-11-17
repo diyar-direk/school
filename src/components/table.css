@@ -483,3 +483,23 @@ table.time-table tbody tr .delete {
 .table .green-btn i {
   font-size: 15px;
 }
+
+div.table tbody tr.select-user:hover td,
+div.table tbody tr.active td {
+  background-color: #01f7ff17;
+  cursor: pointer;
+}
+div.radio {
+  width: 12px;
+  pointer-events: none;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--border-color);
+  margin: 0 auto;
+  border: solid 2px var(--body-color);
+  outline: var(--border-color) solid 2px;
+}
+div.table tbody tr.active div.radio {
+  background-color: #00aeff;
+  outline: #00aeff solid 2px;
+}
