@@ -278,7 +278,7 @@ const Classes = () => {
     }
     return h2;
   }
-  
+
   function createYearLeveFltr() {
     let h2 = [];
     for (let index = 1; index < 13; index++) {
@@ -487,9 +487,9 @@ const Classes = () => {
                         {yearLevel
                           ? `${language.class && language.class.year_level}: ` +
                             yearLevel
-                          : `${
-                              language.class && language.class.year_level
-                            } : ${language.class && language.class.all_years}`}
+                          : `${language.class && language.class.year_level} : ${
+                              language.class && language.class.all_years
+                            }`}
                       </div>
                       <article className="grid-3">
                         <h2 data-level={false} onClick={selectFilterYears}>
