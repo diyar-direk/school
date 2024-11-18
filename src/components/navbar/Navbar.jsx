@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import { Context } from "../../context/Context";
 import Cookies from "universal-cookie";
 const Navbar = () => {
+  const nav = useNavigate();
   const context = useContext(Context);
   const language = context && context.selectedLang;
   const isAdmin = context && context.userDetails.isAdmin;
@@ -11,7 +12,7 @@ const Navbar = () => {
   const isTeacher = context && context.userDetails.isTeacher;
   const id = context && context.userDetails.userDetails._id;
   const ProfilePath = isAdmin
-    ? "/dashboard"
+    ? "/dashboard/admin_profile"
     : isTeacher
     ? `/dashboard/teacher_profile/${id}`
     : `/dashboard/student_profile/${id}`;
@@ -25,6 +26,7 @@ const Navbar = () => {
   const isClosed = JSON.parse(localStorage.getItem("isClosed")) || false;
   const [form, setForm] = useState("");
   const cookie = new Cookies();
+
   const logOut = () => {
     cookie.remove("school-token");
     context.setUserDetails({
@@ -119,6 +121,7 @@ const Navbar = () => {
     { name: "all subjects", path: "subjects" },
     { name: "all classes", path: "classes" },
     { name: "my profile", path: ProfilePath },
+    { name: "all quizzes", path: "all_quizzes" },
   ];
   if (!isStudent) {
     pages.push(
@@ -137,7 +140,8 @@ const Navbar = () => {
       { name: "add exam", path: "add_exam" },
       { name: "add subjects", path: "subjects" },
       { name: "add classes", path: "classes" },
-      { name: "add exam result", path: "add_exam_result" }
+      { name: "add exam result", path: "add_exam_result" },
+      { name: "add quizzes", path: "add_quiz" }
     );
   }
 
@@ -162,7 +166,6 @@ const Navbar = () => {
     }
     return reasult;
   };
-  const nav = useNavigate();
   const searchClick = () => {
     if (form.length > 1) {
       const matchedPage = pages.find(
@@ -238,16 +241,16 @@ const Navbar = () => {
                 </h2>
               </div>
             </article>
-            <Link replace onClick={logOut} to={"/"} className="log-out center">
+            <h4 onClick={logOut} className="c-pointer log-out center">
               <i className="fa-solid fa-right-from-bracket"></i>
-            </Link>
+            </h4>
           </div>
         </div>
       </nav>
 
       <aside className={`${!isClosed === false ? "closed" : ""}`}>
         <article className="between">
-          <Link className="center" to={"/dashboard"}>
+          <Link className="center">
             <i className="fa-solid fa-graduation-cap"></i>
             <h1>school</h1>
           </Link>
@@ -265,12 +268,18 @@ const Navbar = () => {
               <div className="links">
                 <div onClick={openDiv} className="center">
                   <i className="fa-solid fa-users"></i>
-                  <h1 className="flex-1">{language.navBar && language.navBar.users}</h1>
+                  <h1 className="flex-1">
+                    {language.navBar && language.navBar.users}
+                  </h1>
                   <i className="arrow fa-solid fa-chevron-right"></i>
                 </div>
                 <article>
-                  <NavLink to={"all_users"}>{language.navBar && language.navBar.all_users}</NavLink>
-                  <NavLink to={"add_user"}>{language.navBar && language.navBar.add_users}</NavLink>
+                  <NavLink to={"all_users"}>
+                    {language.navBar && language.navBar.all_users}
+                  </NavLink>
+                  <NavLink to={"add_user"}>
+                    {language.navBar && language.navBar.add_users}
+                  </NavLink>
                 </article>
               </div>
             )}
@@ -279,12 +288,18 @@ const Navbar = () => {
               <div className="links">
                 <div onClick={openDiv} className="center">
                   <i className="fa-solid fa-user-group"></i>
-                  <h1 className="flex-1">{language.navBar && language.navBar.admins}</h1>
+                  <h1 className="flex-1">
+                    {language.navBar && language.navBar.admins}
+                  </h1>
                   <i className="arrow fa-solid fa-chevron-right"></i>
                 </div>
                 <article>
-                  <NavLink to={"all_admins"}>{language.navBar && language.navBar.all_admins}</NavLink>
-                  <NavLink to={"add_admin"}>{language.navBar && language.navBar.add_admins}</NavLink>
+                  <NavLink to={"all_admins"}>
+                    {language.navBar && language.navBar.all_admins}
+                  </NavLink>
+                  <NavLink to={"add_admin"}>
+                    {language.navBar && language.navBar.add_admins}
+                  </NavLink>
                 </article>
               </div>
             )}
@@ -391,23 +406,27 @@ const Navbar = () => {
             <div className="links">
               <div onClick={openDiv} className="center">
                 <i className="fa-solid fa-pencil"></i>
-                <h1 className="flex-1">{language.navBar && language.navBar.quiz}</h1>
+                <h1 className="flex-1">
+                  {language.navBar && language.navBar.quiz}
+                </h1>
                 <i className="arrow fa-solid fa-chevron-right"></i>
               </div>
               <article>
-                <NavLink to={"all_quizzes"}>{language.navBar && language.navBar.all_quiz}</NavLink>
-                {isAdmin && <NavLink to={"add_quiz"}>{language.navBar && language.navBar.add_quiz}</NavLink>}
+                <NavLink to={"all_quizzes"}>
+                  {language.navBar && language.navBar.all_quiz}
+                </NavLink>
+                {isAdmin && (
+                  <NavLink to={"add_quiz"}>
+                    {language.navBar && language.navBar.add_quiz}
+                  </NavLink>
+                )}
               </article>
             </div>
           </div>
-          <Link
-            replace
-            onClick={logOut}
-            to={"/"}
-            className="log-out center aside"
-          >
-            <i className="fa-solid fa-right-from-bracket"></i> <h3>{language.navBar && language.navBar.log_out}</h3>
-          </Link>
+          <h4 onClick={logOut} className="log-out center c-pointer aside">
+            <i className="fa-solid fa-right-from-bracket"></i>
+            <h3>{language.navBar && language.navBar.log_out}</h3>
+          </h4>
         </div>
       </aside>
     </>

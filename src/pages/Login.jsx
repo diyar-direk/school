@@ -16,6 +16,7 @@ export const showPassword = (e) => {
 
 const Login = () => {
   const context = useContext(Context);
+
   const [error, setError] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
   const [form, setForm] = useState({
@@ -62,7 +63,7 @@ const Login = () => {
 
       isTeacher && nav(`/dashboard/teacher_profile/${data.profileId._id}`);
       isStudent && nav(`/dashboard/student_profile/${data.profileId._id}`);
-      isAdmin && nav(`/dashboard`);
+      isAdmin && nav(`/dashboard/admin_profile`);
     } catch (error) {
       console.log(error);
       if (error.status === 401) setError("wrong name or passowrd");

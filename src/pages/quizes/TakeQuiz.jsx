@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Context } from "../../context/Context";
 import "./quiz.css";
@@ -13,10 +13,8 @@ const TakeQuiz = () => {
     userDetails &&
     `${userDetails.firstName} ${userDetails.middleName} ${userDetails.lastName}`;
   const [data, setData] = useState([]);
-  const [initialTime, setInitialTime] = useState(0);
   const [time, setTime] = useState(0);
   const [remainingTime, setRemainingTime] = useState("");
-  const timerStarted = useRef(false);
   const [answers, setAnswers] = useState([]);
   useEffect(() => {
     axios
@@ -28,40 +26,35 @@ const TakeQuiz = () => {
       .then((res) => {
         setData(res.data.data);
         setAnswers(res.data.data.questions);
-        const durationInSeconds = res.data.data.duration * 60;
-        setInitialTime(durationInSeconds);
-        if (!timerStarted.current) {
-          setTime(durationInSeconds);
-          timerStarted.current = true;
-        }
+        setTime(new Date(res.data.data.endDate));
       });
   }, []);
 
   useEffect(() => {
-    if (timerStarted.current) {
-      const interval = setInterval(() => {
-        setTime((prevTime) => {
-          if (prevTime <= 1) {
-            clearInterval(interval);
-            return 0;
-          }
-          return prevTime - 1;
-        });
-      }, 1000);
+    if (!time) return;
 
-      return () => clearInterval(interval);
-    }
-  }, [time]);
+    const intervalId = setInterval(() => {
+      const currentTime = new Date();
+      const ms = time - currentTime;
 
-  useEffect(() => {
-    const hours = Math.floor(time / 3600);
-    const minutes = Math.floor((time % 3600) / 60);
-    const seconds = time % 60;
-    setRemainingTime(
-      `${hours.toString().padStart(2, "0")}:${minutes
-        .toString()
-        .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
-    );
+      if (ms <= 0) {
+        clearInterval(intervalId);
+        setRemainingTime("00:00:00");
+        return;
+      }
+
+      const hours = Math.floor(ms / (1000 * 60 * 60));
+      const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((ms % (1000 * 60)) / 1000);
+
+      setRemainingTime(
+        `${hours.toString().padStart(2, "0")}:${minutes
+          .toString()
+          .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+      );
+    }, 1000);
+
+    return () => clearInterval(intervalId);
   }, [time]);
 
   const questions = data?.questions?.map((e, i) => {
@@ -125,6 +118,11 @@ const TakeQuiz = () => {
       </>
     );
   });
+
+  const submitQuiz = async (e) => {
+    e.preventDefault();
+  };
+
   return (
     <main>
       <div className="dashboard-container">
@@ -133,16 +131,19 @@ const TakeQuiz = () => {
             <h1 className="title">{data.subjectId?.name}</h1>
             <div>
               <h2 className="text-capitalize">{name}</h2>
-              <h3 className="text-capitalize">{data.duration}</h3>
+              <h3 className="text-capitalize">{data.duration} minuets </h3>
             </div>
           </div>
           <h2 className="time gap-10 center text-capitalize">
-            remaining time : <span>{remainingTime}</span>
+            remaining time : <span> {remainingTime} </span>
           </h2>
 
           <div className="questions-space">{questions}</div>
 
-          <button className="btn"> finish the quiz </button>
+          <button onClick={submitQuiz} className="btn">
+            {" "}
+            finish the quiz{" "}
+          </button>
         </div>
       </div>
     </main>

@@ -29,11 +29,12 @@ import AddAdmin from "./Auth/AddAdmin";
 import UpdateAdmin from "./Auth/UpdateAdmin";
 import AllUsers from "./Auth/AllUsers";
 import AddUser from "./Auth/AddUser";
-import AllQuizes from "./pages/quizes/AllQuizes";
 import AddQuiz from "./pages/quizes/AddQuiz";
 import UpdateQuiz from "./pages/quizes/UpdateQuiz";
 import StudentAuth from "./Auth/StudentAuth";
 import TakeQuiz from "./pages/quizes/TakeQuiz";
+import AllQuizes from "./pages/quizes/AllQuizes";
+import AdminProfile from "./Auth/AdminProfile";
 
 function App() {
   const location = useLocation();
@@ -52,6 +53,7 @@ function App() {
               <Route path="*" element={<NotFound />} />
 
               <Route element={<AdminAuth />}>
+                <Route path="admin_profile" element={<AdminProfile />} />
                 <Route path="all_admins" element={<AllAdmins />} />
                 <Route path="add_admin" element={<AddAdmin />} />
                 <Route path="all_users" element={<AllUsers />} />

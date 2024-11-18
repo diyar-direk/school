@@ -113,6 +113,12 @@ const AllQuizes = () => {
   const tableData =
     searchData &&
     searchData.map((e, i) => {
+      const currentDate = new Date();
+      const startDate = new Date(e.date);
+      const endDate = new Date(e.endDate);
+      const canTake =
+        isStudent && currentDate >= startDate && currentDate < endDate;
+
       return (
         <tr key={e._id}>
           <td>{e.title}</td>
@@ -153,14 +159,15 @@ const AllQuizes = () => {
               </div>
             </td>
           )}
-          {isStudent && (
-            <td>
+          <td>
+            {isStudent && canTake && (
               <Link
                 to={`/dashboard/take_quiz/${e._id}`}
                 className="fa-solid fa-play c-pointer start c-green"
               ></Link>
-            </td>
-          )}
+            )}
+            {isStudent && currentDate > endDate && "missed quiz"}
+          </td>
         </tr>
       );
     });
@@ -239,52 +246,37 @@ const AllQuizes = () => {
           </div>
         )}
         <div className="container">
-          <h1 className="title">{language.quizzes && language.quizzes.all_quizzes}</h1>
+          <h1 className="title">
+            {language.quizzes && language.quizzes.all_quizzes}
+          </h1>
           <div className="tabel-container">
             <div className="table">
-{/*<<<<<<< main*/}
-              <form className="flex search gap-20">
-                {isAdmin && (
-                  <Link className="btn" to={"/dashboard/add_quiz"}>
-                    <i className="fa-regular fa-square-plus"></i> {language.quizzes && language.quizzes.add_quizzes}
+              {isAdmin && (
+                <div className="flex search gap-20">
+                  <Link to={"/dashboard/add_quiz"} className="btn">
+                    <i class="fa-regular fa-square-plus"></i> add quiz
                   </Link>
-                )}
-              </form>
-              <table className={`${tableData.length === 0 ? "loading" : ""}`}>
-                <thead>
-                  <tr>
-                    <th>{language.quizzes && language.quizzes.title}</th>
-                    <th>{language.quizzes && language.quizzes.discreption}</th>
-                    <th>{language.quizzes && language.quizzes.subject}</th>
-                    <th>{language.quizzes && language.quizzes.class}</th>
-                    <th>{language.quizzes && language.quizzes.date}</th>
-                    <th>{language.quizzes && language.quizzes.duration}</th>
-                    {isAdmin && <th></th>}
-=======
-              <div className="flex search gap-20">
-                <Link className="btn">
-                  <i class="fa-regular fa-square-plus"></i> add quiz
-                </Link>
-
-                <div className="flex flex-direction">
-                  <div className="selecte">
-                    <div onClick={handleClick} className="inp">
-                      {yearLevel
-                        ? `${language.class && language.class.year_level}: ` +
-                          yearLevel
-                        : `${language.class && language.class.year_level} : ${
-                            language.class && language.class.all_years
-                          }`}
+                  <div className="flex flex-direction">
+                    <div className="selecte">
+                      <div onClick={handleClick} className="inp">
+                        {yearLevel
+                          ? `${language.class && language.class.year_level}: ` +
+                            yearLevel
+                          : `${language.class && language.class.year_level} : ${
+                              language.class && language.class.all_years
+                            }`}
+                      </div>
+                      <article className="grid-3">
+                        <h2 data-level={false} onClick={selectFilterYears}>
+                          {language.class && language.class.all_years}
+                        </h2>
+                        {createYearLeveFltr()}
+                      </article>
                     </div>
-                    <article className="grid-3">
-                      <h2 data-level={false} onClick={selectFilterYears}>
-                        {language.class && language.class.all_years}
-                      </h2>
-                      {createYearLeveFltr()}
-                    </article>
                   </div>
                 </div>
-              </div>
+              )}
+
               <table className={`${tableData.length === 0 ? "loading" : ""}`}>
                 <thead>
                   <tr>
@@ -295,7 +287,6 @@ const AllQuizes = () => {
                     <th>date</th>
                     <th>duration</th>
                     {!isTeacher && <th></th>}
->>>>>>> main
                   </tr>
                 </thead>
                 <tbody

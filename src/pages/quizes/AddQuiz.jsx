@@ -36,6 +36,7 @@ const AddQuiz = () => {
     title: "",
     description: "",
     questions: [],
+    endDate: "",
   });
 
   const language = context && context.selectedLang;
@@ -153,6 +154,7 @@ const AddQuiz = () => {
 
   const handelSubmit = async (e) => {
     e.preventDefault();
+
     if (!form.yearLevel) setTopFormError("please choose a year level");
     else if (!form.classId) setTopFormError("please choose a class");
     else if (!form.subjectId) setTopFormError("please choose a subject");
@@ -173,7 +175,9 @@ const AddQuiz = () => {
     for (let i = 0; i < length; i++) {
       inp.push(
         <div key={i} className="flex relative flex-direction">
-          <label htmlFor={`answor-${i + 1}`}>{language.quizzes && language.quizzes.answer} {i + 1}</label>
+          <label htmlFor={`answor-${i + 1}`}>
+            {language.quizzes && language.quizzes.answer} {i + 1}
+          </label>
           <div className="center gap-10 justify-start">
             <input
               required
@@ -183,7 +187,9 @@ const AddQuiz = () => {
               type="text"
               id={`answor-${i + 1}`}
               className="inp"
-              placeholder={language.quizzes && language.quizzes.answer_placeholder}
+              placeholder={
+                language.quizzes && language.quizzes.answer_placeholder
+              }
             />
             <i
               onClick={(e) => {
@@ -316,18 +322,24 @@ const AddQuiz = () => {
       });
     } else {
       const allQuestions = [...arrayOfMultiQuestions, ...arrayOfT_RQuestions];
-      setForm({ ...form, questions: allQuestions });
+      const startDate = new Date(form.date);
+      const endDate = new Date(startDate.getTime() + form.duration * 60 * 1000);
+      const formWithQuestions = {
+        ...form,
+        questions: allQuestions,
+        endDate: endDate.toISOString(),
+      };
+
       try {
         const data = await axios.post(
           "http://localhost:8000/api/quizzes",
-          form,
+          formWithQuestions,
           {
             headers: {
               Authorization: "Bearer " + token,
             },
           }
         );
-        console.log(data);
 
         if (data.status === 201) {
           responseFun(true);
@@ -340,6 +352,7 @@ const AddQuiz = () => {
             type: "Quize",
             title: "",
             description: "",
+            endDate: "",
             questions: [],
           });
           setArrayOfMultiQuestions([]);
@@ -361,7 +374,7 @@ const AddQuiz = () => {
       <div className="dashboard-container relative">
         {loading && <FormLoading />}
         <div className="container relative">
-          {overlay && <SendData data="exam" response={response} />}
+          {overlay && <SendData data="quiz" response={response} />}
           <h1 className="title">
             {language.quizzes && language.quizzes.add_a_quiz}
           </h1>
@@ -523,7 +536,9 @@ const AddQuiz = () => {
             </div>
             {topFormError && <p className="error">{topFormError}</p>}
             {!allowCreate && (
-              <button className="btn question">{language.quizzes && language.quizzes.add_questions}</button>
+              <button className="btn question">
+                {language.quizzes && language.quizzes.add_questions}
+              </button>
             )}
           </form>
 
@@ -832,7 +847,7 @@ const AddQuiz = () => {
                 )}
               </div>
               <div onClick={() => submitData()} className="btn send-quiz">
-              {language.quizzes && language.quizzes.send_quiz}
+                {language.quizzes && language.quizzes.send_quiz}
               </div>
             </div>
           )}
