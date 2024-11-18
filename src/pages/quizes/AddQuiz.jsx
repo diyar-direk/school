@@ -173,7 +173,7 @@ const AddQuiz = () => {
     for (let i = 0; i < length; i++) {
       inp.push(
         <div key={i} className="flex relative flex-direction">
-          <label htmlFor={`answor-${i + 1}`}>answor {i + 1}</label>
+          <label htmlFor={`answor-${i + 1}`}>{language.quizzes && language.quizzes.answer} {i + 1}</label>
           <div className="center gap-10 justify-start">
             <input
               required
@@ -183,7 +183,7 @@ const AddQuiz = () => {
               type="text"
               id={`answor-${i + 1}`}
               className="inp"
-              placeholder="write exam ansowr"
+              placeholder={language.quizzes && language.quizzes.answer_placeholder}
             />
             <i
               onClick={(e) => {
@@ -362,12 +362,16 @@ const AddQuiz = () => {
         {loading && <FormLoading />}
         <div className="container relative">
           {overlay && <SendData data="exam" response={response} />}
-          <h1 className="title">add quiz</h1>
+          <h1 className="title">
+            {language.quizzes && language.quizzes.add_a_quiz}
+          </h1>
           <form onSubmit={handelSubmit} className="relative dashboard-form">
             <h1>{language.exams && language.exams.please_complete_form}</h1>
             <div className="flex wrap ">
               <div className="flex flex-direction">
-                <label htmlFor="title">exam title</label>
+                <label htmlFor="title">
+                  {language.quizzes && language.quizzes.exam_title}
+                </label>
                 <input
                   required
                   onInput={handleForm}
@@ -375,11 +379,15 @@ const AddQuiz = () => {
                   type="text"
                   id="title"
                   className="inp"
-                  placeholder="write exam title"
+                  placeholder={
+                    language.quizzes && language.quizzes.exam_title_placeholder
+                  }
                 />
               </div>
               <div className="flex flex-direction">
-                <label htmlFor="description">exam description</label>
+                <label htmlFor="description">
+                  {language.quizzes && language.quizzes.exam_discreption}
+                </label>
                 <input
                   required
                   onInput={handleForm}
@@ -387,7 +395,10 @@ const AddQuiz = () => {
                   type="text"
                   id="description"
                   className="inp"
-                  placeholder="write exam description"
+                  placeholder={
+                    language.quizzes &&
+                    language.quizzes.exam_discreption_placeholder
+                  }
                 />
               </div>
               <div className="flex flex-direction">
@@ -431,7 +442,9 @@ const AddQuiz = () => {
                             );
                           })
                         ) : (
-                          <h2>loading</h2>
+                          <h2>
+                            {language.quizzes && language.quizzes.loading}
+                          </h2>
                         )}
                       </article>
                     </div>
@@ -466,7 +479,9 @@ const AddQuiz = () => {
                             );
                           })
                         ) : (
-                          <h2>loading</h2>
+                          <h2>
+                            {language.quizzes && language.quizzes.loading}
+                          </h2>
                         )}
                       </article>
                     </div>
@@ -475,7 +490,9 @@ const AddQuiz = () => {
               )}
 
               <div className="flex flex-direction">
-                <label htmlFor="date">quize date</label>
+                <label htmlFor="date">
+                  {language.quizzes && language.quizzes.quiz_date}
+                </label>
                 <input
                   required
                   onInput={handleForm}
@@ -506,7 +523,7 @@ const AddQuiz = () => {
             </div>
             {topFormError && <p className="error">{topFormError}</p>}
             {!allowCreate && (
-              <button className="btn question">create questions</button>
+              <button className="btn question">{language.quizzes && language.quizzes.add_questions}</button>
             )}
           </form>
 
@@ -518,7 +535,9 @@ const AddQuiz = () => {
               {multiSelect && (
                 <div className="flex wrap">
                   <div className="flex flex-direction">
-                    <label htmlFor="question">question title</label>
+                    <label htmlFor="question">
+                      {language.quizzes && language.quizzes.question_title}
+                    </label>
                     <input
                       autoFocus
                       required
@@ -532,7 +551,10 @@ const AddQuiz = () => {
                       type="text"
                       id="question"
                       className="inp"
-                      placeholder="write question title"
+                      placeholder={
+                        language.quizzes &&
+                        language.quizzes.question_title_placeholder
+                      }
                     />
                   </div>
                   {createInp(multiQuestionsCount)}
@@ -557,14 +579,16 @@ const AddQuiz = () => {
                   }}
                   className="add-question"
                 >
-                  + add answor
+                  + {language.quizzes && language.quizzes.add_answer}
                 </span>
               )}
 
               {T_RSelect && (
                 <div className="flex wrap">
                   <div className="flex flex-direction">
-                    <label htmlFor={`answor-${1}`}>question title </label>
+                    <label htmlFor={`answor-${1}`}>
+                      {language.quizzes && language.quizzes.question_title}
+                    </label>
                     <div className="center gap-10 justify-start">
                       <input
                         autoFocus
@@ -579,7 +603,10 @@ const AddQuiz = () => {
                         type="text"
                         id={`answor-${1}`}
                         className="inp"
-                        placeholder="write exam ansowr"
+                        placeholder={
+                          language.quizzes &&
+                          language.quizzes.answer_placeholder
+                        }
                       />
                       <i
                         onClick={(e) => {
@@ -623,7 +650,9 @@ const AddQuiz = () => {
                       setMultiSelect(true);
                     }}
                   >
-                    + add multiple choice question
+                    +
+                    {language.quizzes &&
+                      language.quizzes.add_multichoice_question}
                   </span>
                   <span
                     onClick={() => {
@@ -632,13 +661,17 @@ const AddQuiz = () => {
                     }}
                     className="add-question"
                   >
-                    + add true false question
+                    +{" "}
+                    {language.quizzes &&
+                      language.quizzes.add_trueflase_question}
                   </span>
                 </div>
               )}
               {DataError && <p className="error"> {DataError} </p>}
               {(multiSelect || T_RSelect) && (
-                <button className="btn">save</button>
+                <button className="btn">
+                  {language.quizzes && language.quizzes.save}
+                </button>
               )}
             </form>
           )}
@@ -649,13 +682,19 @@ const AddQuiz = () => {
               <div className="table">
                 {arrayOfMultiQuestions.length > 0 && (
                   <>
-                    <h2>multiple choices</h2>
+                    <h2>{language.quizzes && language.quizzes.multiple}</h2>
                     <table className="mb-40">
                       <thead>
                         <tr>
-                          <th>question</th>
-                          <th>wrong answer</th>
-                          <th>correct Answer</th>
+                          <th>
+                            {language.quizzes && language.quizzes.question}
+                          </th>
+                          <th>
+                            {language.quizzes && language.quizzes.wrong_ans}
+                          </th>
+                          <th>
+                            {language.quizzes && language.quizzes.correct_ans}
+                          </th>
                           <th></th>
                         </tr>
                       </thead>
@@ -723,12 +762,14 @@ const AddQuiz = () => {
 
                 {arrayOfT_RQuestions.length > 0 && (
                   <>
-                    <h2>true || false</h2>
+                    <h2>{language.quizzes && language.quizzes.t_f}</h2>
                     <table>
                       <thead>
                         <tr>
-                          <th>question</th>
-                          <th>answer</th>
+                          <th>
+                            {language.quizzes && language.quizzes.question}
+                          </th>
+                          <th>{language.quizzes && language.quizzes.answer}</th>
                           <th></th>
                         </tr>
                       </thead>
@@ -737,7 +778,15 @@ const AddQuiz = () => {
                           return (
                             <tr key={i}>
                               <td> {e.text} </td>
-                              <td>{e.correctAnswer ? "true" : "false"}</td>
+                              <td>
+                                {e.correctAnswer
+                                  ? `${
+                                      language.quizzes && language.quizzes.true
+                                    }`
+                                  : `${
+                                      language.quizzes && language.quizzes.false
+                                    }`}
+                              </td>
                               <td>
                                 <div className="admin gap-10 center">
                                   <i
@@ -783,7 +832,7 @@ const AddQuiz = () => {
                 )}
               </div>
               <div onClick={() => submitData()} className="btn send-quiz">
-                send quiz
+              {language.quizzes && language.quizzes.send_quiz}
               </div>
             </div>
           )}
