@@ -173,8 +173,16 @@ div.table tbody td:not(table.time-table tbody td):first-of-type {
   border-left: solid 2px var(--section-color);
   position: static;
 }
+body.arabic div.table tbody td:not(table.time-table tbody td):first-of-type {
+  border-left: none;
+  border-right: solid 2px var(--section-color);
+}
 div.table tbody td:not(table.time-table tbody td):last-of-type {
   border-right: solid 2px var(--section-color);
+}
+body.arabic div.table tbody td:not(table.time-table tbody td):last-of-type {
+  border-right: none;
+  border-left: solid 2px var(--section-color);
 }
 
 div.table tbody td .photo {
@@ -207,6 +215,9 @@ div.table tbody td div.options {
   opacity: 0;
   z-index: 1;
   pointer-events: none;
+}
+body.arabic div.table tbody td div.options {
+  right: -115px;
 }
 div.table tbody td div.options.active-div {
   top: 80%;
@@ -320,6 +331,17 @@ div.table .false {
 }
 .overlay > div .none {
   background-color: #666666;
+  color: white;
+  width: 50%;
+  margin-top: 20px;
+  cursor: pointer;
+  gap: 10px;
+  text-transform: capitalize;
+  border-radius: 6px;
+  padding: 8px;
+}
+.overlay > div .send {
+  background-color: #4400ff;
   color: white;
   width: 50%;
   margin-top: 20px;

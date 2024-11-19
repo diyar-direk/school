@@ -76,6 +76,9 @@ h1.title::before {
   left: 0;
   border-radius: 20px;
 }
+body.arabic h1.title::before {
+  right: 0;
+}
 h1.title::after {
   border-radius: 20px;
   content: "";
@@ -86,9 +89,13 @@ h1.title::after {
   bottom: 0;
   left: 0;
 }
+body.arabic h1.title::after {
+  right: 0;
+}
 .text-capitalize {
   text-transform: capitalize;
 }
+
 .flex {
   display: flex;
 }
@@ -161,7 +168,9 @@ body.arabic {
 .flex-direction {
   flex-direction: column;
 }
-
+.font-color {
+  color: var(--font-color);
+}
 .btn {
   padding: 10px;
   width: fit-content;

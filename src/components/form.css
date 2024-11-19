@@ -108,6 +108,10 @@ form.dashboard-form .flex-direction .inp {
   text-wrap: nowrap;
   padding-right: 20px;
 }
+body.arabic .selecte .inp {
+  padding-left: 20px;
+  padding-right: 10px;
+}
 .selecte .inp::before {
   position: absolute;
   content: "\f078";
@@ -118,6 +122,10 @@ form.dashboard-form .flex-direction .inp {
   font-size: 50%;
   transform: translateY(-50%);
   pointer-events: none;
+}
+body.arabic .selecte .inp::before {
+  left: 10px;
+  right: auto;
 }
 .selecte > article {
   background-color: var(--body-color);
@@ -131,6 +139,7 @@ form.dashboard-form .flex-direction .inp {
   pointer-events: none;
   max-height: 300px;
   overflow-y: auto;
+  text-align: center;
 }
 .selecte .inp.active + article {
   transition: opacity 0.4s;
@@ -285,6 +294,10 @@ form.quize i.delete {
   font-size: 11px;
   color: brown;
   border: dashed 1px brown;
+}
+body.arabic form.quize i.delete {
+  left: 0;
+  right: auto;
 }
 form.quize i.delete:hover {
   color: white;

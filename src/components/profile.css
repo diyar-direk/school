@@ -121,6 +121,10 @@ div.profile .info > h2 > a {
   box-shadow: var(--box-shadow);
   right: 10px;
 }
+body.arabic div.profile .info > h2 > a {
+  left: 10px;
+  right: auto;
+}
 div.profile .info > h2 > a:hover {
   color: white;
   background-color: var(--main-color);

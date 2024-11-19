@@ -306,7 +306,9 @@ aside.closed > div > div > .links > article {
   top: 0;
   width: 150px;
 }
-
+body.arabic aside.closed > div > div > .links > article {
+  right: calc(100% + 16px);
+}
 aside > div > div > .links.active > article {
   max-height: 200px;
 }

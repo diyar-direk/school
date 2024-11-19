@@ -88,11 +88,13 @@ const ExamResult = () => {
   const handelSubmit = async (e) => {
     e.preventDefault();
     try {
-      const inpValue = parseInt(document.querySelector("td.input input").value);
+      const inpValue = parseFloat(
+        document.querySelector("td.input input").value
+      );
 
       const res = await axios.patch(
-        `http://localhost:8000/api/exam-results/${selectedItems}`,
-        { score: inpValue },
+        `http://localhost:8000/api/exam-results/${selectedItems.examResultId}`,
+        { score: inpValue, type: selectedItems.type },
         {
           headers: {
             Authorization: "Bearer " + token,
@@ -132,7 +134,7 @@ const ExamResult = () => {
                     e.target.nextSibling.nextSibling.nextSibling.click();
                 }}
               >
-                {score.score + "/" + score.totalMarks}
+                {`${score.type}: `} {score.score + "/" + score.totalMarks}
               </span>
               {isAdmin && (
                 <form
@@ -173,7 +175,7 @@ const ExamResult = () => {
                     const inp = document.querySelector("td.input input");
                     inp && (inp.value = score.score);
                     inp && inp.focus();
-                    setSelectedItems(score.examResultId);
+                    setSelectedItems(score);
                   }}
                   className="update icon fa-regular fa-pen-to-square"
                 ></i>

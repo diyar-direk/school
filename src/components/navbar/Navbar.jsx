@@ -229,14 +229,22 @@ const Navbar = () => {
                 className="lang center"
               >
                 <i className="fa-solid fa-earth-americas"></i>
-                <span className="lang-span">EN</span>
+                <span className="lang-span"> {context?.language} </span>
                 <i className="fa-solid fa-chevron-down"></i>
               </div>
               <div className="languages">
-                <h2 onClick={selectLang} data-lang="AR">
+                <h2
+                  className={`${context?.language === "AR" ? "active" : ""}`}
+                  onClick={selectLang}
+                  data-lang="AR"
+                >
                   عربي
                 </h2>
-                <h2 onClick={selectLang} className="active" data-lang="EN">
+                <h2
+                  onClick={selectLang}
+                  className={`${context?.language === "EN" ? "active" : ""}`}
+                  data-lang="EN"
+                >
                   english
                 </h2>
               </div>

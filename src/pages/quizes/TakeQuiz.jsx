@@ -1,14 +1,17 @@
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Context } from "../../context/Context";
 import "./quiz.css";
+import FormLoading from "../../components/FormLoading";
 const TakeQuiz = () => {
   const { id } = useParams();
   const context = useContext(Context);
-
+  const [canTake, setCanTake] = useState(true);
   const token = context?.userDetails.token;
   const userDetails = context?.userDetails.userDetails;
+  const studentId = context?.userDetails.userDetails._id;
+  const nav = useNavigate();
   const name =
     userDetails &&
     `${userDetails.firstName} ${userDetails.middleName} ${userDetails.lastName}`;
@@ -16,7 +19,35 @@ const TakeQuiz = () => {
   const [time, setTime] = useState(0);
   const [remainingTime, setRemainingTime] = useState("");
   const [answers, setAnswers] = useState([]);
+  const [takedScore, setTakedScore] = useState(0);
+  const [overlay, setOverlay] = useState(false);
+  const [endTime, setEndTime] = useState(false);
+
+  window.addEventListener("click", () => {
+    overlay && setOverlay(false);
+  });
+
   useEffect(() => {
+    axios
+      .get(
+        `http://localhost:8000/api/exam-results?student=${studentId}&active=true&exam=${id}&limit=1`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then((res) => {
+        if (res.data.data.length > 0) {
+          setCanTake(false);
+          setTakedScore(res.data.data[0].score);
+        }
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    if (!canTake) return;
     axios
       .get(`http://localhost:8000/api/quizzes/${id}`, {
         headers: {
@@ -28,10 +59,10 @@ const TakeQuiz = () => {
         setAnswers(res.data.data.questions);
         setTime(new Date(res.data.data.endDate));
       });
-  }, []);
+  }, [canTake]);
 
   useEffect(() => {
-    if (!time) return;
+    if (!time || !canTake) return;
 
     const intervalId = setInterval(() => {
       const currentTime = new Date();
@@ -40,6 +71,7 @@ const TakeQuiz = () => {
       if (ms <= 0) {
         clearInterval(intervalId);
         setRemainingTime("00:00:00");
+        submitQuiz();
         return;
       }
 
@@ -55,7 +87,7 @@ const TakeQuiz = () => {
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [time]);
+  }, [time, canTake]);
 
   const questions = data?.questions?.map((e, i) => {
     return (
@@ -121,6 +153,7 @@ const TakeQuiz = () => {
 
   const submitQuiz = async (e) => {
     e.preventDefault();
+    setEndTime(true);
     let ans = 0;
     answers.forEach((e) => {
       if (e.studentAnswer)
@@ -131,28 +164,86 @@ const TakeQuiz = () => {
           ans++;
     });
     const score = parseFloat(((ans * 100) / answers.length).toFixed(2));
+    const form = {
+      exam: id,
+      student: studentId,
+      score,
+      type: "Quiz",
+    };
+
+    try {
+      const data = await axios.post(
+        `http://localhost:8000/api/exam-results`,
+        form,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (data.status === 201) nav(`/dashboard/exams_result`);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <main>
-      <div className="dashboard-container">
-        <div className="container">
-          <div className="center between quiz-title">
-            <h1 className="title">{data.subjectId?.name}</h1>
-            <div>
-              <h2 className="text-capitalize">{name}</h2>
-              <h3 className="text-capitalize">{data.duration} minuets </h3>
+      <div className="dashboard-container ">
+        <div className="container relative">
+          {overlay && (
+            <div className="overlay">
+              <div className="change-status">
+                <h1>confirm send quiz?</h1>
+                <div className="flex gap-20">
+                  <div onClick={submitQuiz} className="send center">
+                    <h2>submit</h2>
+                    <i className="fa-solid fa-share"></i>
+                  </div>
+                  <div
+                    onClick={() => {
+                      setOverlay(false);
+                    }}
+                    className="none center"
+                  >
+                    <h2>cencel</h2>
+                    <i className="fa-solid fa-ban"></i>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          <h2 className="time gap-10 center text-capitalize">
-            remaining time : <span> {remainingTime} </span>
-          </h2>
+          )}
+          {endTime && <FormLoading />}
+          {canTake ? (
+            <>
+              <div className="center between quiz-title">
+                <h1 className="title">{data.subjectId?.name}</h1>
+                <div>
+                  <h2 className="text-capitalize">{name}</h2>
+                  <h3 className="text-capitalize">{data.duration} minuets </h3>
+                </div>
+              </div>
+              <h2 className="time gap-10 center text-capitalize">
+                remaining time : <span> {remainingTime} </span>
+              </h2>
 
-          <div className="questions-space">{questions}</div>
+              <div className="questions-space">{questions}</div>
 
-          <button onClick={submitQuiz} className="btn">
-            finish the quiz
-          </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOverlay(true);
+                }}
+                className="btn"
+              >
+                finish the quiz
+              </button>
+            </>
+          ) : (
+            <h1 className=" center text-capitalize font-color">
+              you taked this quiz and your score is {takedScore}
+            </h1>
+          )}
         </div>
       </div>
     </main>
