@@ -337,6 +337,7 @@ body::-webkit-scrollbar {
   }
   h1.title {
     font-size: 24px;
+    margin-bottom: 30px;
   }
   h1.title::after,
   h1.title::before {
@@ -365,7 +366,7 @@ body::-webkit-scrollbar {
 
 @media (max-width: 675px) {
   .grid-3 {
-    grid-template-columns: 1fr;
+    gap: 10px;
   }
 
   .btn {

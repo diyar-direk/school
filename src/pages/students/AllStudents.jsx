@@ -348,7 +348,10 @@ const AllStudents = () => {
           </h1>
           <div className="tabel-container">
             <div className="table">
-              <form onSubmit={handelSubmit} className="flex search gap-20">
+              <form
+                onSubmit={handelSubmit}
+                className="flex search has-search gap-20"
+              >
                 <input
                   onInput={(e) => {
                     setForm(e.target.value);
@@ -415,7 +418,11 @@ const AllStudents = () => {
                   </Link>
                 )}
               </form>
-              <table className={`${tableData.length === 0 ? "loading" : ""}`}>
+              <table
+                className={`${
+                  tableData.length === 0 ? "loading" : ""
+                } has-search`}
+              >
                 <thead>
                   <tr>
                     {isAdmin && (

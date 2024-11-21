@@ -2,10 +2,10 @@
   gap: 30px;
 }
 .subjects .tabel-container {
-  flex: calc(100% - 450px);
+  flex: calc(100% - 360px);
 }
 .subjects form {
-  flex: 300px;
+  flex: 240px;
 }
 .subjects form .inp {
   width: 100%;
@@ -20,4 +20,43 @@
 .subjects form .btn {
   font-size: 18px;
   width: 100%;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .subjects form.dashboard-form label {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  .subjects form.dashboard-form .inp {
+    padding: 8px;
+    font-size: 17px;
+    margin: 10px 0;
+  }
+  .subjects .selecte > article h2 {
+    font-size: 15px;
+  }
+  .subjects form.dashboard-form button {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 650px) {
+  .subjects form.dashboard-form label {
+    font-size: 15px;
+    margin-bottom: 5px;
+  }
+  .subjects form.dashboard-form .flex-direction .inp {
+    font-size: 15px;
+  }
+  .subjects .selecte > article h2 {
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  .subjects .selecte > article {
+    padding: 8px 15px;
+  }
+  .subjects form.dashboard-form .inp {
+    font-size: 15px;
+  }
 }
