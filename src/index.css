@@ -8,9 +8,11 @@
 html {
   scroll-behavior: smooth;
 }
-input {
+input,
+textarea {
   caret-color: var(--main-color);
   outline: none;
+  resize: none;
 }
 .overlay {
   width: 100%;
@@ -23,6 +25,7 @@ input {
   top: 0;
   z-index: 40;
   position: fixed;
+  padding: 20px;
 }
 
 a {

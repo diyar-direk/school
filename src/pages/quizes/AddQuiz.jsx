@@ -188,7 +188,8 @@ const AddQuiz = () => {
             {language.quizzes && language.quizzes.answer} {i + 1}
           </label>
           <div className="center gap-10 justify-start">
-            <input
+            <textarea
+              rows={3}
               required
               autoFocus={i > 0}
               onInput={(e) => handleInputChange(e, i)}
@@ -572,7 +573,8 @@ const AddQuiz = () => {
                     <label htmlFor="question">
                       {language.quizzes && language.quizzes.question_title}
                     </label>
-                    <input
+                    <textarea
+                      rows={3}
                       autoFocus
                       required
                       onInput={(e) =>
@@ -615,7 +617,7 @@ const AddQuiz = () => {
                       setMultiQuestionsCount((e) => e + 1);
                     }
                   }}
-                  className="add-question"
+                  className="add-question multi-add"
                 >
                   + {language.quizzes && language.quizzes.add_answer}
                 </span>
@@ -628,7 +630,8 @@ const AddQuiz = () => {
                       {language.quizzes && language.quizzes.question_title}
                     </label>
                     <div className="center gap-10 justify-start">
-                      <input
+                      <textarea
+                        rows={3}
                         autoFocus
                         required
                         value={T_RQuestions.text}
@@ -721,7 +724,7 @@ const AddQuiz = () => {
                 {arrayOfMultiQuestions.length > 0 && (
                   <>
                     <h2>{language.quizzes && language.quizzes.multiple}</h2>
-                    <table className="mb-40">
+                    <table className="mb-40 quiz-table">
                       <thead>
                         <tr>
                           <th>
@@ -806,7 +809,7 @@ const AddQuiz = () => {
                 {arrayOfT_RQuestions.length > 0 && (
                   <>
                     <h2>{language.quizzes && language.quizzes.t_f}</h2>
-                    <table>
+                    <table className="quiz-table">
                       <thead>
                         <tr>
                           <th>

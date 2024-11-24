@@ -18,7 +18,7 @@ const SendData = (props) => {
           ? `${language.error && language.error.sent_successfully}`
           : props.response === 400
           ? `${props.data}${language.error && language.error.allready_exisits}`
-          : `$${language.error && language.error.network_error}`}
+          : `${language.error && language.error.network_error}`}
       </h1>
     </div>
   );

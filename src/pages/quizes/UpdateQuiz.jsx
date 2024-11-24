@@ -221,7 +221,8 @@ const UpdateQuiz = () => {
         <div key={i} className="flex relative flex-direction">
           <label htmlFor={`answor-${i + 1}`}>answor {i + 1}</label>
           <div className="center gap-10 justify-start">
-            <input
+            <textarea
+              rows={3}
               required
               onInput={(e) => handleInputChange(e, i)}
               autoFocus={i > 0}
@@ -553,7 +554,8 @@ const UpdateQuiz = () => {
               <div className="flex wrap">
                 <div className="flex flex-direction">
                   <label htmlFor="question">question title</label>
-                  <input
+                  <textarea
+                    rows={3}
                     autoFocus
                     required
                     onInput={(e) =>
@@ -591,7 +593,7 @@ const UpdateQuiz = () => {
                     setMultiQuestionsCount((e) => e + 1);
                   }
                 }}
-                className="add-question"
+                className="add-question multi-add"
               >
                 + add answor
               </span>
@@ -602,7 +604,8 @@ const UpdateQuiz = () => {
                 <div className="flex flex-direction">
                   <label htmlFor={`answor-${1}`}>question title </label>
                   <div className="center gap-10 justify-start">
-                    <input
+                    <textarea
+                      rows={3}
                       autoFocus
                       required
                       value={T_RQuestions.text}
@@ -685,7 +688,7 @@ const UpdateQuiz = () => {
                 {arrayOfMultiQuestions.length > 0 && (
                   <>
                     <h2>multiple choices</h2>
-                    <table className="mb-40">
+                    <table className="mb-40 quiz-table">
                       <thead>
                         <tr>
                           <th>question</th>
@@ -764,7 +767,7 @@ const UpdateQuiz = () => {
                 {arrayOfT_RQuestions.length > 0 && (
                   <>
                     <h2>true || false</h2>
-                    <table>
+                    <table className="quiz-table">
                       <thead>
                         <tr>
                           <th>question</th>

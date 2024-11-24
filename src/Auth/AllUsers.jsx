@@ -6,6 +6,7 @@ import { Context } from "../context/Context";
 const AllUsers = () => {
   const context = useContext(Context);
   const token = context && context.userDetails.token;
+  const myId = context && context.userDetails.userDetails._id;
 
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState({});
@@ -86,11 +87,12 @@ const AllUsers = () => {
     searchData &&
     searchData.map((e) => {
       const date = new Date(e.createdAt);
+
       return (
         <tr key={e._id}>
           <td>{e.username}</td>
 
-          <td> {e.role} </td>
+          <td>{language.users && language.users[e.role.toLowerCase()]}</td>
           <td>
             {`${date.getFullYear()}/${date.getMonth()}/${date.getDate()}`}
           </td>
@@ -185,20 +187,22 @@ const AllUsers = () => {
                 <div className="flex flex-direction">
                   <div className="selecte">
                     <div onClick={handleClick} className="inp">
-                      {role ? role : "all roles"}
+                      {role
+                        ? role
+                        : `${language.users && language.users.all_roles}`}
                     </div>
                     <article>
                       <h2 onClick={selcetRoles} data-role={false}>
-                        all roles
+                        {language.users && language.users.all_roles}
                       </h2>
                       <h2 onClick={selcetRoles} data-role={"Admin"}>
-                        Admin
+                        {language.users && language.users.admins}
                       </h2>
                       <h2 onClick={selcetRoles} data-role={"Teacher"}>
-                        Teacher
+                        {language.users && language.users.teachers}
                       </h2>
                       <h2 onClick={selcetRoles} data-role={"Student"}>
-                        Student
+                        {language.users && language.users.students}
                       </h2>
                     </article>
                   </div>

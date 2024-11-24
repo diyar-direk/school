@@ -20,12 +20,16 @@ h2.time span {
   margin-bottom: 10px;
 }
 .questions-space > div h2 {
-  color: var(--font-color);
+  font-size: 20px;
+  padding: 10px 20px;
+}
+.questions-space > div h2:not(.true-false) {
+  color: var(--main-color);
 }
 .questions-space > div h2.true-false {
   background: var(--body-color);
   border-radius: 6px;
-  padding: 10px 20px;
+  color: var(--font-color);
 }
 .questions-space > div i {
   width: 40px;
@@ -78,4 +82,111 @@ h2.time span {
 
 .questions-space > div article.multi > div h4 {
   pointer-events: none;
+}
+
+@media (max-width: 1000px) {
+  .questions-space > div h2 {
+    padding: 7px 20px;
+    font-size: 18px;
+  }
+  .questions-space > div i {
+    width: 35px;
+    height: 35px;
+    font-size: 17px;
+  }
+  div.quiz-title > div h2,
+  h2.time {
+    font-size: 20px;
+  }
+  div.quiz-title > div h3 {
+    font-size: 18px;
+  }
+  .questions-space > div article > div {
+    font-size: 17px;
+  }
+}
+@media (max-width: 800px) {
+  .questions-space > div h2 {
+    padding: 6px 15px;
+    font-size: 16px;
+  }
+  .questions-space > div i {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+  div.quiz-title > div h2,
+  h2.time {
+    font-size: 18px;
+  }
+  div.quiz-title > div h3 {
+    font-size: 17px;
+  }
+  .questions-space > div {
+    padding: 0;
+  }
+  .questions-space {
+    margin: 20px 0 25px;
+  }
+  .questions-space > div .gap-10 {
+    gap: 8px;
+  }
+  .questions-space > div article > div {
+    font-size: 14px;
+  }
+}
+@media (max-width: 600px) {
+  .questions-space > div h2 {
+    padding: 6px 10px;
+    font-size: 15px;
+  }
+  .questions-space > div i {
+    width: 25px;
+    height: 25px;
+    font-size: 12px;
+  }
+  div.quiz-title > div h2,
+  h2.time {
+    font-size: 16px;
+  }
+  div.quiz-title > div h3 {
+    font-size: 15px;
+  }
+
+  .questions-space {
+    margin: 15px 0 25px;
+  }
+  .questions-space > div .gap-10 {
+    gap: 7px;
+  }
+  .questions-space > h3 {
+    font-size: 16px;
+  }
+  .questions-space > div article > div {
+    font-size: 13px;
+  }
+}
+@media (max-width: 460px) {
+  div.quiz-title > div h2,
+  h2.time {
+    font-size: 15px;
+  }
+  div.quiz-title > div h3 {
+    font-size: 14px;
+  }
+  .questions-space > div i {
+    width: 23px;
+    height: 23px;
+    font-size: 10px;
+  }
+  .questions-space > div h2 {
+    padding: 5px 8px;
+    font-size: 13px;
+  }
+  .questions-space > h3 {
+    font-size: 15px;
+  }
+  .questions-space > div article > div {
+    font-size: 11px;
+  }
 }
