@@ -264,15 +264,16 @@ form.quize {
 
 .add-question {
   display: block;
-  margin-top: 20px;
   border-radius: 6px;
   background: var(--section-color);
-  width: fit-content;
   padding: 10px;
   text-transform: capitalize;
   font-weight: bold;
   color: var(--font-color);
   cursor: pointer;
+  flex: 1;
+  text-align: center;
+  min-width: 210px;
 }
 .add-question:hover {
   background-color: var(--main-color);
@@ -329,5 +330,98 @@ form.quize i.false:hover {
 @keyframes rotate {
   100% {
     rotate: 365deg;
+  }
+}
+
+@media (max-width: 800px) {
+  form.dashboard-form > div {
+    gap: 20px;
+  }
+
+  form.dashboard-form h1 {
+    font-size: 21px;
+    margin-bottom: 20px;
+  }
+  form.dashboard-form label {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  form.dashboard-form .flex-direction .inp {
+    padding: 8px;
+    font-size: 17px;
+  }
+  .selecte > article h2 {
+    font-size: 15px;
+  }
+  form.dashboard-form button {
+    font-size: 20px;
+    width: 100%;
+  }
+  form.dashboard-form .flex-direction {
+    min-width: 250px;
+  }
+  .add-question {
+    padding: 8px;
+    font-size: 14px;
+  }
+}
+@media (max-width: 650px) {
+  form.dashboard-form {
+    padding: 20px 15px;
+  }
+  form.dashboard-form h1 {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+  form.dashboard-form label {
+    font-size: 15px;
+    margin-bottom: 5px;
+  }
+  form.dashboard-form .flex-direction .inp {
+    font-size: 15px;
+  }
+  form.dashboard-form > div {
+    gap: 10px;
+  }
+  form.dashboard-form button {
+    font-size: 16px;
+  }
+  .selecte > article h2 {
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  .selecte > article {
+    padding: 8px 15px;
+  }
+  form.dashboard-form {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 500px) {
+  form.dashboard-form .flex-direction {
+    min-width: auto;
+    flex: 100%;
+  }
+  .overlay form.dashboard-form .flex-direction {
+    min-width: 260px;
+  }
+  form.dashboard-form h1 {
+    font-size: 15px;
+  }
+  form.dashboard-form label {
+    font-size: 14px;
+  }
+  form.dashboard-form .flex-direction .inp {
+    font-size: 14px;
+  }
+  .selecte > article h2 {
+    font-size: 13px;
+  }
+  form.dashboard-form button {
+    font-size: 15px;
+  }
+  .add-question {
+    font-size: 12px;
   }
 }

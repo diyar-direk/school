@@ -535,7 +535,7 @@ const AddQuiz = () => {
                 />
               </div>
 
-              <div className="flex flex-direction">
+              <div className="flex  flex-direction">
                 <label htmlFor="duration">
                   {language.exams && language.exams.duration_input}
                 </label>
@@ -680,7 +680,7 @@ const AddQuiz = () => {
               )}
 
               {!multiSelect && !T_RSelect && (
-                <div className="flex gap-20">
+                <div className="flex wrap gap-20">
                   <span
                     className="add-question"
                     onClick={() => {

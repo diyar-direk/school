@@ -437,14 +437,18 @@ const ExamResult = () => {
                 >
                   <thead>
                     <tr>
-                      <th>
-                        {language.examResult &&
-                          language.examResult.subject_name}
-                      </th>
-                      {createThExams(maxResultsLength)}
-                      <th>
-                        {language.examResult && language.examResult.score}
-                      </th>
+                      {tableData.length > 0 && (
+                        <>
+                          <th>
+                            {language.examResult &&
+                              language.examResult.subject_name}
+                          </th>
+                          {createThExams(maxResultsLength)}
+                          <th>
+                            {language.examResult && language.examResult.score}
+                          </th>
+                        </>
+                      )}
                     </tr>
                   </thead>
                   <tbody

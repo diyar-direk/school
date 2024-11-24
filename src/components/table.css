@@ -10,6 +10,10 @@ div.table {
   min-width: 600px;
   min-height: 400px;
   overflow-y: hidden;
+  white-space: nowrap;
+}
+div.table .search {
+  flex-wrap: wrap;
 }
 div.table .search input,
 .table .selecte {
@@ -493,14 +497,11 @@ table.time-table tbody tr .delete {
   font-size: 15px;
   cursor: pointer;
 }
-.table.flex {
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-end;
-}
+
 .table .green-btn {
   background-color: #07a12e;
   font-size: 17px;
+  margin-top: 20px;
 }
 .table .green-btn:hover {
   background-color: #057220;
@@ -538,4 +539,220 @@ i.disabled.start {
   color: #e60404;
   font-weight: bold;
   text-transform: uppercase;
+}
+
+@media (max-width: 1000px) {
+  div.table {
+    min-width: auto;
+  }
+  div.table .search {
+    gap: 10px;
+  }
+  div.table .search input,
+  .table .selecte {
+    padding: 8px;
+  }
+
+  .selecte .inp {
+    font-size: 14px;
+  }
+  div.table tbody td div.options div.delete i,
+  div.table tbody td div.options .update i,
+  div.table tbody td div.options .visit i {
+    font-size: 14px;
+  }
+  div.table tbody td div.options div.delete,
+  div.table tbody td div.options .update,
+  div.table tbody td div.options .visit {
+    font-size: 15px;
+    padding: 8px;
+  }
+  div.table tbody tr:last-child td div.options.active-div.has-visit {
+    top: -125px;
+  }
+  table.time-table tbody tr .update,
+  table.time-table tbody tr .delete {
+    font-size: 13px;
+  }
+}
+@media (max-width: 900px) {
+  div.table .search .flex-direction {
+    flex: 1;
+  }
+  div.table .search input,
+  div.table .search button {
+    order: -1;
+  }
+  div.table .search button {
+    width: 35px;
+    height: 35px;
+  }
+  div.table .search input {
+    flex: calc(100% - 50px);
+  }
+  div.table .search a.btn {
+    text-align: center;
+    flex: 1;
+    font-size: 15px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    min-width: 100px;
+  }
+  div.table thead th {
+    font-size: 16px;
+  }
+  div.table tbody td {
+    font-size: 15px;
+  }
+  div.table .pagination h3 {
+    width: 30px;
+    font-size: 17px;
+    height: 30px;
+  }
+  div.table tbody td div.options {
+    left: -130px;
+  }
+  div.tabel-container {
+    position: relative;
+  }
+  div.table .search.has-search {
+    position: absolute;
+    width: 100%;
+    padding-right: 40px;
+  }
+  div.table table.has-search {
+    margin-top: 90px;
+  }
+  table.exam tbody .icon {
+    font-size: 12px;
+  }
+  div.table table.exam td.input .div-input {
+    width: 90px;
+  }
+  div.table table.exam td .div-input button {
+    font-size: 11px;
+  }
+  div.table table.exam td span {
+    font-size: 14px;
+  }
+  .tabel-container .day > div {
+    padding: 8px 10px;
+    font-size: 15px;
+  }
+  .table .green-btn {
+    font-size: 15px;
+  }
+  .table .green-btn i {
+    font-size: 12px;
+  }
+}
+@media (max-width: 800px) {
+  div.table table.has-search {
+    margin-top: 135px;
+  }
+  div.table .admin .delete,
+  div.table .admin .update {
+    font-size: 14px;
+  }
+  div.table > h2 {
+    font-size: 20px;
+  }
+  table .table-loading {
+    font-size: 20px;
+  }
+  div.table table.exam td span {
+    font-size: 13px;
+  }
+  table.exam tbody .icon {
+    font-size: 11px;
+  }
+}
+@media (max-width: 700px) {
+  .selecte .inp {
+    font-size: 13px;
+  }
+  div.table .search button {
+    font-size: 12px;
+  }
+  div.table .search a.btn {
+    font-size: 14px;
+  }
+  table .checkbox {
+    width: 13px;
+    height: 13px;
+  }
+  table .checkbox::after {
+    font-size: 9px;
+  }
+  div.table thead th {
+    font-size: 15px;
+  }
+  div.table tbody td {
+    font-size: 13px;
+  }
+  div.table tbody td div.options div.delete i,
+  div.table tbody td div.options .update i,
+  div.table tbody td div.options .visit i {
+    font-size: 13px;
+  }
+  div.table tbody td div.options div.delete,
+  div.table tbody td div.options .update,
+  div.table tbody td div.options .visit {
+    font-size: 14px;
+    padding: 7px;
+  }
+  div.table tbody td div.options {
+    left: -140px;
+  }
+  div.table tbody tr:last-child td div.options.active-div.has-visit {
+    top: -115px;
+  }
+  div.table .pagination h3 {
+    width: 25px;
+    height: 25px;
+    font-size: 15px;
+  }
+  div.table > h2 {
+    font-size: 17px;
+  }
+  .tabel-container .day > div {
+    font-size: 13px;
+    padding: 7px 10px;
+  }
+  table.time-table tbody tr .update,
+  table.time-table tbody tr .delete {
+    font-size: 12px;
+  }
+  .table .green-btn {
+    font-size: 14px;
+  }
+  .table .green-btn i {
+    font-size: 11px;
+  }
+}
+@media (max-width: 550px) {
+  main > div.dashboard-container div.table table.has-search {
+    margin-top: 185px;
+  }
+  div.table .admin .delete,
+  div.table .admin .update {
+    font-size: 12px;
+  }
+  div.table > h2 {
+    font-size: 15px;
+  }
+  table .table-loading {
+    font-size: 16px;
+  }
+  .table .green-btn {
+    font-size: 12px;
+    margin-top: 10px;
+  }
+  .table .green-btn i {
+    font-size: 10px;
+  }
+  .tabel-container .day > div {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
 }

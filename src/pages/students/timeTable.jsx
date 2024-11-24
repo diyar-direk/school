@@ -183,7 +183,8 @@ const TimeTable = () => {
   };
   const handelSubmit = async (e) => {
     e.preventDefault();
-    if (!form.subjectId) setDataError(`${language.error && language.error.please_choose_subject}`);
+    if (!form.subjectId)
+      setDataError(`${language.error && language.error.please_choose_subject}`);
     else {
       setFormLoading(true);
       try {
@@ -410,7 +411,7 @@ const TimeTable = () => {
                   {language.timeTable && language.timeTable.next_day}
                 </div>
               </div>
-              <div className="table flex">
+              <div className="table">
                 <table
                   className={`${
                     tableData.length === 0 ? "loading" : ""
