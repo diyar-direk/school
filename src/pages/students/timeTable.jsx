@@ -280,7 +280,9 @@ const TimeTable = () => {
 
   return (
     <main>
-      <div className="dashboard-container">
+      <div
+        className={`${context?.isClosed ? "closed" : ""}  dashboard-container`}
+      >
         {overlay && (
           <div className="overlay">
             <form
@@ -368,10 +370,12 @@ const TimeTable = () => {
                 {form.yearLevel && (
                   <>
                     <div className="flex flex-direction">
-                      <label>classes</label>
+                      <label>{language?.attendance.class}</label>
                       <div className="selecte">
                         <div onClick={handleClick} className="inp">
-                          {classesName ? classesName : "please select classes"}
+                          {classesName
+                            ? classesName
+                            : language?.attendance.class_placeholder}
                         </div>
                         <article>
                           {classes.length > 0 ? (

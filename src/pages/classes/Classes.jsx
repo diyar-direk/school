@@ -247,6 +247,8 @@ const Classes = () => {
             name: data.name,
             yearLevel: data.yearLevel,
           });
+          const inp = document.querySelector(".subjects form .inp");
+          inp?.focus();
         });
     }
   }, [selectedId]);
@@ -404,7 +406,9 @@ const Classes = () => {
 
   return (
     <main>
-      <div className="dashboard-container">
+      <div
+        className={`${context?.isClosed ? "closed" : ""}  dashboard-container`}
+      >
         <div className="container ">
           {dataOverlay && (
             <SendData

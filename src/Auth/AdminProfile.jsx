@@ -58,7 +58,9 @@ const AdminProfile = () => {
 
   return (
     <main>
-      <div className="dashboard-container">
+      <div
+        className={`${context?.isClosed ? "closed" : ""}  dashboard-container`}
+      >
         <div className="container">
           <div className="grid-3 admin-page gap-20">
             <article className="center">

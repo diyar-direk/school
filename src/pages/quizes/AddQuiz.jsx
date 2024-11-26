@@ -386,7 +386,11 @@ const AddQuiz = () => {
 
   return (
     <main>
-      <div className="dashboard-container relative">
+      <div
+        className={`${
+          context?.isClosed ? "closed" : ""
+        } relative dashboard-container`}
+      >
         {loading && <FormLoading />}
         <div className="container relative">
           {overlay && (

@@ -179,7 +179,9 @@ const AddExam = () => {
 
   return (
     <main>
-      <div className="dashboard-container">
+      <div
+        className={`${context?.isClosed ? "closed" : ""}  dashboard-container`}
+      >
         <div className="container relative">
           {overlay && (
             <SendData

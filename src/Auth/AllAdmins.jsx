@@ -52,7 +52,8 @@ const AllAdmins = () => {
       return (
         <tr key={e._id}>
           <td>
-            {e.firstName} {e.lastName} {e._id === id && `(${language.navBar && language.navBar.me} )`}
+            {e.firstName} {e.lastName}{" "}
+            {e._id === id && `(${language.navBar && language.navBar.me} )`}
           </td>
 
           <td> admin </td>
@@ -105,7 +106,9 @@ const AllAdmins = () => {
 
   return (
     <main>
-      <div className="dashboard-container">
+      <div
+        className={`${context?.isClosed ? "closed" : ""}  dashboard-container`}
+      >
         {overlay && (
           <div className="overlay">
             <div className="change-status">
@@ -132,12 +135,15 @@ const AllAdmins = () => {
           </div>
         )}
         <div className="container">
-          <h1 className="title">{language.admins && language.admins.all_admins}</h1>
+          <h1 className="title">
+            {language.admins && language.admins.all_admins}
+          </h1>
           <div className="tabel-container">
             <div className="table">
               <form className="flex search gap-20">
                 <Link className="btn" to={"/dashboard/add_admin"}>
-                  <i className="fa-regular fa-square-plus"></i> {language.admins && language.admins.add_admins}
+                  <i className="fa-regular fa-square-plus"></i>{" "}
+                  {language.admins && language.admins.add_admins}
                 </Link>
               </form>
               <table className={`${tableData.length === 0 ? "loading" : ""}`}>

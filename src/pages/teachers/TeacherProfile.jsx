@@ -48,7 +48,9 @@ const TeacherProfile = () => {
 
   return (
     <main>
-      <div className="dashboard-container">
+      <div
+        className={`${context?.isClosed ? "closed" : ""}  dashboard-container`}
+      >
         <div className="container">
           <h1 className="title"> {data.firstName + " " + data.lastName} </h1>
           <div className="profile">

@@ -312,6 +312,7 @@
   },
   "admins": {
     "all_admins": "جميع المسؤولين",
+    "update_admins": "تعديل مسؤول",
     "add_admins": "إضافة مسؤولين",
     "name": "الاسم",
     "role": "الدور",
@@ -332,6 +333,7 @@
   },
   "quizzes": {
     "all_quizzes": "جميع الاختبارات",
+    "update_quiz": "تعديل اختبار",
     "add_quizzes": "إضافة اختبارات",
     "add_a_quiz": "إضافة اختبار",
     "title": "العنوان",

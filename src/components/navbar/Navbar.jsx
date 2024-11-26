@@ -23,7 +23,7 @@ const Navbar = () => {
       context.userDetails.userDetails.lastName;
 
   const location = useLocation();
-  const isClosed = JSON.parse(localStorage.getItem("isClosed")) || false;
+
   const [form, setForm] = useState("");
   const cookie = new Cookies();
 
@@ -77,6 +77,10 @@ const Navbar = () => {
   };
 
   useEffect(() => {
+    if (window.innerWidth <= 600) {
+      localStorage.setItem("isClosed", true);
+      context?.setIsClosed(true);
+    }
     const linksDiv = document.querySelectorAll("aside .links");
     const removeClass = document.querySelectorAll(
       "aside >div> div > .links > div.center"
@@ -101,12 +105,9 @@ const Navbar = () => {
 
   const closeAside = () => {
     const nav = document.querySelector("nav");
-    const aside = document.querySelector("aside");
-    const container = document.querySelector(".dashboard-container");
     nav && nav.classList.toggle("closed");
     localStorage.setItem("isClosed", nav.classList.contains("closed"));
-    aside && aside.classList.toggle("closed");
-    container && container.classList.toggle("closed");
+    context?.setIsClosed(nav.classList.contains("closed"));
   };
 
   const selectLang = (e) => {
@@ -186,7 +187,7 @@ const Navbar = () => {
   };
   return (
     <>
-      <nav className={`${!isClosed === false ? "closed" : ""} center`}>
+      <nav className={`${context?.isClosed ? "closed" : ""} center`}>
         <div className="container between gap-20">
           <form className="search flex-1 center relative">
             <input
@@ -257,7 +258,7 @@ const Navbar = () => {
         </div>
       </nav>
 
-      <aside className={`${!isClosed === false ? "closed" : ""}`}>
+      <aside className={`${context?.isClosed ? "closed" : ""}`}>
         <article className="between">
           <Link className="center">
             <i className="fa-solid fa-graduation-cap"></i>

@@ -170,10 +170,14 @@ const AllQuizes = () => {
                 </Link>
               )}
               {isStudent && currentDate < startDate && (
-                <i className="fa-solid disabled start">{language.quizzes && language.quizzes.waiting}.</i>
+                <i className="fa-solid disabled start">
+                  {language.quizzes && language.quizzes.waiting}.
+                </i>
               )}
               {isStudent && currentDate > endDate && (
-                <span className="missed-quiz">{language.quizzes && language.quizzes.allready_done}</span>
+                <span className="missed-quiz">
+                  {language.quizzes && language.quizzes.allready_done}
+                </span>
               )}
             </td>
           )}
@@ -223,7 +227,9 @@ const AllQuizes = () => {
 
   return (
     <main>
-      <div className="dashboard-container">
+      <div
+        className={`${context?.isClosed ? "closed" : ""}  dashboard-container`}
+      >
         {overlay && (
           <div className="overlay">
             <div className="change-status">
@@ -263,7 +269,8 @@ const AllQuizes = () => {
               {isAdmin && (
                 <div className="flex search gap-20">
                   <Link to={"/dashboard/add_quiz"} className="btn">
-                    <i className="fa-regular fa-square-plus"></i> add quiz
+                    <i className="fa-regular fa-square-plus"></i>{" "}
+                    {language.quizzes.add_a_quiz}
                   </Link>
                   <div className="flex flex-direction">
                     <div className="selecte">

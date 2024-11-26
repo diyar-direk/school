@@ -86,6 +86,8 @@ const Subjects = () => {
             code: data.code,
             yearLevel: data.yearLevel,
           });
+          const inp = document.querySelector(".subjects form .inp");
+          inp?.focus();
         });
     }
   }, [selectedId]);
@@ -389,7 +391,9 @@ const Subjects = () => {
 
   return (
     <main>
-      <div className="dashboard-container">
+      <div
+        className={`${context?.isClosed ? "closed" : ""}  dashboard-container`}
+      >
         <div className="container">
           {dataOverlay && (
             <SendData
