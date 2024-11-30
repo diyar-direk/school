@@ -426,5 +426,14 @@
     "confirm_sending": "هل أنت متأكد أنك تريد إنهاء الاختبار؟",
     "submit": "إرسال",
     "cancel": "إلغاء"
+  },
+  "days":{
+    "sunday":"الاحد",
+    "monday":"الاثنين",
+    "tuesday":"الثلثاء",
+    "wednesday":"الاربعاء",
+    "thursday":"الخميس",
+    "friday":"الجمعة",
+    "saturday":"السبت"
   }
 }

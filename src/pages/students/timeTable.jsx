@@ -22,14 +22,15 @@ const TimeTable = () => {
   const [formLoading, setFormLoading] = useState(false);
   const [selectedId, setSelectedId] = useState("");
   const language = context && context.selectedLang;
+
   const daysOfWeek = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
+    { name: language?.days?.sunday, day: "Sunday" },
+    { name: language?.days?.monday, day: "Monday" },
+    { name: language?.days?.tuesday, day: "Tuesday" },
+    { name: language?.days?.wednesday, day: "Wednesday" },
+    { name: language?.days?.thursday, day: "Thursday" },
+    { name: language?.days?.friday, day: "Friday" },
+    { name: language?.days?.saturday, day: "Saturday" },
   ];
 
   const [form, setForm] = useState({
@@ -37,7 +38,7 @@ const TimeTable = () => {
     endTime: "",
     classId: "",
     subjectId: "",
-    dayOfWeek: daysOfWeek[dayNumber],
+    dayOfWeek: daysOfWeek[dayNumber].day,
     yearLevel: "",
   });
 
@@ -45,7 +46,7 @@ const TimeTable = () => {
     if (form.classId) {
       try {
         const res = await axios.get(
-          `http://localhost:8000/api/time-table?active=true&classId=${form.classId}&dayOfWeek=${daysOfWeek[dayNumber]}&sort=startTime`,
+          `http://localhost:8000/api/time-table?active=true&classId=${form.classId}&dayOfWeek=${daysOfWeek[dayNumber].day}&sort=startTime`,
           {
             headers: {
               Authorization: "Bearer " + token,
@@ -64,7 +65,7 @@ const TimeTable = () => {
   useEffect(() => {
     getData();
 
-    setForm({ ...form, dayOfWeek: daysOfWeek[dayNumber] });
+    setForm({ ...form, dayOfWeek: daysOfWeek[dayNumber].day });
   }, [dayNumber, form.classId]);
 
   useEffect(() => {
@@ -212,6 +213,7 @@ const TimeTable = () => {
         setIsUpdate(false);
         setSelectedId("");
         setForm({ ...form, startTime: "", endTime: "", subjectId: "" });
+        setSubjectName("");
       } catch (error) {
         console.log(error);
       } finally {
@@ -410,7 +412,7 @@ const TimeTable = () => {
                 <div onClick={decrement} className="flex-1">
                   {language.timeTable && language.timeTable.prev_day}
                 </div>
-                <div className="flex-1"> {daysOfWeek[dayNumber]} </div>
+                <div className="flex-1"> {daysOfWeek[dayNumber].name} </div>
                 <div onClick={increment} className="flex-1">
                   {language.timeTable && language.timeTable.next_day}
                 </div>

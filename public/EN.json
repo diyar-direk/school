@@ -426,5 +426,14 @@
     "confirm_sending": "Are you sure you want to finish this quiz?",
     "submit": "Submit",
     "cancel": "Cancel"
+  },
+  "days":{
+    "sunday":"Sunday",
+    "monday":"Monday",
+    "tuesday":"Tuesday",
+    "wednesday":"Wednesday",
+    "thursday":"Thursday",
+    "friday":"Friday",
+    "saturday":"Saturday"
   }
 }
