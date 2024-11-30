@@ -8,6 +8,9 @@ const Provider = ({ children }) => {
   const [language, setLanguage] = useState(
     localStorage.getItem("language") || userLang || "EN"
   );
+  const [isClosed, setIsClosed] = useState(
+    JSON.parse(localStorage.getItem("isClosed")) || false
+  );
   const [selectedLang, setSelectedLang] = useState("");
   const [userDetails, setUserDetails] = useState({
     isAdmin: false,
@@ -53,6 +56,8 @@ const Provider = ({ children }) => {
   return (
     <Context.Provider
       value={{
+        isClosed,
+        setIsClosed,
         setMode,
         language,
         setLanguage,

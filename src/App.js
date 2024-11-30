@@ -38,6 +38,7 @@ import AdminProfile from "./Auth/AdminProfile";
 
 function App() {
   const location = useLocation();
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
@@ -51,7 +52,6 @@ function App() {
           <Route element={<Auth />}>
             <Route path="dashboard" element={<Dashboard />}>
               <Route path="*" element={<NotFound />} />
-
               <Route element={<AdminAuth />}>
                 <Route path="admin_profile" element={<AdminProfile />} />
                 <Route path="all_admins" element={<AllAdmins />} />

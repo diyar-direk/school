@@ -403,7 +403,11 @@ const UpdateQuiz = () => {
 
   return (
     <main>
-      <div className="dashboard-container relative">
+      <div
+        className={`${
+          context?.isClosed ? "closed" : ""
+        } relative dashboard-container`}
+      >
         {loading && <FormLoading />}
         <div className="container relative">
           {overlay && (
@@ -412,12 +416,14 @@ const UpdateQuiz = () => {
               response={response}
             />
           )}
-          <h1 className="title">add quiz</h1>
+          <h1 className="title">{language?.quizzes.update_quiz}</h1>
           <form onSubmit={handelSubmit} className="relative dashboard-form">
             <h1>{language.exams && language.exams.please_complete_form}</h1>
             <div className="flex wrap ">
               <div className="flex flex-direction">
-                <label htmlFor="title">exam title</label>
+                <label htmlFor="title">
+                  {language.quizzes && language.quizzes.exam_title}
+                </label>
                 <input
                   required
                   onInput={handleForm}
@@ -429,7 +435,9 @@ const UpdateQuiz = () => {
                 />
               </div>
               <div className="flex flex-direction">
-                <label htmlFor="description">exam description</label>
+                <label htmlFor="description">
+                  {language.quizzes && language.quizzes.exam_discreption}
+                </label>
                 <input
                   required
                   onInput={handleForm}
@@ -515,7 +523,9 @@ const UpdateQuiz = () => {
               )}
 
               <div className="flex flex-direction">
-                <label htmlFor="date">quize date</label>
+                <label htmlFor="date">
+                  {language.quizzes && language.quizzes.quiz_date}
+                </label>
                 <input
                   required
                   onInput={handleForm}
@@ -554,7 +564,9 @@ const UpdateQuiz = () => {
             {multiSelect && (
               <div className="flex wrap">
                 <div className="flex flex-direction">
-                  <label htmlFor="question">question title</label>
+                  <label htmlFor="question">
+                    {language.quizzes && language.quizzes.question_title}
+                  </label>
                   <textarea
                     rows={3}
                     autoFocus
@@ -596,14 +608,16 @@ const UpdateQuiz = () => {
                 }}
                 className="add-question multi-add"
               >
-                + add answor
+                + {language.quizzes && language.quizzes.add_answer}
               </span>
             )}
 
             {T_RSelect && (
               <div className="flex wrap">
                 <div className="flex flex-direction">
-                  <label htmlFor={`answor-${1}`}>question title </label>
+                  <label htmlFor={`answor-${1}`}>
+                    {language.quizzes && language.quizzes.question_title}{" "}
+                  </label>
                   <div className="center gap-10 justify-start">
                     <textarea
                       rows={3}
@@ -663,7 +677,9 @@ const UpdateQuiz = () => {
                     setMultiSelect(true);
                   }}
                 >
-                  + add multiple choice question
+                  +{" "}
+                  {language.quizzes &&
+                    language.quizzes.add_multichoice_question}
                 </span>
                 <span
                   onClick={() => {
@@ -672,13 +688,16 @@ const UpdateQuiz = () => {
                   }}
                   className="add-question"
                 >
-                  + add true false question
+                  +{" "}
+                  {language.quizzes && language.quizzes.add_trueflase_question}
                 </span>
               </div>
             )}
             {DataError && <p className="error"> {DataError} </p>}
             {(multiSelect || T_RSelect) && (
-              <button className="btn">save</button>
+              <button className="btn">
+                {language.quizzes && language.quizzes.save}
+              </button>
             )}
           </form>
 
@@ -688,13 +707,19 @@ const UpdateQuiz = () => {
               <div className="table">
                 {arrayOfMultiQuestions.length > 0 && (
                   <>
-                    <h2>multiple choices</h2>
+                    <h2>{language.quizzes && language.quizzes.multiple}</h2>
                     <table className="mb-40 quiz-table">
                       <thead>
                         <tr>
-                          <th>question</th>
-                          <th>wrong answer</th>
-                          <th>correct Answer</th>
+                          <th>
+                            {language.quizzes && language.quizzes.question}
+                          </th>
+                          <th>
+                            {language.quizzes && language.quizzes.wrong_ans}
+                          </th>
+                          <th>
+                            {language.quizzes && language.quizzes.correct_ans}
+                          </th>
                           <th></th>
                         </tr>
                       </thead>
@@ -767,12 +792,14 @@ const UpdateQuiz = () => {
 
                 {arrayOfT_RQuestions.length > 0 && (
                   <>
-                    <h2>true || false</h2>
+                    <h2>{language.quizzes && language.quizzes.t_f}</h2>
                     <table className="quiz-table">
                       <thead>
                         <tr>
-                          <th>question</th>
-                          <th>answer</th>
+                          <th>
+                            {language.quizzes && language.quizzes.question}
+                          </th>
+                          <th>{language.quizzes && language.quizzes.answer}</th>
                           <th></th>
                         </tr>
                       </thead>
@@ -832,7 +859,7 @@ const UpdateQuiz = () => {
                 )}
               </div>
               <div onClick={() => submitData()} className="btn send-quiz">
-                send quiz
+                {language.quizzes && language.quizzes.send_quiz}
               </div>
             </div>
           )}

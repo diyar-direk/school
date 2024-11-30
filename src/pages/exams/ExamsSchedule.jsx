@@ -264,7 +264,9 @@ const ExamSchedule = () => {
 
   return (
     <main>
-      <div className="dashboard-container">
+      <div
+        className={`${context?.isClosed ? "closed" : ""}  dashboard-container`}
+      >
         {overlay && (
           <div className="overlay">
             <div className="change-status">
@@ -296,7 +298,7 @@ const ExamSchedule = () => {
             </div>
           </div>
         )}
-        
+
         <div className="container">
           <h1 className="title">
             {language.exams && language.exams.exam_schedule}

@@ -25,7 +25,6 @@ const TakeQuiz = () => {
   const [endTime, setEndTime] = useState(false);
   const language = context && context.selectedLang;
 
-
   window.addEventListener("click", () => {
     overlay && setOverlay(false);
   });
@@ -204,12 +203,16 @@ const TakeQuiz = () => {
 
   return (
     <main>
-      <div className="dashboard-container ">
+      <div
+        className={`${context?.isClosed ? "closed" : ""}  dashboard-container`}
+      >
         <div className="container relative">
           {overlay && (
             <div className="overlay">
               <div className="change-status">
-                <h1>{language.take_quiz && language.take_quiz.confirm_sending}</h1>
+                <h1>
+                  {language.take_quiz && language.take_quiz.confirm_sending}
+                </h1>
                 <div className="flex gap-20">
                   <div onClick={submitQuiz} className="send center">
                     <h2>{language.take_quiz && language.take_quiz.submit}</h2>
@@ -235,11 +238,15 @@ const TakeQuiz = () => {
                 <h1 className="title">{data.subjectId?.name}</h1>
                 <div>
                   <h2 className="text-capitalize">{name}</h2>
-                  <h3 className="text-capitalize">{data.duration}{language.take_quiz && language.take_quiz.minutes} </h3>
+                  <h3 className="text-capitalize">
+                    {data.duration}
+                    {language.take_quiz && language.take_quiz.minutes}{" "}
+                  </h3>
                 </div>
               </div>
               <h2 className="time gap-10 center text-capitalize">
-              {language.take_quiz && language.take_quiz.remainig_time} <span> {remainingTime} </span>
+                {language.take_quiz && language.take_quiz.remainig_time}{" "}
+                <span> {remainingTime} </span>
               </h2>
 
               <div className="questions-space">{questions}</div>
@@ -256,7 +263,9 @@ const TakeQuiz = () => {
             </>
           ) : (
             <h1 className=" center text-capitalize font-color">
-              {language.take_quiz && language.take_quiz.you_allready_took_and_scored} {takedScore}
+              {language.take_quiz &&
+                language.take_quiz.you_allready_took_and_scored}{" "}
+              {takedScore}
             </h1>
           )}
         </div>

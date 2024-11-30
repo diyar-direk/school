@@ -57,11 +57,14 @@ const AddUser = () => {
 
   const handelSubmit = async (e) => {
     e.preventDefault();
-    if (form.username.includes(" ")) setDataError(`${language.error && language.error.username_no_spaces}`);
+    if (form.username.includes(" "))
+      setDataError(`${language.error && language.error.username_no_spaces}`);
     else if (passwordConfirmation !== form.password)
       setDataError(`${language.error && language.error.passwords_must_match}`);
-    else if (!form.role) setDataError(`${language.error && language.error.please_choose_role}`);
-    else if (!form.profileId) setDataError(`${language.error && language.error.please_choose_user}`);
+    else if (!form.role)
+      setDataError(`${language.error && language.error.please_choose_role}`);
+    else if (!form.profileId)
+      setDataError(`${language.error && language.error.please_choose_user}`);
     else {
       try {
         setFormLoading(true);
@@ -210,10 +213,19 @@ const AddUser = () => {
 
   return (
     <main>
-      <div className="dashboard-container">
+      <div
+        className={`${context?.isClosed ? "closed" : ""}  dashboard-container`}
+      >
         <div className="container relative">
-          {overlay && <SendData  data={`${language.error && language.error.user}`} response={response} />}
-          <h1 className="title">{language.users && language.users.add_users}</h1>
+          {overlay && (
+            <SendData
+              data={`${language.error && language.error.user}`}
+              response={response}
+            />
+          )}
+          <h1 className="title">
+            {language.users && language.users.add_users}
+          </h1>
 
           <form
             onSubmit={handelSubmit}
@@ -223,7 +235,9 @@ const AddUser = () => {
             <h1>{language.exams && language.exams.please_complete_form}</h1>
             <div className="flex wrap ">
               <div className="flex flex-direction">
-                <label htmlFor="username">{language.users && language.users.user_name}</label>
+                <label htmlFor="username">
+                  {language.users && language.users.user_name}
+                </label>
                 <input
                   required
                   onInput={handleForm}
@@ -231,12 +245,16 @@ const AddUser = () => {
                   type="text"
                   id="username"
                   className="inp"
-                  placeholder={language.users && language.users.user_name_placeholder}
+                  placeholder={
+                    language.users && language.users.user_name_placeholder
+                  }
                 />
               </div>
 
               <div className="flex flex-direction">
-                <label htmlFor="password">{language.users && language.users.password}</label>
+                <label htmlFor="password">
+                  {language.users && language.users.password}
+                </label>
                 <input
                   required
                   onInput={handleForm}
@@ -244,12 +262,16 @@ const AddUser = () => {
                   type="password"
                   id="password"
                   className="inp"
-                  placeholder={language.users && language.users.password_placeholder}
+                  placeholder={
+                    language.users && language.users.password_placeholder
+                  }
                 />
               </div>
 
               <div className="flex flex-direction">
-                <label htmlFor="confPassword">{language.users && language.users.conf_password}</label>
+                <label htmlFor="confPassword">
+                  {language.users && language.users.conf_password}
+                </label>
                 <input
                   required
                   onInput={(e) => setPasswordConfirmation(e.target.value)}
@@ -257,7 +279,9 @@ const AddUser = () => {
                   value={passwordConfirmation}
                   id="confPassword"
                   className="inp"
-                  placeholder={language.users && language.users.conf_password_placeholder}
+                  placeholder={
+                    language.users && language.users.conf_password_placeholder
+                  }
                 />
               </div>
 
@@ -265,7 +289,9 @@ const AddUser = () => {
                 <label>{language.users && language.users.role}</label>
                 <div className="selecte">
                   <div onClick={handleClick} className="inp">
-                    {form.role ? form.role : `${language.users && language.users.role_placeholder}`}
+                    {form.role
+                      ? form.role
+                      : `${language.users && language.users.role_placeholder}`}
                   </div>
                   <article>
                     <h2
@@ -300,7 +326,9 @@ const AddUser = () => {
               </div>
             </div>
             {DataError && <p className="error">{DataError}</p>}
-            <button className="btn">{language.users && language.users.create_btn}</button>
+            <button className="btn">
+              {language.users && language.users.create_btn}
+            </button>
           </form>
 
           {form.role && (
@@ -313,7 +341,9 @@ const AddUser = () => {
                       <div className="selecte">
                         <div onClick={handleClick} className="inp">
                           {yearLevel
-                            ? `${language.users && language.users.year_level}: ` + yearLevel
+                            ? `${
+                                language.users && language.users.year_level
+                              }: ` + yearLevel
                             : `${
                                 language.teachers &&
                                 language.teachers.year_level
@@ -371,7 +401,9 @@ const AddUser = () => {
                       {form.role !== "Admin" && (
                         <th>{language.teachers && language.teachers.gender}</th>
                       )}
-                      {form.role !== "Admin" && <th>{language.users && language.users.year_level}</th>}
+                      {form.role !== "Admin" && (
+                        <th>{language.users && language.users.year_level}</th>
+                      )}
                       <th>{language.users && language.users.email}</th>
                       <th>{language.users && language.users.role}</th>
                     </tr>

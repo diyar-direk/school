@@ -294,7 +294,9 @@ const Attendence = () => {
 
   return (
     <main>
-      <div className="dashboard-container">
+      <div
+        className={`${context?.isClosed ? "closed" : ""}  dashboard-container`}
+      >
         {overlay && (
           <div className="overlay">
             <div className="change-status">
@@ -341,10 +343,12 @@ const Attendence = () => {
                 />
               </div>
               <div className="flex flex-direction">
-                <label>class</label>
+                <label>{language?.attendance.class}</label>
                 <div className="selecte">
                   <div onClick={handleClick} className="inp">
-                    {classesName ? classesName : "please selecte a class"}
+                    {classesName
+                      ? classesName
+                      : language?.attendance.class_placeholder}
                   </div>
                   <article> {createClasses} </article>
                 </div>

@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
+import { Context } from "./../context/Context";
 
 const NotFound = () => {
+  const context = useContext(Context);
   return (
     <main>
-      <div className="dashboard-container">
+      <div
+        className={`${context?.isClosed ? "closed" : ""}  dashboard-container`}
+      >
         <div className="container center flex-direction">
           <div className="flex gap-10">
             <img src={require("./404.png")} alt="" />

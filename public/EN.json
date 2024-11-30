@@ -312,6 +312,7 @@
   "admins": {
     "all_admins": "All Admins",
     "add_admins": "Add Admins",
+    "update_admins": "Update Admin",
     "name": "Name",
     "role": "Role",
     "email": "Email",
@@ -333,6 +334,7 @@
     "all_quizzes": "All Quizzes",
     "add_quizzes": "Add Quizzes",
     "add_a_quiz": "Add a Quiz",
+    "update_quiz": "Update Quiz",
     "title": "Title",
     "discreption": "Description",
     "subject": "Subject",
