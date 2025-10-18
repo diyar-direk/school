@@ -12,14 +12,6 @@ const Provider = ({ children }) => {
     JSON.parse(localStorage.getItem("isClosed")) || false
   );
   const [selectedLang, setSelectedLang] = useState("");
-  const [userDetails, setUserDetails] = useState({
-    isAdmin: false,
-    isTeacher: false,
-    isStudent: false,
-    token: "",
-    userDetails: {},
-    role: "",
-  });
 
   useEffect(() => {
     localStorage.setItem("isDark", mode ? 1 : 0);
@@ -62,8 +54,6 @@ const Provider = ({ children }) => {
         language,
         setLanguage,
         selectedLang,
-        userDetails,
-        setUserDetails,
       }}
     >
       {children}

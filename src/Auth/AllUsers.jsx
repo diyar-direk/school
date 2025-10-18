@@ -1,12 +1,14 @@
 import { useContext, useEffect, useState } from "react";
 import "../components/table.css";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import { Context } from "../context/Context";
+import { useAuth } from "../context/AuthContext";
+import axiosInstance from "../utils/axios";
 const AllUsers = () => {
   const context = useContext(Context);
-  const token = context && context.userDetails.token;
-  const myId = context && context.userDetails.userDetails._id;
+  const { userDetails } = useAuth();
+
+  const myId = userDetails?.userDetails?._id;
 
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState({});
@@ -16,7 +18,7 @@ const AllUsers = () => {
   const [loading, setLoading] = useState(true);
   const [overlay, setOverlay] = useState(false);
   const [role, setRole] = useState("");
-  const language = context && context.selectedLang;
+  const language = context?.selectedLang;
 
   window.addEventListener("click", () => {
     const overlayDiv = document.querySelector(".overlay");
@@ -61,14 +63,10 @@ const AllUsers = () => {
   };
 
   const fetchData = async () => {
-    let URL = `http://localhost:8000/api/users?page=${activePage}&limit=${divsCount}`;
+    let URL = `users?page=${activePage}&limit=${divsCount}`;
     if (role) URL += `&role=${role}`;
     try {
-      const data = await axios.get(URL, {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      });
+      const data = await axiosInstance.get(URL);
 
       setSearchData(data.data.data);
       setDataLength(data.data.numverOfAcriveUsers);
@@ -119,14 +117,7 @@ const AllUsers = () => {
 
   const deleteOne = async () => {
     try {
-      const data = await axios.delete(
-        `http://localhost:8000/api/users/${selectedItems._id}`,
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
-      );
+      const data = await axiosInstance.delete(`users/${selectedItems._id}`);
       data && fetchData();
 
       setSelectedItems({});
@@ -211,7 +202,7 @@ const AllUsers = () => {
                     </article>
                   </div>
                 </div>
-                <Link className="btn" to={"/dashboard/add_user"}>
+                <Link className="btn" to={"/add_user"}>
                   <i className="fa-regular fa-square-plus"></i>{" "}
                   {language.users && language.users.add_users}
                 </Link>

@@ -1,20 +1,20 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import "../components/form.css";
-import axios from "axios";
 import { Context } from "../context/Context";
 import SendData from "../components/response/SendData";
 import FormLoading from "../components/FormLoading";
+import axiosInstance from "../utils/axios";
 
 const AddAdmin = () => {
   const context = useContext(Context);
-  const token = context && context.userDetails.token;
+
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
     email: "",
   });
 
-  const language = context && context.selectedLang;
+  const language = context?.selectedLang;
   const [loading, setLoading] = useState(false);
   const [overlay, setOverlay] = useState(false);
   const [response, setResponse] = useState(false);
@@ -43,11 +43,7 @@ const AddAdmin = () => {
     e.preventDefault();
 
     try {
-      const data = await axios.post("http://localhost:8000/api/admins", form, {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      });
+      const data = await axiosInstance.post("admins", form);
 
       if (data.status === 201) {
         responseFun(true);

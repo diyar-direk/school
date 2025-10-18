@@ -1,14 +1,13 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../components/form.css";
 import "../components/table.css";
-import axios from "axios";
 import { Context } from "../context/Context";
 import SendData from "../components/response/SendData";
 import FormLoading from "../components/FormLoading";
+import axiosInstance from "../utils/axios";
 
 const AddUser = () => {
   const context = useContext(Context);
-  const token = context && context.userDetails.token;
 
   const [form, setForm] = useState({
     username: "",
@@ -17,7 +16,7 @@ const AddUser = () => {
     profileId: "",
   });
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const language = context && context.selectedLang;
+  const language = context?.selectedLang;
   const [loading, setLoading] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
 
@@ -69,11 +68,7 @@ const AddUser = () => {
       try {
         setFormLoading(true);
 
-        const data = await axios.post("http://localhost:8000/api/users", form, {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        });
+        const data = await axiosInstance.post("users", form);
 
         if (data.status === 201) {
           responseFun(true);
@@ -112,14 +107,10 @@ const AddUser = () => {
     setLoading(true);
     const role = form.role.toLowerCase() + "s";
     try {
-      let url = `http://localhost:8000/api/${role}?limit=${divsCount}&page=${activePage}&active=true`;
+      let url = `${role}?limit=${divsCount}&page=${activePage}&active=true`;
       if (form.role !== "Admin" && gender) url += `&gender=${gender}`;
       if (form.role !== "Admin" && yearLevel) url += `&yearLevel=${yearLevel}`;
-      const res = await axios.get(url, {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      });
+      const res = await axiosInstance.get(url);
 
       if (form.role === "Admin") setDataLength(res.data.numberOfAdmins);
       else if (form.role === "Teacher")

@@ -1,14 +1,15 @@
 import { useContext, useEffect, useState } from "react";
 import "../../components/table.css";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import SendData from "../../components/response/SendData";
 import FormLoading from "../../components/FormLoading";
 import { Context } from "../../context/Context";
+import { useAuth } from "../../context/AuthContext";
+import axiosInstance from "../../utils/axios";
 const Classes = () => {
   const context = useContext(Context);
-  const token = context && context.userDetails.token;
-  const isAdmin = context && context.userDetails.isAdmin;
+  const { userDetails } = useAuth();
+  const isAdmin = userDetails?.isAdmin;
   const [searchData, setSearchData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [classesCount, setClassesCount] = useState(0);
@@ -19,7 +20,7 @@ const Classes = () => {
   const [selectedId, setSelectedId] = useState(false);
   const divsCount = 10;
   const [overlay, setOverlay] = useState(false);
-  const language = context && context.selectedLang;
+  const language = context?.selectedLang;
 
   window.addEventListener("click", () => {
     const overlayDiv = document.querySelector(".overlay");
@@ -67,17 +68,13 @@ const Classes = () => {
 
   const fetchData = async () => {
     try {
-      let url = `http://localhost:8000/api/classes?limit=${divsCount}&page=${activePage}&active=true`;
+      let url = `classes?limit=${divsCount}&page=${activePage}&active=true`;
 
       if (yearLevel) {
         url += `&yearLevel=${yearLevel}`;
       }
 
-      const res = await axios.get(url, {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      });
+      const res = await axiosInstance.get(url);
 
       setDataLength(res.data.numberOfActiveClasses);
 
@@ -157,13 +154,8 @@ const Classes = () => {
       const counts = {};
       for (let e of searchData) {
         try {
-          const res = await axios.get(
-            `http://localhost:8000/api/students/count-students?classId=${e._id}`,
-            {
-              headers: {
-                Authorization: "Bearer " + token,
-              },
-            }
+          const res = await axiosInstance.get(
+            `students/count-students?classId=${e._id}`
           );
           counts[e._id] = res.data.numberOfDocuments;
         } catch (error) {
@@ -235,21 +227,15 @@ const Classes = () => {
 
   useEffect(() => {
     if (selectedId) {
-      axios
-        .get(`http://localhost:8000/api/classes/${selectedId}`, {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        })
-        .then((res) => {
-          const data = res.data.data;
-          setForm({
-            name: data.name,
-            yearLevel: data.yearLevel,
-          });
-          const inp = document.querySelector(".subjects form .inp");
-          inp?.focus();
+      axiosInstance.get(`classes/${selectedId}`).then((res) => {
+        const data = res.data.data;
+        setForm({
+          name: data.name,
+          yearLevel: data.yearLevel,
         });
+        const inp = document.querySelector(".subjects form .inp");
+        inp?.focus();
+      });
     }
   }, [selectedId]);
 
@@ -323,29 +309,13 @@ const Classes = () => {
     else {
       try {
         if (!selectedId) {
-          const data = await axios.post(
-            "http://localhost:8000/api/classes",
-            form,
-            {
-              headers: {
-                Authorization: "Bearer " + token,
-              },
-            }
-          );
+          const data = await axiosInstance.post("classes", form);
 
           if (data.status === 201) {
             responseFun(true);
           }
         } else {
-          await axios.patch(
-            `http://localhost:8000/api/classes/${selectedId}`,
-            form,
-            {
-              headers: {
-                Authorization: "Bearer " + token,
-              },
-            }
-          );
+          await axiosInstance.patch(`classes/${selectedId}`, form);
         }
         fetchData();
         setForm({
@@ -363,14 +333,9 @@ const Classes = () => {
   };
   const deleteOne = async () => {
     try {
-      const data = await axios.patch(
-        `http://localhost:8000/api/classes/deactivate/${selectedItems[0]}`,
-        [],
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
+      const data = await axiosInstance.patch(
+        `classes/deactivate/${selectedItems[0]}`,
+        []
       );
       data && fetchData();
 
@@ -383,17 +348,9 @@ const Classes = () => {
   };
   const deleteAll = async () => {
     try {
-      const data = await axios.patch(
-        "http://localhost:8000/api/classes/deactivateMany",
-        {
-          Ids: selectedItems,
-        },
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
-      );
+      const data = await axiosInstance.patch("classes/deactivateMany", {
+        Ids: selectedItems,
+      });
       data && fetchData();
 
       selectedItems.length = 0;

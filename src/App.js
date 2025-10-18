@@ -20,8 +20,6 @@ import UpdateStudent from "./pages/students/UpdateStudent";
 import { useEffect } from "react";
 import NotFound from "./components/NotFound";
 import Dashboard from "./pages/Dashboard";
-import Auth from "./Auth/Auth";
-import Refresh from "./Auth/Refersh";
 import AdminAuth from "./Auth/AdminAuth";
 import TeacherAuth from "./Auth/TeacherAuth";
 import AllAdmins from "./Auth/AllAdmins";
@@ -35,6 +33,8 @@ import StudentAuth from "./Auth/StudentAuth";
 import TakeQuiz from "./pages/quizes/TakeQuiz";
 import AllQuizes from "./pages/quizes/AllQuizes";
 import AdminProfile from "./Auth/AdminProfile";
+import { Toaster } from "react-hot-toast";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   const location = useLocation();
@@ -44,56 +44,49 @@ function App() {
   }, [location.pathname]);
   return (
     <div className="App">
+      <Toaster position="top-center" />
       <Routes>
         <Route path="*" element={<NotFound />} />
-        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
 
-        <Route element={<Refresh />}>
-          <Route element={<Auth />}>
-            <Route path="dashboard" element={<Dashboard />}>
-              <Route path="*" element={<NotFound />} />
-              <Route element={<AdminAuth />}>
-                <Route path="admin_profile" element={<AdminProfile />} />
-                <Route path="all_admins" element={<AllAdmins />} />
-                <Route path="add_admin" element={<AddAdmin />} />
-                <Route path="all_users" element={<AllUsers />} />
-                <Route path="add_user" element={<AddUser />} />
-                <Route path="update_admin/:id" element={<UpdateAdmin />} />
-                <Route path="add_teacher" element={<AddTeacher />} />
-                <Route path="add_student" element={<AddStudent />} />
-                <Route path="add_exam_result" element={<AddExamResult />} />
-                <Route path="add_exam" element={<AddExam />} />
-                <Route path="add_quiz" element={<AddQuiz />} />
-                <Route path="update_quiz/:id" element={<UpdateQuiz />} />
-                <Route path="update_teacher/:id" element={<UpdateTeacher />} />
-                <Route path="update_student/:id" element={<UpdateStudent />} />
-                <Route
-                  path="update_exam/:id"
-                  element={<UpdateExamSchedule />}
-                />
-              </Route>
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<Dashboard />}>
+            <Route path="*" element={<NotFound />} />
+            <Route element={<AdminAuth />}>
+              <Route path="admin_profile" element={<AdminProfile />} />
+              <Route path="all_admins" element={<AllAdmins />} />
+              <Route path="add_admin" element={<AddAdmin />} />
+              <Route path="all_users" element={<AllUsers />} />
+              <Route path="add_user" element={<AddUser />} />
+              <Route path="update_admin/:id" element={<UpdateAdmin />} />
+              <Route path="add_teacher" element={<AddTeacher />} />
+              <Route path="add_student" element={<AddStudent />} />
+              <Route path="add_exam_result" element={<AddExamResult />} />
+              <Route path="add_exam" element={<AddExam />} />
+              <Route path="add_quiz" element={<AddQuiz />} />
+              <Route path="update_quiz/:id" element={<UpdateQuiz />} />
+              <Route path="update_teacher/:id" element={<UpdateTeacher />} />
+              <Route path="update_student/:id" element={<UpdateStudent />} />
+              <Route path="update_exam/:id" element={<UpdateExamSchedule />} />
+            </Route>
 
-              <Route element={<TeacherAuth />}>
-                <Route path="all_teachers" element={<AllTeachers />} />
-                <Route
-                  path="teacher_profile/:id"
-                  element={<TeacherProfile />}
-                />
-                <Route path="all_students" element={<AllStudents />} />
-                <Route path="attendence" element={<Attendence />} />
-              </Route>
+            <Route element={<TeacherAuth />}>
+              <Route path="all_teachers" element={<AllTeachers />} />
+              <Route path="teacher_profile/:id" element={<TeacherProfile />} />
+              <Route path="all_students" element={<AllStudents />} />
+              <Route path="attendence" element={<Attendence />} />
+            </Route>
 
-              <Route path="all_quizzes" element={<AllQuizes />} />
-              <Route path="student_profile/:id" element={<StudentProfile />} />
-              <Route path="time_table" element={<TimeTable />} />
-              <Route path="classes" element={<Classes />} />
-              <Route path="subjects" element={<Subjects />} />
-              <Route path="exams_schedule" element={<ExamSchedule />} />
-              <Route path="exams_result" element={<ExamResult />} />
+            <Route path="all_quizzes" element={<AllQuizes />} />
+            <Route path="student_profile/:id" element={<StudentProfile />} />
+            <Route path="time_table" element={<TimeTable />} />
+            <Route path="classes" element={<Classes />} />
+            <Route path="subjects" element={<Subjects />} />
+            <Route path="exams_schedule" element={<ExamSchedule />} />
+            <Route path="exams_result" element={<ExamResult />} />
 
-              <Route element={<StudentAuth />}>
-                <Route path="take_quiz/:id" element={<TakeQuiz />} />
-              </Route>
+            <Route element={<StudentAuth />}>
+              <Route path="take_quiz/:id" element={<TakeQuiz />} />
             </Route>
           </Route>
         </Route>

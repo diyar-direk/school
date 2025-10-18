@@ -2,42 +2,30 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import "./navbar.css";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "../../context/Context";
-import Cookies from "universal-cookie";
+import { useAuth } from "../../context/AuthContext";
 
 const Navbar = () => {
   const nav = useNavigate();
   const context = useContext(Context);
-  const language = context && context.selectedLang;
-  const isAdmin = context && context.userDetails.isAdmin;
-  const isStudent = context && context.userDetails.isStudent;
-  const isTeacher = context && context.userDetails.isTeacher;
-  const id = context && context.userDetails.userDetails._id;
+  const language = context?.selectedLang;
+  const { userDetails, logout } = useAuth();
+  const isAdmin = userDetails?.isAdmin;
+  const isStudent = userDetails?.isStudent;
+  const isTeacher = userDetails?.isTeacher;
+  const id = userDetails?.userDetails?._id;
   const ProfilePath = isAdmin
-    ? "/dashboard/admin_profile"
+    ? "/admin_profile"
     : isTeacher
-    ? `/dashboard/teacher_profile/${id}`
-    : `/dashboard/student_profile/${id}`;
+    ? `/teacher_profile/${id}`
+    : `/student_profile/${id}`;
   const name =
-    context &&
-    context.userDetails.userDetails.firstName +
-      " " +
-      context.userDetails.userDetails.lastName;
+    userDetails?.userDetails?.firstName +
+    " " +
+    userDetails?.userDetails?.lastName;
 
   const location = useLocation();
 
   const [form, setForm] = useState("");
-  const cookie = new Cookies();
-
-  const logOut = () => {
-    cookie.remove("school-token");
-    context.setUserDetails({
-      isAdmin: false,
-      isTeacher: false,
-      isStudent: false,
-      token: "",
-      userDetails: {},
-    });
-  };
 
   window.addEventListener("click", () => {
     const langDiv = document.querySelector(
@@ -181,7 +169,7 @@ const Navbar = () => {
         nav(matchedPage.path);
       } else {
         const path = form.replaceAll(" ", "_");
-        nav(`/dashboard/${path}`);
+        nav(`/${path}`);
       }
       setForm("");
     }
@@ -214,7 +202,7 @@ const Navbar = () => {
               <i className="center photo fa-solid fa-user"></i>
               <article>
                 <h4>{name}</h4>
-                <p> {context.userDetails.role} </p>
+                <p> {userDetails?.role} </p>
               </article>
             </Link>
 
@@ -260,7 +248,7 @@ const Navbar = () => {
                 </h2>
               </div>
             </article>
-            <h4 onClick={logOut} className="c-pointer log-out center">
+            <h4 onClick={logout} className="c-pointer log-out center">
               <i className="fa-solid fa-right-from-bracket"></i>
             </h4>
           </div>
@@ -296,10 +284,10 @@ const Navbar = () => {
                   <i className="arrow fa-solid fa-chevron-right"></i>
                 </div>
                 <article>
-                  <NavLink to={"all_users"}>
+                  <NavLink to={"/all_users"}>
                     {language.navBar && language.navBar.all_users}
                   </NavLink>
-                  <NavLink to={"add_user"}>
+                  <NavLink to={"/add_user"}>
                     {language.navBar && language.navBar.add_users}
                   </NavLink>
                 </article>
@@ -316,10 +304,10 @@ const Navbar = () => {
                   <i className="arrow fa-solid fa-chevron-right"></i>
                 </div>
                 <article>
-                  <NavLink to={"all_admins"}>
+                  <NavLink to={"/all_admins"}>
                     {language.navBar && language.navBar.all_admins}
                   </NavLink>
-                  <NavLink to={"add_admin"}>
+                  <NavLink to={"/add_admin"}>
                     {language.navBar && language.navBar.add_admins}
                   </NavLink>
                 </article>
@@ -336,11 +324,11 @@ const Navbar = () => {
                   <i className="arrow fa-solid fa-chevron-right"></i>
                 </div>
                 <article>
-                  <NavLink to={"all_teachers"}>
+                  <NavLink to={"/all_teachers"}>
                     {language.navBar && language.navBar.all_teachers}
                   </NavLink>
                   {isAdmin && (
-                    <NavLink to={"add_teacher"}>
+                    <NavLink to={"/add_teacher"}>
                       {language.navBar && language.navBar.add_teacher}
                     </NavLink>
                   )}
@@ -357,11 +345,11 @@ const Navbar = () => {
                   <i className="arrow fa-solid fa-chevron-right"></i>
                 </div>
                 <article>
-                  <NavLink to={"all_students"}>
+                  <NavLink to={"/all_students"}>
                     {language.navBar && language.navBar.all_students}
                   </NavLink>
                   {isAdmin && (
-                    <NavLink to={"add_student"}>
+                    <NavLink to={"/add_student"}>
                       {language.navBar && language.navBar.add_student}
                     </NavLink>
                   )}
@@ -378,19 +366,19 @@ const Navbar = () => {
                 <i className="arrow fa-solid fa-chevron-right"></i>
               </div>
               <article>
-                <NavLink to={"exams_schedule"}>
+                <NavLink to={"/exams_schedule"}>
                   {language.navBar && language.navBar.exam_schedule}
                 </NavLink>
                 {isAdmin && (
-                  <NavLink to={"add_exam"}>
+                  <NavLink to={"/add_exam"}>
                     {language.navBar && language.navBar.add_exam}
                   </NavLink>
                 )}
-                <NavLink to={"exams_result"}>
+                <NavLink to={"/exams_result"}>
                   {language.navBar && language.navBar.exam_results}
                 </NavLink>
                 {isAdmin && (
-                  <NavLink to={"add_exam_result"}>
+                  <NavLink to={"/add_exam_result"}>
                     {language.navBar && language.navBar.add_exam_results}
                   </NavLink>
                 )}
@@ -407,20 +395,20 @@ const Navbar = () => {
               </div>
               <article>
                 {!isStudent && (
-                  <NavLink to={"attendence"}>
+                  <NavLink to={"/attendence"}>
                     {language.navBar && language.navBar.attendance}
                   </NavLink>
                 )}
-                <NavLink to={"time_table"}>
+                <NavLink to={"/time_table"}>
                   {language.navBar && language.navBar.time_table}
                 </NavLink>
               </article>
             </div>
-            <NavLink to={"subjects"} className="w-100 justify-start center">
+            <NavLink to={"/subjects"} className="w-100 justify-start center">
               <i className="fa-solid fa-pen-nib"></i>
               <h1> {language.navBar && language.navBar.subjects}</h1>
             </NavLink>
-            <NavLink to={"classes"} className="w-100 justify-start center">
+            <NavLink to={"/classes"} className="w-100 justify-start center">
               <i className="fa-solid fa-school-flag"></i>
               <h1>{language.navBar && language.navBar.classes}</h1>
             </NavLink>
@@ -434,18 +422,18 @@ const Navbar = () => {
                 <i className="arrow fa-solid fa-chevron-right"></i>
               </div>
               <article>
-                <NavLink to={"all_quizzes"}>
+                <NavLink to={"/all_quizzes"}>
                   {language.navBar && language.navBar.all_quiz}
                 </NavLink>
                 {isAdmin && (
-                  <NavLink to={"add_quiz"}>
+                  <NavLink to={"/add_quiz"}>
                     {language.navBar && language.navBar.add_quiz}
                   </NavLink>
                 )}
               </article>
             </div>
           </div>
-          <h3 onClick={logOut} className="log-out center c-pointer aside">
+          <h3 onClick={logout} className="log-out center c-pointer aside">
             <i className="fa-solid fa-right-from-bracket"></i>
             <span>{language.navBar && language.navBar.log_out}</span>
           </h3>

@@ -15,6 +15,7 @@ const Dashboard = () => {
 
     return () => clearTimeout(timer);
   }, [location.pathname]);
+
   return (
     <>
       <Navbar />

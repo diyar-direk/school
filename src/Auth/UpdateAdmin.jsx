@@ -1,14 +1,13 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../components/form.css";
-import axios from "axios";
 import { Context } from "../context/Context";
 import SendData from "../components/response/SendData";
 import FormLoading from "../components/FormLoading";
 import { useNavigate, useParams } from "react-router-dom";
+import axiosInstance from "../utils/axios";
 
 const UpdateAdmin = () => {
   const context = useContext(Context);
-  const token = context && context.userDetails.token;
   const nav = useNavigate();
   const { id } = useParams();
   const [form, setForm] = useState({
@@ -18,12 +17,8 @@ const UpdateAdmin = () => {
   });
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:8000/api/admins/${id}`, {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      })
+    axiosInstance
+      .get(`admins/${id}`)
       .then((res) => {
         setForm({
           firstName: res.data.data.firstName,
@@ -33,11 +28,11 @@ const UpdateAdmin = () => {
       })
       .catch((err) => {
         console.log(err);
-        nav("/dashboard/err-400");
+        nav("/err-400");
       });
   }, []);
 
-  const language = context && context.selectedLang;
+  const language = context?.selectedLang;
   const [loading, setLoading] = useState(false);
   const [overlay, setOverlay] = useState(false);
   const [response, setResponse] = useState(false);
@@ -66,19 +61,11 @@ const UpdateAdmin = () => {
     e.preventDefault();
 
     try {
-      const data = await axios.patch(
-        `http://localhost:8000/api/admins/${id}`,
-        form,
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
-      );
+      const data = await axiosInstance.patch(`admins/${id}`, form);
 
       if (data.status === 200) {
         responseFun(true);
-        nav("/dashboard/all_admins");
+        nav("/all_admins");
       }
     } catch (error) {
       console.log(error);
