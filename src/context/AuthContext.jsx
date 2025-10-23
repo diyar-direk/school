@@ -99,10 +99,8 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (token && !userDetails) {
-      getUserDetails();
-    }
-  }, [token, getUserDetails, userDetails]);
+    getUserDetails();
+  }, [getUserDetails]);
 
   if (userLoading) return <Loader />;
 

@@ -17,6 +17,15 @@
   border-radius: 4px;
   background-color: var(--body-color);
 }
+.overlay .confirm-popup > div {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.overlay .confirm-popup > div > button {
+  flex: 1;
+}
 .overlay .popup h1 {
   text-transform: capitalize;
   text-align: center;

@@ -194,7 +194,7 @@ div.table tbody tr:hover {
   opacity: 1;
   pointer-events: all;
 }
-tr td {
+tbody tr {
   background-color: #334b7c26;
 }
 tr:not(:last-of-type) td {

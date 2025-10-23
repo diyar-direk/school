@@ -31,7 +31,6 @@ const TableBody = ({
       if (column.getCell) {
         return column.getCell({
           row,
-          setSelectedItems,
           userDetails,
           isCustomPopUpOpen,
           setIsCustomPopUpOpen,
@@ -39,7 +38,7 @@ const TableBody = ({
       }
       return row[column.name];
     },
-    [setSelectedItems, userDetails, isCustomPopUpOpen, setIsCustomPopUpOpen]
+    [userDetails, isCustomPopUpOpen, setIsCustomPopUpOpen]
   );
 
   const rows = useMemo(

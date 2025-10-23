@@ -32,7 +32,7 @@ const ConfirmPopUp = ({
 
   return (
     <div className="overlay" role="dialog" {...props} onClick={onClose}>
-      <div className="popup" onClick={(e) => e.stopPropagation()}>
+      <div className="popup confirm-popup" onClick={(e) => e.stopPropagation()}>
         <h1>{heading || "are you sure you want to do this"}</h1>
         <div>
           <Button {...confirmButtonProps} onClick={onConfirm} type="button">

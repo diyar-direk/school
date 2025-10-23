@@ -173,221 +173,199 @@ const AddUser = () => {
   }
 
   return (
-    <main>
-      <div
-        className={`${context?.isClosed ? "closed" : ""}  dashboard-container`}
-      >
-        <div className="container relative">
-          <h1 className="title">
-            {language.users && language.users.add_users}
-          </h1>
+    <div className="container relative">
+      <h1 className="title">{language.users && language.users.add_users}</h1>
 
-          <form
-            onSubmit={handelSubmit}
-            className="relative user dashboard-form"
-          >
-            <h1>{language.exams && language.exams.please_complete_form}</h1>
-            <div className="flex wrap ">
-              <div className="flex flex-direction">
-                <label htmlFor="username">
-                  {language.users && language.users.user_name}
-                </label>
-                <input
-                  required
-                  onInput={handleForm}
-                  value={form.username}
-                  type="text"
-                  id="username"
-                  className="inp"
-                  placeholder={
-                    language.users && language.users.user_name_placeholder
-                  }
-                />
+      <form onSubmit={handelSubmit} className="relative user dashboard-form">
+        <h1>{language.exams && language.exams.please_complete_form}</h1>
+        <div className="flex wrap ">
+          <div className="flex flex-direction">
+            <label htmlFor="username">
+              {language.users && language.users.user_name}
+            </label>
+            <input
+              required
+              onInput={handleForm}
+              value={form.username}
+              type="text"
+              id="username"
+              className="inp"
+              placeholder={
+                language.users && language.users.user_name_placeholder
+              }
+            />
+          </div>
+
+          <div className="flex flex-direction">
+            <label htmlFor="password">
+              {language.users && language.users.password}
+            </label>
+            <input
+              required
+              onInput={handleForm}
+              value={form.password}
+              type="password"
+              id="password"
+              className="inp"
+              placeholder={
+                language.users && language.users.password_placeholder
+              }
+            />
+          </div>
+
+          <div className="flex flex-direction">
+            <label htmlFor="confPassword">
+              {language.users && language.users.conf_password}
+            </label>
+            <input
+              required
+              onInput={(e) => setPasswordConfirmation(e.target.value)}
+              type="password"
+              value={passwordConfirmation}
+              id="confPassword"
+              className="inp"
+              placeholder={
+                language.users && language.users.conf_password_placeholder
+              }
+            />
+          </div>
+
+          <div className="flex flex-direction">
+            <label>{language.users && language.users.role}</label>
+            <div className="selecte">
+              <div onClick={handleClick} className="inp">
+                {form.role
+                  ? form.role
+                  : `${language.users && language.users.role_placeholder}`}
               </div>
-
-              <div className="flex flex-direction">
-                <label htmlFor="password">
-                  {language.users && language.users.password}
-                </label>
-                <input
-                  required
-                  onInput={handleForm}
-                  value={form.password}
-                  type="password"
-                  id="password"
-                  className="inp"
-                  placeholder={
-                    language.users && language.users.password_placeholder
-                  }
-                />
-              </div>
-
-              <div className="flex flex-direction">
-                <label htmlFor="confPassword">
-                  {language.users && language.users.conf_password}
-                </label>
-                <input
-                  required
-                  onInput={(e) => setPasswordConfirmation(e.target.value)}
-                  type="password"
-                  value={passwordConfirmation}
-                  id="confPassword"
-                  className="inp"
-                  placeholder={
-                    language.users && language.users.conf_password_placeholder
-                  }
-                />
-              </div>
-
-              <div className="flex flex-direction">
-                <label>{language.users && language.users.role}</label>
-                <div className="selecte">
-                  <div onClick={handleClick} className="inp">
-                    {form.role
-                      ? form.role
-                      : `${language.users && language.users.role_placeholder}`}
-                  </div>
-                  <article>
-                    <h2
-                      data-role="Admin"
-                      onClick={(e) => {
-                        setDataError(false);
-                        setForm({ ...form, role: e.target.dataset.role });
-                      }}
-                    >
-                      {language.users && language.users.admin}
-                    </h2>
-                    <h2
-                      data-role="Teacher"
-                      onClick={(e) => {
-                        setDataError(false);
-                        setForm({ ...form, role: e.target.dataset.role });
-                      }}
-                    >
-                      {language.users && language.users.teacher}
-                    </h2>
-                    <h2
-                      data-role="Student"
-                      onClick={(e) => {
-                        setDataError(false);
-                        setForm({ ...form, role: e.target.dataset.role });
-                      }}
-                    >
-                      {language.users && language.users.student}
-                    </h2>
-                  </article>
-                </div>
-              </div>
-            </div>
-            {DataError && <p className="error">{DataError}</p>}
-            <button className="btn">
-              {language.users && language.users.create_btn}
-            </button>
-          </form>
-
-          {form.role && (
-            <div className="tabel-container">
-              <div className="table">
-                <h2>{language.users && language.users.please_select}</h2>
-                {form.role !== "Admin" && (
-                  <form className="flex search gap-20">
-                    <div className="flex flex-direction">
-                      <div className="selecte">
-                        <div onClick={handleClick} className="inp">
-                          {yearLevel
-                            ? `${
-                                language.users && language.users.year_level
-                              }: ` + yearLevel
-                            : `${
-                                language.teachers &&
-                                language.teachers.year_level
-                              }: ${
-                                language.teachers && language.teachers.all_years
-                              }`}
-                        </div>
-
-                        <article className="grid-3">
-                          <h2 data-level={false} onClick={selectYears}>
-                            {language.teachers && language.teachers.all_years}
-                          </h2>
-                          {createYearLeve()}
-                        </article>
-                      </div>
-                    </div>
-                    <div className="flex flex-direction">
-                      <div className="selecte">
-                        <div onClick={handleClick} className="inp">
-                          {gender
-                            ? `${
-                                language.teachers && language.teachers.gender
-                              }: ` + gender
-                            : `${
-                                language.teachers && language.teachers.gender
-                              }: ${
-                                language.teachers &&
-                                language.teachers.both_genders
-                              }`}
-                        </div>
-                        <article>
-                          <h2 onClick={selectGender} data-gender={0}>
-                            {language.teachers &&
-                              language.teachers.both_genders}
-                          </h2>
-                          <h2 onClick={selectGender} data-gender="Male">
-                            {language.teachers && language.teachers.male}
-                          </h2>
-                          <h2 onClick={selectGender} data-gender="Female">
-                            {language.teachers && language.teachers.female}
-                          </h2>
-                        </article>
-                      </div>
-                    </div>
-                  </form>
-                )}
-
-                <table
-                  className={`${tableData?.length === 0 ? "loading" : ""}`}
+              <article>
+                <h2
+                  data-role="Admin"
+                  onClick={(e) => {
+                    setDataError(false);
+                    setForm({ ...form, role: e.target.dataset.role });
+                  }}
                 >
-                  <thead>
-                    <tr>
-                      <td></td>
-                      <th>{language.teachers && language.teachers.name}</th>
-                      {form.role !== "Admin" && (
-                        <th>{language.teachers && language.teachers.gender}</th>
-                      )}
-                      {form.role !== "Admin" && (
-                        <th>{language.users && language.users.year_level}</th>
-                      )}
-                      <th>{language.users && language.users.email}</th>
-                      <th>{language.users && language.users.role}</th>
-                    </tr>
-                  </thead>
-                  <tbody
-                    className={`${tableData?.length === 0 ? "relative" : ""}`}
-                  >
-                    {tableData?.length > 0
-                      ? tableData
-                      : !loading && (
-                          <div className="table-loading">
-                            {language.teachers && language.teachers.no_data}
-                          </div>
-                        )}
-                    {loading && (
+                  {language.users && language.users.admin}
+                </h2>
+                <h2
+                  data-role="Teacher"
+                  onClick={(e) => {
+                    setDataError(false);
+                    setForm({ ...form, role: e.target.dataset.role });
+                  }}
+                >
+                  {language.users && language.users.teacher}
+                </h2>
+                <h2
+                  data-role="Student"
+                  onClick={(e) => {
+                    setDataError(false);
+                    setForm({ ...form, role: e.target.dataset.role });
+                  }}
+                >
+                  {language.users && language.users.student}
+                </h2>
+              </article>
+            </div>
+          </div>
+        </div>
+        {DataError && <p className="error">{DataError}</p>}
+        <button className="btn">
+          {language.users && language.users.create_btn}
+        </button>
+      </form>
+
+      {form.role && (
+        <div className="tabel-container">
+          <div className="table">
+            <h2>{language.users && language.users.please_select}</h2>
+            {form.role !== "Admin" && (
+              <form className="flex search gap-20">
+                <div className="flex flex-direction">
+                  <div className="selecte">
+                    <div onClick={handleClick} className="inp">
+                      {yearLevel
+                        ? `${language.users && language.users.year_level}: ` +
+                          yearLevel
+                        : `${
+                            language.teachers && language.teachers.year_level
+                          }: ${
+                            language.teachers && language.teachers.all_years
+                          }`}
+                    </div>
+
+                    <article className="grid-3">
+                      <h2 data-level={false} onClick={selectYears}>
+                        {language.teachers && language.teachers.all_years}
+                      </h2>
+                      {createYearLeve()}
+                    </article>
+                  </div>
+                </div>
+                <div className="flex flex-direction">
+                  <div className="selecte">
+                    <div onClick={handleClick} className="inp">
+                      {gender
+                        ? `${language.teachers && language.teachers.gender}: ` +
+                          gender
+                        : `${language.teachers && language.teachers.gender}: ${
+                            language.teachers && language.teachers.both_genders
+                          }`}
+                    </div>
+                    <article>
+                      <h2 onClick={selectGender} data-gender={0}>
+                        {language.teachers && language.teachers.both_genders}
+                      </h2>
+                      <h2 onClick={selectGender} data-gender="Male">
+                        {language.teachers && language.teachers.male}
+                      </h2>
+                      <h2 onClick={selectGender} data-gender="Female">
+                        {language.teachers && language.teachers.female}
+                      </h2>
+                    </article>
+                  </div>
+                </div>
+              </form>
+            )}
+
+            <table className={`${tableData?.length === 0 ? "loading" : ""}`}>
+              <thead>
+                <tr>
+                  <td></td>
+                  <th>{language.teachers && language.teachers.name}</th>
+                  {form.role !== "Admin" && (
+                    <th>{language.teachers && language.teachers.gender}</th>
+                  )}
+                  {form.role !== "Admin" && (
+                    <th>{language.users && language.users.year_level}</th>
+                  )}
+                  <th>{language.users && language.users.email}</th>
+                  <th>{language.users && language.users.role}</th>
+                </tr>
+              </thead>
+              <tbody className={`${tableData?.length === 0 ? "relative" : ""}`}>
+                {tableData?.length > 0
+                  ? tableData
+                  : !loading && (
                       <div className="table-loading">
-                        {language.teachers && language.teachers.loading}
+                        {language.teachers && language.teachers.no_data}
                       </div>
                     )}
-                  </tbody>
-                </table>
-                <div className="pagination flex">
-                  {createPags(divsCount, dataLength)}
-                </div>
-              </div>
+                {loading && (
+                  <div className="table-loading">
+                    {language.teachers && language.teachers.loading}
+                  </div>
+                )}
+              </tbody>
+            </table>
+            <div className="pagination flex">
+              {createPags(divsCount, dataLength)}
             </div>
-          )}
+          </div>
         </div>
-      </div>
-    </main>
+      )}
+    </div>
   );
 };
 
