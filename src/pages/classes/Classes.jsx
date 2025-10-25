@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useMemo, useState } from "react";
 import { Context } from "../../context/Context";
 import { useAuth } from "../../context/AuthContext";
 import Table from "../../components/table/Table";
@@ -64,14 +64,14 @@ const Classes = () => {
         name: "createdAt",
         headerName: "createdAt",
         sort: true,
-        getCell: ({ row }) => dateFormatter(row.createdAt),
+        getCell: ({ row }) => dateFormatter(row.createdAt, "fullDate"),
       },
       {
         name: "updatedAt",
         headerName: "updatedAt",
         sort: true,
         hidden: true,
-        getCell: ({ row }) => dateFormatter(row.updatedAt),
+        getCell: ({ row }) => dateFormatter(row.updatedAt, "fullDate"),
       },
       {
         name: "actions",

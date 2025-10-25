@@ -101,7 +101,7 @@ const TableBody = ({
       ) : (
         <tr>
           <td className="no-data" colSpan={visibleColumnsCount}>
-            no data found
+            no results found
           </td>
         </tr>
       )}

@@ -9,10 +9,11 @@ import TableToolBar from "../../components/table_toolbar/TableToolBar";
 import { endPoints } from "../../constants/endPoints";
 import { useQuery } from "@tanstack/react-query";
 import APIClient from "../../utils/ApiClient";
-import { limit } from "../../constants/enums";
+import { limit, roles } from "../../constants/enums";
 import Button from "../../components/buttons/Button";
 import { pagesRoute } from "./../../constants/pagesRoute";
 import Add from "../../components/table_toolbar/Add";
+import AllowedTo from "../../components/AllowedTo";
 
 const column = [
   {
@@ -26,14 +27,14 @@ const column = [
     name: "createdAt",
     headerName: "createdAt",
     sort: true,
-    getCell: ({ row }) => dateFormatter(row.createdAt),
+    getCell: ({ row }) => dateFormatter(row.createdAt, "fullDate"),
   },
   {
     name: "updatedAt",
     headerName: "updatedAt",
     sort: true,
     hidden: true,
-    getCell: ({ row }) => dateFormatter(row.updatedAt),
+    getCell: ({ row }) => dateFormatter(row.updatedAt, "fullDate"),
   },
   {
     name: "actions",
@@ -66,15 +67,17 @@ const AllAdmins = () => {
       <div className="table-container flex-1">
         <TableToolBar>
           <Search setSearch={setSearch} />
-          <Delete
-            queryKey={endPoints.admins}
-            data={data}
-            selectedItems={selectedItems}
-            setPage={setPage}
-            setSelectedItems={setSelectedItems}
-            endPoint={endPoints.admins}
-          />
-          <Add path={pagesRoute.admin.add} />
+          <AllowedTo roles={[roles.admin]}>
+            <Delete
+              queryKey={endPoints.admins}
+              data={data}
+              selectedItems={selectedItems}
+              setPage={setPage}
+              setSelectedItems={setSelectedItems}
+              endPoint={endPoints.admins}
+            />
+            <Add path={pagesRoute.admin.add} />
+          </AllowedTo>
         </TableToolBar>
         <Table
           colmuns={column}

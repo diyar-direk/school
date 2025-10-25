@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from "react";
 
 import { Link } from "react-router-dom";
 import { Context } from "../../context/Context";
-import { date } from "../exams/ExamsSchedule";
 import { useAuth } from "../../context/AuthContext";
 import axiosInstance from "../../utils/axios";
 const AllQuizes = () => {
@@ -125,7 +124,7 @@ const AllQuizes = () => {
             {e.yearLevel} : {e.classId.name}
           </td>
 
-          <td dangerouslySetInnerHTML={date(e.date)} />
+          <td />
           <td> {e.duration} </td>
           {isAdmin && (
             <td>

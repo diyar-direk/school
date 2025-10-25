@@ -90,7 +90,7 @@ const SelectInputApi = ({
   };
 
   return (
-    <div className="select-input">
+    <div className="select-input inp">
       {label && <label className="title font-color">{label}</label>}
 
       <div className="placeholder center relative" onClick={toggleOpen}>
@@ -142,6 +142,7 @@ const SelectInputApi = ({
               key={span._id || i}
               btnStyleType="outlined"
               btnType="delete"
+              className="selected-value"
             >
               {typeof span === "string" ? span : optionLabel(span)}
             </Button>
@@ -155,7 +156,7 @@ const SelectInputApi = ({
           </Button>
         )
       )}
-      {errorText && <p className="color-red">{errorText}</p>}
+      {errorText && <p className="field-error">{errorText}</p>}
     </div>
   );
 };

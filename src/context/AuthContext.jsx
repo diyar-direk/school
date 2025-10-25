@@ -10,37 +10,49 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
 import Loader from "../components/Loader";
+import { roles } from "../constants/enums";
+import { endPoints } from "../constants/endPoints";
+import { pagesRoute } from "../constants/pagesRoute";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
+  const [userDetails, setUserDetails] = useState(null);
+  const [userLoading, setUserLoading] = useState(true);
 
   const nav = useNavigate();
 
-  const [userDetails, setUserDetails] = useState(null);
-
   const logout = useCallback(() => {
     setUserDetails(null);
-    Cookies.remove("school-token");
+    Cookies.remove("accessToken");
     nav("/login");
   }, [nav]);
-  const token = Cookies.get("school-token");
 
   useEffect(() => {
+    let isRefreshing = false;
+    let refreshSubscribers = [];
+
+    const onRefreshed = (newToken) => {
+      refreshSubscribers.forEach((cb) => cb(newToken));
+      refreshSubscribers = [];
+    };
+
+    const addSubscriber = (cb) => {
+      refreshSubscribers.push(cb);
+    };
+
     const requestInterceptor = axiosInstance.interceptors.request.use(
       (config) => {
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
+        const accessToken = Cookies.get("accessToken");
+        if (accessToken) {
+          config.headers.Authorization = `Bearer ${accessToken}`;
         }
-        if (config.method !== "get") {
-          setLoading(true);
-        }
+        if (config.method !== "get") setLoading(true);
         return config;
       },
       (error) => {
         setLoading(false);
-
         return Promise.reject(error);
       }
     );
@@ -50,22 +62,68 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
         if (response.config.method !== "get") {
           const message =
-            response?.data?.message || "Operation done successfully";
-
+            response?.data?.message || "Operation done successfully ✅";
           toast.success(message);
         }
         return response;
       },
-      (error) => {
+      async (error) => {
         setLoading(false);
+        const originalRequest = error.config;
+        const status = error.response?.status;
+
+        if ((status === 401 || status === 403) && !originalRequest._retry) {
+          originalRequest._retry = true;
+
+          const hasRefreshCookie = Cookies.get("refreshToken");
+
+          if (!hasRefreshCookie) {
+            logout();
+            return Promise.reject(error);
+          }
+
+          if (isRefreshing) {
+            return new Promise((resolve) => {
+              addSubscriber((newToken) => {
+                originalRequest.headers.Authorization = `Bearer ${newToken}`;
+                resolve(axiosInstance(originalRequest));
+              });
+            });
+          }
+
+          isRefreshing = true;
+          try {
+            const { data } = await axiosInstance.post(
+              endPoints["refresh-token"],
+              {},
+              { withCredentials: true }
+            );
+
+            const newAccessToken = data.accessToken;
+
+            Cookies.set("accessToken", newAccessToken);
+            axiosInstance.defaults.headers.common.Authorization =
+              "Bearer " + newAccessToken;
+
+            onRefreshed(newAccessToken);
+
+            return axiosInstance(originalRequest);
+          } catch (err) {
+            logout();
+            return Promise.reject(err);
+          } finally {
+            isRefreshing = false;
+          }
+        }
+
         const message =
           error?.response?.data?.message ||
           error?.data?.message ||
           "Something went wrong";
         toast.error(message);
-        if (error.status === 401 || error.status === 403) {
-          logout();
-        }
+
+        if (status === 403) logout();
+
         return Promise.reject(error);
       }
     );
@@ -74,25 +132,32 @@ export const AuthProvider = ({ children }) => {
       axiosInstance.interceptors.request.eject(requestInterceptor);
       axiosInstance.interceptors.response.eject(responseInterceptor);
     };
-  }, [token, logout]);
-
-  const [userLoading, setUserLoading] = useState(true);
+  }, [logout]);
 
   const getUserDetails = useCallback(async () => {
     try {
       setUserLoading(true);
-      const { data } = await axiosInstance.get(`users/profile`);
-      const isAdmin = data?.user?.role === "Admin";
-      const isTeacher = data?.user?.role === "Teacher";
-      const isStudent = data?.user?.role === "Student";
-      return setUserDetails({
+      const { data: user } = await axiosInstance.get(endPoints.profile);
+      const { user: data } = user;
+
+      const isAdmin = data.role === roles.admin;
+      const isTeacher = data.role === roles.teacher;
+      const isStudent = data.role === roles.student;
+
+      const myProfilePath = isAdmin
+        ? pagesRoute.admin.view(data?._id)
+        : isTeacher
+        ? pagesRoute.teacher.view(data?.profileId?._id)
+        : pagesRoute.student.view(data?.profileId?._id);
+
+      setUserDetails({
         isAdmin,
         isTeacher,
         isStudent,
-        ...data?.user,
+        myProfilePath,
+        ...data,
       });
     } catch (error) {
-      console.log(error);
     } finally {
       setUserLoading(false);
     }
@@ -113,4 +178,5 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
 export const useAuth = () => useContext(AuthContext);

@@ -87,7 +87,11 @@ const SelectOptionInput = ({
   };
 
   return (
-    <div className="select-input" ref={containerRef} onKeyDown={handleKeyDown}>
+    <div
+      className="select-input inp"
+      ref={containerRef}
+      onKeyDown={handleKeyDown}
+    >
       <label
         tabIndex={0}
         onFocus={() => setIsOpen(true)}

@@ -1,119 +1,34 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import "../../components/profile.css";
-import { Link, useParams } from "react-router-dom";
 import { Context } from "../../context/Context";
-import { useNavigate } from "react-router-dom/dist";
 import { useAuth } from "../../context/AuthContext";
-import axiosInstance from "../../utils/axios";
-
+import dateFormatter from "../../utils/dateFormatter";
+import { Link, useParams } from "react-router-dom";
+import { pagesRoute } from "./../../constants/pagesRoute";
+import { useQuery } from "@tanstack/react-query";
+import { endPoints } from "../../constants/endPoints";
+import APIClient from "./../../utils/ApiClient";
+const apiClient = new APIClient(endPoints.students);
 const StudentProfile = () => {
-  const [data, setData] = useState({
-    classId: "",
-    email: "",
-    firstName: "",
-    gender: "",
-    lastName: "",
-    middleName: "",
-    phoneNumber: "",
-    street: "",
-    city: "",
-    yearLevel: "",
-    dateOfBirth: "",
-    yearRepeated: [],
-    enrollmentDate: "",
-    guardianContact: {
-      name: "",
-      phone: "",
-      relationship: "",
-    },
+  const { isAdmin } = useAuth();
+  const { id } = useParams();
+  const { data } = useQuery({
+    queryKey: [endPoints.students, id],
+    queryFn: () => apiClient.getOne(id),
   });
+
   const context = useContext(Context);
   const language = context?.selectedLang;
-  const { userDetails } = useAuth();
-  const isAdmin = userDetails?.isAdmin;
-  const [yearRepeated, setYearRepeated] = useState([]);
 
-  const { id } = useParams();
-  const nav = useNavigate();
-  useEffect(() => {
-    axiosInstance
-      .get(`students/${id}`)
-      .then((res) => {
-        const data = res.data.data;
-        const birthDateCount = new Date(data.dateOfBirth);
-        const dateOfBirth = `${birthDateCount.getFullYear()}/${birthDateCount.getMonth()}/${birthDateCount.getDay()}`;
-        const enrollmentDateCount = new Date(data.enrollmentDate);
-        const enrollmentDate = `${enrollmentDateCount.getFullYear()}/${enrollmentDateCount.getMonth()}/${enrollmentDateCount.getDay()}`;
-
-        const updateForm = {
-          ...data,
-          email: data.contactInfo.email,
-          firstName: data.firstName,
-          gender: data.gender,
-          lastName: data.lastName,
-          middleName: data.middleName,
-          phoneNumber: data.contactInfo.phone,
-          yearLevel: data.yearLevel,
-          street: data.address.street,
-          city: data.address.city,
-          dateOfBirth: dateOfBirth,
-          enrollmentDate: enrollmentDate,
-          guardianContact: {
-            name: data.guardianContact.name,
-            phone: data.guardianContact.phone,
-            relationship: data.guardianContact.relationship,
-          },
-          yearRepeated: data.yearRepeated,
-        };
-        if (data.classId) {
-          updateForm.classId = data.classId.name;
-        }
-        setData(updateForm);
-        setYearRepeated(data.yearRepeated);
-      })
-      .catch((err) => {
-        console.log(err);
-        nav("/err-400");
-      });
-  }, []);
-  const [isEditing, setIsEditing] = useState(false);
-
-  const handleSave = async () => {
-    try {
-      const response = await axiosInstance.patch(
-        `students/increment-year/${id}`,
-        { yearRepeated }
-      );
-
-      const updatedYearRepeated = response.data.data.yearRepeated;
-      setYearRepeated(updatedYearRepeated);
-      setIsEditing(false);
-    } catch (err) {
-      console.error("Failed to update yearRepeated:", err);
-    }
-  };
-
-  const handleCancel = () => {
-    setYearRepeated(data.yearRepeated);
-    setIsEditing(false);
-  };
-
-  const handleInputChange = (index, field, value) => {
-    setYearRepeated((prev) =>
-      prev.map((item, idx) =>
-        idx === index ? { ...item, [field]: value } : item
-      )
-    );
-  };
   return (
     <div className="container">
-      <h1 className="title"> {data.firstName + " " + data.lastName} </h1>
+      <h1 className="title"> {`${data?.firstName} ${data?.lastName}`} </h1>
       <div className="profile">
         <div className="image">
           <i className="photo fa-solid fa-user"></i>
           {isAdmin && (
-            <Link to={`/update_student/${id}`} className="center gap-10">
-              {language.students && language.students.edit_btn}
+            <Link to={pagesRoute.student.update(id)} className="center gap-10">
+              {language?.students?.edit_btn}
               <i className="fa-regular fa-pen-to-square"></i>
             </Link>
           )}
@@ -121,138 +36,57 @@ const StudentProfile = () => {
         <div className="info">
           {isAdmin && (
             <h2 className="name">
-              <Link to={`/update_student/${id}`}>
+              <Link to={pagesRoute.student.update(id)}>
                 <i className="fa-regular fa-pen-to-square"></i>
               </Link>
             </h2>
           )}
 
           <div className="flex">
-            <h2>{language.students && language.students.first_name} :</h2>
-            <p> {data.firstName} </p>
-          </div>
-          <div className="flex">
-            <h2>{language.students && language.students.middle_name} :</h2>
-            <p> {data.middleName} </p>
-          </div>
-          <div className="flex">
-            <h2>{language.students && language.students.last_name} :</h2>
-            <p> {data.lastName} </p>
-          </div>
-          <div className="flex">
-            <h2>{language.students && language.students.email} :</h2>
-            <p className="email">{data.email}</p>
-          </div>
-          <div className="flex">
-            <h2>{language.students && language.students.phone} :</h2>
-            <p>{data.phoneNumber}</p>
-          </div>
-          <div className="flex">
-            <h2>{language.students && language.students.gender} :</h2>
-            <p> {data.gender} </p>
-          </div>
-
-          <div className="flex">
-            <h2>{language.students && language.students.date_of_birth} :</h2>
-            <p> {data.dateOfBirth} </p>
-          </div>
-          <div className="flex">
-            <h2>{language.students && language.students.year_level} :</h2>
-            <p>{data.yearLevel}</p>
-          </div>
-          <div className="flex">
-            <h2>{language.students && language.students.classes} :</h2>
-            <p>{data.classId}</p>
-          </div>
-          <div className="flex">
-            <h2>{language.students && language.students.enrollment_date} :</h2>
-            <p>{data.enrollmentDate}</p>
-          </div>
-
-          <div className="flex">
-            <h2>{language.students && language.students.city} :</h2>
-            <p>{data.city}</p>
-          </div>
-          <div className="flex">
-            <h2>{language.students && language.students.street} :</h2>
-            <p>{data.street}</p>
-          </div>
-          <div className="flex">
-            <h2>{language.students && language.students.guardian} :</h2>
+            <h2>{"language?.students?.name"} :</h2>
             <p>
-              {data.guardianContact.relationship} :{data.guardianContact.name}{" "}
-              <br />
-              {data.guardianContact.phone}
+              {data?.firstName} {data?.middleName} {data?.lastName}
             </p>
           </div>
-          <div className="flex student-reapet">
-            {isEditing ? (
-              <>
-                {/* Editable Title */}
-                <h2>{language.students.years_repeated}:</h2>
-                <div>
-                  {/* Editable Year Data */}
-                  {yearRepeated?.map((e, index) => (
-                    <div className=" collumn" key={index}>
-                      <label className="font-color">
-                        {language.students?.year || "Year"}:{" "}
-                        <span>{e.yearLevel} </span>
-                      </label>
-                      <label className="font-color">
-                        {language.students?.repeated_count || "Repeated Count"}:{" "}
-                        <input
-                          type="number"
-                          className="student-inp"
-                          value={e.yearCount}
-                          onChange={(event) =>
-                            handleInputChange(
-                              index,
-                              "yearCount",
-                              event.target.value
-                            )
-                          }
-                        />
-                      </label>
-                    </div>
-                  ))}
-                </div>
-                <div className="flex wrap gap-10">
-                  {/* Buttons to Save or Cancel */}
-                  <button className="student-save stu-btn" onClick={handleSave}>
-                    {language.students?.save_btn}
-                  </button>
-                  <button
-                    className="student-cancel stu-btn"
-                    onClick={handleCancel}
-                  >
-                    {language.students?.cancel_btn}
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                {/* Read Mode */}
-                <h2>{language.students.years_repeated} :</h2>
-                <p>
-                  {yearRepeated?.map((e, index) => (
-                    <React.Fragment key={index}>
-                      {`${language.students?.year || "Year"} : ${
-                        e.yearLevel
-                      }; ${
-                        language.students?.repeated_count || "Repeated Count"
-                      }: ${e.yearCount}`}
-                      <br />
-                    </React.Fragment>
-                  ))}
-                </p>
-                {isAdmin && (
-                  <i
-                    className="fa-regular fa-pen-to-square font-color c-pointer"
-                    onClick={() => setIsEditing(true)}
-                  ></i>
-                )}
-              </>
-            )}
+          <div className="flex">
+            <h2>{language?.students?.gender} :</h2>
+            <p> {data?.gender} </p>
+          </div>
+
+          <div className="flex">
+            <h2>{language?.students?.date_of_birth} :</h2>
+            <p> {dateFormatter(data?.dateOfBirth)} </p>
+          </div>
+
+          <div className="flex">
+            <h2>{language?.students?.email} :</h2>
+            <p className="email">{data?.email}</p>
+          </div>
+          <div className="flex">
+            <h2>{language?.students?.phone} :</h2>
+            <p>{data?.phoneNumber}</p>
+          </div>
+
+          <div className="flex">
+            <h2>{language?.students?.enrollment_date} :</h2>
+            <p>{dateFormatter(data?.enrollmentDate)}</p>
+          </div>
+
+          <div className="flex">
+            <h2>{"language?.students?.guardianName"} :</h2>
+            <p>{data?.guardianName}</p>
+          </div>
+          <div className="flex">
+            <h2>{"language?.students?.guardianRelationship"} :</h2>
+            <p>{data?.guardianRelationship}</p>
+          </div>
+          <div className="flex">
+            <h2>{"language?.students?.guardianPhone"} :</h2>
+            <p>{data?.guardianPhone}</p>
+          </div>
+          <div className="flex">
+            <h2>{"language?.students?.created_at"} :</h2>
+            <p>{dateFormatter(data?.createdAt, "fullDate")}</p>
           </div>
         </div>
       </div>

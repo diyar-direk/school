@@ -4,18 +4,16 @@ import { useContext, useEffect, useState } from "react";
 import { Context } from "../../context/Context";
 import { useAuth } from "../../context/AuthContext";
 import useDarkMode from "../../hooks/useDarkMode";
+import navbarLinks from "./navbarLinks";
 
 const Navbar = () => {
   const nav = useNavigate();
   const context = useContext(Context);
   const language = context?.selectedLang;
   const { userDetails, logout } = useAuth();
-  const isAdmin = userDetails?.isAdmin;
-  const isStudent = userDetails?.isStudent;
-  const id = userDetails?._id;
-  const ProfilePath = `profile/${id}`;
   const name =
     userDetails?.profileId?.firstName + " " + userDetails?.profileId?.lastName;
+  const { myProfilePath } = userDetails;
 
   const location = useLocation();
 
@@ -53,6 +51,7 @@ const Navbar = () => {
       main && main.classList.toggle("div-open");
     }
   };
+
   const { changeMode } = useDarkMode();
 
   useEffect(() => {
@@ -93,47 +92,41 @@ const Navbar = () => {
     context.setLanguage(e.target.dataset.lang);
   };
 
-  let pages = [
-    { name: language?.navBar?.exam_schedule, path: "exams_schedule" },
-    { name: language?.navBar?.exam_results, path: "exams_result" },
-    { name: language?.navBar?.attendance, path: "attendence" },
-    { name: language?.navBar?.time_table, path: "time_table" },
-    { name: language?.navBar?.subjects, path: "subjects" },
-    { name: language?.navBar?.classes, path: "classes" },
-    { name: language?.navBar?.my_profile, path: ProfilePath },
-    { name: language?.navBar?.all_quiz, path: "all_quizzes" },
-  ];
-  if (!isStudent) {
-    pages.push(
-      { name: language?.navBar?.all_students, path: "all_students" },
-      { name: language?.navBar?.all_teachers, path: "all_teachers" }
-    );
-  }
-  if (isAdmin) {
-    pages.push(
-      { name: language?.navBar?.all_admins, path: "all_admins" },
-      { name: language?.navBar?.all_users, path: "all_users" },
-      { name: language?.navBar?.add_users, path: "add_user" },
-      { name: language?.navBar?.add_admins, path: "add_admin" },
-      { name: language?.navBar?.add_teacher, path: "add_teacher" },
-      { name: language?.navBar?.add_student, path: "add_student" },
-      { name: language?.navBar?.add_exam, path: "add_exam" },
-      { name: language?.navBar?.add_subjects, path: "subjects" },
-      { name: language?.navBar?.add_classes, path: "classes" },
-      { name: language?.navBar?.add_exam_results, path: "add_exam_result" },
-      { name: language?.navBar?.add_quiz, path: "add_quiz" }
-    );
-  }
+  const flattenNavbarLinks = (links, role, language) => {
+    const result = [];
+
+    const walk = (items) => {
+      items.forEach((item) => {
+        const canShow = item.showIf.includes(role);
+        if (!canShow) return;
+
+        if (item.type === "multi" && item.children) {
+          walk(item.children);
+        } else {
+          result.push({
+            name: item.title(language.navBar),
+            path:
+              typeof item.to === "function" ? item.to(myProfilePath) : item.to,
+          });
+        }
+      });
+    };
+
+    walk(links);
+    return result;
+  };
+
+  const pages = flattenNavbarLinks(navbarLinks, userDetails?.role, language);
 
   const search = () => {
-    let reasult = [];
+    let result = [];
     if (form.length > 1) {
       pages.forEach((e, i) => {
         if (
           e.name?.toLowerCase().includes(form.toLowerCase()) ||
-          e.path.toLowerCase().includes(form.toLowerCase())
+          e.path?.toLowerCase().includes(form.toLowerCase())
         ) {
-          reasult.push(
+          result.push(
             <Link key={i} onClick={() => setForm("")} to={e.path}>
               {e.name || "Unnamed"}
             </Link>
@@ -141,18 +134,20 @@ const Navbar = () => {
         }
       });
     }
-    if (reasult.length === 0) {
-      reasult.push(<p key={1}>{language?.navBar?.no_results}</p>);
+
+    if (result.length === 0) {
+      result.push(<p key={1}>{language?.navBar?.no_results}</p>);
     }
-    return reasult;
+
+    return result;
   };
 
   const searchClick = () => {
     if (form.length > 1) {
       const matchedPage = pages.find(
         (e) =>
-          e.name.toLocaleLowerCase().includes(form.toLowerCase()) ||
-          e.path.toLocaleLowerCase().includes(form.toLowerCase())
+          e.name?.toLowerCase().includes(form.toLowerCase()) ||
+          e.path?.toLowerCase().includes(form.toLowerCase())
       );
 
       if (matchedPage) {
@@ -188,7 +183,7 @@ const Navbar = () => {
             {form.length > 1 && <div className="results">{search()}</div>}
           </form>
           <div className="setting center">
-            <Link to={ProfilePath} className="info gap-10 center">
+            <Link to={myProfilePath} className="info gap-10 center">
               <i className="center photo fa-solid fa-user"></i>
               <article>
                 <h4>{name}</h4>
@@ -259,169 +254,47 @@ const Navbar = () => {
 
         <div className="flex-direction flex between gap-20">
           <div className="flex-direction flex gap-10">
-            <NavLink to={ProfilePath} className="w-100 justify-start center">
-              <i className="fa-regular fa-circle-user"></i>
-              <h1>{language.navBar && language.navBar.my_profile}</h1>
-            </NavLink>
-
-            {isAdmin && (
-              <div className="links">
-                <div onClick={openDiv} className="center">
-                  <i className="fa-solid fa-users"></i>
-                  <h1 className="flex-1">
-                    {language.navBar && language.navBar.users}
-                  </h1>
-                  <i className="arrow fa-solid fa-chevron-right"></i>
-                </div>
-                <article>
-                  <NavLink to={"/all_users"}>
-                    {language.navBar && language.navBar.all_users}
-                  </NavLink>
-                  <NavLink to={"/add_user"}>
-                    {language.navBar && language.navBar.add_users}
-                  </NavLink>
-                </article>
-              </div>
-            )}
-
-            {isAdmin && (
-              <div className="links">
-                <div onClick={openDiv} className="center">
-                  <i className="fa-solid fa-user-group"></i>
-                  <h1 className="flex-1">
-                    {language.navBar && language.navBar.admins}
-                  </h1>
-                  <i className="arrow fa-solid fa-chevron-right"></i>
-                </div>
-                <article>
-                  <NavLink to={"/all_admins"}>
-                    {language.navBar && language.navBar.all_admins}
-                  </NavLink>
-                  <NavLink to={"/add_admin"}>
-                    {language.navBar && language.navBar.add_admins}
-                  </NavLink>
-                </article>
-              </div>
-            )}
-
-            {!isStudent && (
-              <div className="links">
-                <div onClick={openDiv} className="center">
-                  <i className="fa-solid fa-people-group"></i>
-                  <h1 className="flex-1">
-                    {language.navBar && language.navBar.teachers}
-                  </h1>
-                  <i className="arrow fa-solid fa-chevron-right"></i>
-                </div>
-                <article>
-                  <NavLink to={"/all_teachers"}>
-                    {language.navBar && language.navBar.all_teachers}
-                  </NavLink>
-                  {isAdmin && (
-                    <NavLink to={"/add_teacher"}>
-                      {language.navBar && language.navBar.add_teacher}
+            {navbarLinks?.map((link) => {
+              if (link.showIf.includes(userDetails?.role)) {
+                if (link.type === "single")
+                  return (
+                    <NavLink
+                      key={link.to}
+                      to={
+                        typeof link.to === "function"
+                          ? link.to(myProfilePath)
+                          : link.to
+                      }
+                      className="w-100 justify-start center"
+                    >
+                      {link.icon}
+                      <h1>{link.title(language?.navBar)}</h1>
                     </NavLink>
-                  )}
-                </article>
-              </div>
-            )}
-            {!isStudent && (
-              <div className="links">
-                <div onClick={openDiv} className="center">
-                  <i className="fa-solid fa-children"></i>
-                  <h1 className="flex-1">
-                    {language.navBar && language.navBar.students}
-                  </h1>
-                  <i className="arrow fa-solid fa-chevron-right"></i>
-                </div>
-                <article>
-                  <NavLink to={"/all_students"}>
-                    {language.navBar && language.navBar.all_students}
-                  </NavLink>
-                  {isAdmin && (
-                    <NavLink to={"/add_student"}>
-                      {language.navBar && language.navBar.add_student}
-                    </NavLink>
-                  )}
-                </article>
-              </div>
-            )}
-
-            <div className="links">
-              <div onClick={openDiv} className="center">
-                <i className="fa-solid fa-list-check"></i>
-                <h1 className="flex-1">
-                  {language.navBar && language.navBar.exam}
-                </h1>
-                <i className="arrow fa-solid fa-chevron-right"></i>
-              </div>
-              <article>
-                <NavLink to={"/exams_schedule"}>
-                  {language.navBar && language.navBar.exam_schedule}
-                </NavLink>
-                {isAdmin && (
-                  <NavLink to={"/add_exam"}>
-                    {language.navBar && language.navBar.add_exam}
-                  </NavLink>
-                )}
-                <NavLink to={"/exams_result"}>
-                  {language.navBar && language.navBar.exam_results}
-                </NavLink>
-                {isAdmin && (
-                  <NavLink to={"/add_exam_result"}>
-                    {language.navBar && language.navBar.add_exam_results}
-                  </NavLink>
-                )}
-              </article>
-            </div>
-
-            <div className="links">
-              <div onClick={openDiv} className="center">
-                <i className="fa-regular fa-calendar-days"></i>
-                <h1 className="flex-1">
-                  {language.navBar && language.navBar.activities}
-                </h1>
-                <i className="arrow fa-solid fa-chevron-right"></i>
-              </div>
-              <article>
-                {!isStudent && (
-                  <NavLink to={"/attendence"}>
-                    {language.navBar && language.navBar.attendance}
-                  </NavLink>
-                )}
-                <NavLink to={"/time_table"}>
-                  {language.navBar && language.navBar.time_table}
-                </NavLink>
-              </article>
-            </div>
-            <NavLink to={"/subjects"} className="w-100 justify-start center">
-              <i className="fa-solid fa-pen-nib"></i>
-              <h1> {language.navBar && language.navBar.subjects}</h1>
-            </NavLink>
-            <NavLink to={"/classes"} className="w-100 justify-start center">
-              <i className="fa-solid fa-school-flag"></i>
-              <h1>{language.navBar && language.navBar.classes}</h1>
-            </NavLink>
-
-            <div className="links">
-              <div onClick={openDiv} className="center">
-                <i className="fa-solid fa-pencil"></i>
-                <h1 className="flex-1">
-                  {language.navBar && language.navBar.quiz}
-                </h1>
-                <i className="arrow fa-solid fa-chevron-right"></i>
-              </div>
-              <article>
-                <NavLink to={"/all_quizzes"}>
-                  {language.navBar && language.navBar.all_quiz}
-                </NavLink>
-                {isAdmin && (
-                  <NavLink to={"/add_quiz"}>
-                    {language.navBar && language.navBar.add_quiz}
-                  </NavLink>
-                )}
-              </article>
-            </div>
+                  );
+                else
+                  return (
+                    <div className="links" key={link.title}>
+                      <div onClick={openDiv} className="center">
+                        {link.icon}
+                        <h1 className="flex-1">
+                          {link.title(language?.navBar)}
+                        </h1>
+                        <i className="arrow fa-solid fa-chevron-right" />
+                      </div>
+                      <article>
+                        {link.children.map(
+                          (child) =>
+                            child.showIf.includes(userDetails?.role) && (
+                              <NavLink to={child.to} key={child.to}>
+                                {child.title(language?.navBar)}
+                              </NavLink>
+                            )
+                        )}
+                      </article>
+                    </div>
+                  );
+              }
+            })}
           </div>
           <h3 onClick={logout} className="log-out center c-pointer aside">
             <i className="fa-solid fa-right-from-bracket"></i>

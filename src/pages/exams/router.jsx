@@ -8,6 +8,7 @@ const AddExam = lazy(() => import("./AddExam"));
 const UpdateExamSchedule = lazy(() => import("./UpdateExamSchedule"));
 const ExamResult = lazy(() => import("./ExamResult"));
 const AddExamResult = lazy(() => import("./AddExamResult"));
+const UpdateExamResult = lazy(() => import("./UpdateExamResult"));
 export const examRouter = [
   {
     path: pagesRoute.exam.page,
@@ -22,7 +23,7 @@ export const examRouter = [
     ),
   },
   {
-    path: pagesRoute.exam.update,
+    path: pagesRoute.exam.update(),
     element: (
       <AllowedTo roles={[roles.admin]}>
         <UpdateExamSchedule />
@@ -38,6 +39,14 @@ export const examRouter = [
     element: (
       <AllowedTo roles={[roles.admin]}>
         <AddExamResult />
+      </AllowedTo>
+    ),
+  },
+  {
+    path: pagesRoute.examResult.update(),
+    element: (
+      <AllowedTo roles={[roles.admin]}>
+        <UpdateExamResult />
       </AllowedTo>
     ),
   },

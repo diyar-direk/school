@@ -1,493 +1,109 @@
-import { useContext, useEffect, useState } from "react";
-import "../../components/form.css";
-import FormLoading from "../../components/FormLoading";
-import SendData from "../../components/response/SendData";
+import { useContext } from "react";
 import { Context } from "../../context/Context";
-import Cookies from "js-cookie";
-import axiosInstance, { baseURL } from "../../utils/axios";
+import Input from "../../components/inputs/Input";
+import { useFormik } from "formik";
+import Button from "../../components/buttons/Button";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import APIClient from "./../../utils/ApiClient";
+import { endPoints } from "../../constants/endPoints";
+import { teacherSchema } from "./../../schemas/teacher";
+import SelectOptionInput from "../../components/inputs/SelectOptionInput";
+import { genders } from "../../constants/enums";
+import { useNavigate } from "react-router-dom";
 
+const apiClient = new APIClient(endPoints.teachers);
 const AddTeacher = () => {
-  const [form, setForm] = useState({
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    email: "",
-    phoneNumber: "",
-    gender: "",
-    yearLevel: "",
-    subjects: "",
-    classes: "",
-  });
   const context = useContext(Context);
+  const nav = useNavigate();
+  const formik = useFormik({
+    initialValues: {
+      firstName: "",
+      lastName: "",
+      middleName: "",
+      email: "",
+      gender: "",
+      phoneNumber: "",
+    },
+    validationSchema: teacherSchema,
+    onSubmit: (values) => handleSubmit.mutate(values),
+  });
+  const queryClient = useQueryClient();
+  const handleSubmit = useMutation({
+    mutationFn: (data) => apiClient.addData(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries([endPoints.teachers]);
+      nav(-1);
+    },
+  });
+
   const language = context?.selectedLang;
-  const token = Cookies.get("school-token");
-  const [loading, setLoading] = useState(false);
-  const [DataError, setDataError] = useState(false);
-  const [subject, setSubject] = useState([]);
-  const [subjectName, setSubjectName] = useState([]);
-  const [classes, setClasses] = useState([]);
 
-  const [classesName, setClassesName] = useState([]);
-
-  const [overlay, setOverlay] = useState(false);
-  const [response, setResponse] = useState(false);
-
-  const responseFun = (complete = false) => {
-    setOverlay(true);
-
-    complete === true
-      ? setResponse(true)
-      : complete === "reapeted data"
-      ? setResponse(400)
-      : setResponse(false);
-    window.onclick = () => {
-      setOverlay(false);
-    };
-    setTimeout(() => {
-      setOverlay(false);
-    }, 3000);
-  };
-
-  const handleForm = (e) => {
-    setForm({ ...form, [e.target.id]: e.target.value });
-  };
-  const handleClick = (e) => {
-    e.stopPropagation();
-    e.target.classList.toggle("active");
-  };
-
-  function selectMale(e) {
-    setForm({ ...form, gender: e.target.dataset.gender });
-    setDataError(false);
-  }
-
-  function selectYears(e) {
-    setForm({
-      ...form,
-      yearLevel: [...new Set([...form.yearLevel, e.target.dataset.level])],
-    });
-    setDataError(false);
-  }
-  function selectSubjects(e, id) {
-    setForm({
-      ...form,
-      subjects: [...new Set([...form.subjects, id])],
-    });
-    setSubjectName((prev) => [...new Set([...prev, e.target.dataset.subject])]);
-    setDataError(false);
-  }
-  function selectClasses(e, id) {
-    setForm({
-      ...form,
-      classes: [...new Set([...form.classes, id])],
-    });
-    setClassesName((prev) => [...new Set([...prev, e.target.dataset.classes])]);
-    setDataError(false);
-  }
-
-  function createYearLeve() {
-    let h2 = [];
-    for (let index = 1; index < 13; index++) {
-      h2.push(
-        <h2 key={index} onClick={selectYears} data-level={index}>
-          {index}
-        </h2>
-      );
-    }
-    return h2;
-  }
-
-  useEffect(() => {
-    const fetchSubjects = async () => {
-      try {
-        const allSubjects = await Promise.all(
-          form.yearLevel &&
-            form.yearLevel.map(async (yearLevel) => {
-              const response = await fetch(
-                `${baseURL}subjects?yearLevel=${yearLevel}&active=true`,
-                {
-                  headers: {
-                    Authorization: "Bearer " + token,
-                  },
-                }
-              );
-              if (!response.ok) {
-                throw new Error(
-                  `Error fetching data for year level ${yearLevel}`
-                );
-              }
-              const data = await response.json();
-              return data.data;
-            })
-        );
-        setSubject(allSubjects.flat()); // Flatten the array if needed
-      } catch (error) {
-        console.error("Failed to fetch subjects:", error);
-      }
-    };
-
-    fetchSubjects();
-  }, [form.yearLevel]);
-
-  useEffect(() => {
-    const fetchClasses = async () => {
-      try {
-        const allSubjects = await Promise.all(
-          form.yearLevel &&
-            form.yearLevel.map(async (yearLevel) => {
-              const response = await fetch(
-                `${baseURL}classes?yearLevel=${yearLevel}&active=true`,
-                {
-                  headers: {
-                    Authorization: "Bearer " + token,
-                  },
-                }
-              );
-              if (!response.ok) {
-                throw new Error(
-                  `Error fetching data for year level ${yearLevel}`
-                );
-              }
-              const data = await response.json();
-              return data.data;
-            })
-        );
-        setClasses(allSubjects.flat()); // Flatten the array if needed
-      } catch (error) {
-        console.error("Failed to fetch subjects:", error);
-      }
-    };
-
-    fetchClasses();
-  }, [form.yearLevel]);
-
-  const handelSubmit = async (e) => {
-    e.preventDefault();
-    if (!form.gender)
-      setDataError(`${language.error && language.error.please_choose_gender}`);
-    else if (!form.yearLevel)
-      setDataError(
-        `${language.error && language.error.please_choose_yearLevel}`
-      );
-    else if (!form.classes)
-      setDataError(`${language.error && language.error.please_choose_class}`);
-    else if (!form.subjects)
-      setDataError(`${language.error && language.error.please_choose_subject}`);
-    else {
-      try {
-        const data = await axiosInstance.post("teachers", form);
-        setForm({
-          firstName: "",
-          middleName: "",
-          lastName: "",
-          email: "",
-          phoneNumber: "",
-          gender: "",
-          yearLevel: "",
-          subjects: "",
-          classes: "",
-        });
-        if (data.status === 201) {
-          responseFun(true);
-        }
-      } catch (error) {
-        console.log(error);
-        if (error.status === 400) responseFun("reapeted data");
-        else responseFun(false);
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
   return (
-    <main>
-      <div
-        className={`${context?.isClosed ? "closed" : ""}  dashboard-container`}
-      >
-        <div className="container relative">
-          {overlay && (
-            <SendData
-              data={`${language.error && language.error.teacher}`}
-              response={response}
-            />
-          )}
-          <h1 className="title">
-            {language.teachers && language.teachers.add_teacher_btn}
-          </h1>
-          <form onSubmit={handelSubmit} className=" relative dashboard-form">
-            {loading && <FormLoading />}
-            <h1>
-              {language.teachers && language.teachers.please_complete_form}
-            </h1>
-            <div className="flex wrap ">
-              <div className="flex flex-direction">
-                <label htmlFor="firstName">
-                  {language.teachers && language.teachers.first_name}
-                </label>
-                <input
-                  onInput={handleForm}
-                  value={form.firstName}
-                  type="text"
-                  id="firstName"
-                  className="inp"
-                  required
-                  placeholder={
-                    language.teachers &&
-                    language.teachers.first_name_placeholder
-                  }
-                />
-              </div>
-              <div className="flex flex-direction">
-                <label htmlFor="middleName">
-                  {language.teachers && language.teachers.middle_name}
-                </label>
-                <input
-                  required
-                  onInput={handleForm}
-                  value={form.middleName}
-                  type="text"
-                  id="middleName"
-                  className="inp"
-                  placeholder={
-                    language.teachers &&
-                    language.teachers.middle_name_placeholder
-                  }
-                />
-              </div>
-              <div className="flex flex-direction">
-                <label htmlFor="lastName">
-                  {language.teachers && language.teachers.last_name}
-                </label>
-                <input
-                  required
-                  onInput={handleForm}
-                  value={form.lastName}
-                  type="text"
-                  id="lastName"
-                  placeholder={
-                    language.teachers && language.teachers.last_name_placeholder
-                  }
-                  className="inp"
-                />
-              </div>
+    <div className="container relative">
+      <h1 className="title">{language?.teachers?.add_teachers}</h1>
 
-              <div className="flex flex-direction">
-                <label>
-                  {language.teachers && language.teachers.gender_input}
-                </label>
-                <div className="selecte">
-                  <div onClick={handleClick} className="inp">
-                    {form.gender
-                      ? form.gender
-                      : `${
-                          language.teachers &&
-                          language.teachers.gender_placeholder
-                        }`}
-                  </div>
-                  <article>
-                    <h2 onClick={selectMale} data-gender="Male">
-                      {language.teachers && language.teachers.male}
-                    </h2>
-                    <h2 onClick={selectMale} data-gender="Female">
-                      {language.teachers && language.teachers.female}
-                    </h2>
-                  </article>
-                </div>
-              </div>
+      <form onSubmit={formik.handleSubmit} className="relative dashboard-form">
+        <h1>{language.exams && language.exams.please_complete_form}</h1>
+        <div className="flex wrap">
+          <Input
+            title={language?.teachers?.first_name}
+            onInput={formik.handleChange}
+            value={formik.values.firstName}
+            placeholder={language?.teachers?.first_name_placeholder}
+            name="firstName"
+            errorText={formik.errors?.firstName}
+          />
+          <Input
+            title={language?.teachers?.middle_name}
+            onInput={formik.handleChange}
+            value={formik.values.middleName}
+            placeholder={language?.teachers?.middle_name_placeholder}
+            name="middleName"
+            errorText={formik.errors?.middleName}
+          />
+          <Input
+            title={language?.teachers?.last_name}
+            onInput={formik.handleChange}
+            value={formik.values.lastName}
+            placeholder={language?.teachers?.last_name_placeholder}
+            name="lastName"
+            errorText={formik.errors?.lastName}
+          />
 
-              <div className="flex flex-direction">
-                <label htmlFor="email">
-                  {language.teachers && language.teachers.email}
-                </label>
-                <input
-                  required
-                  onInput={handleForm}
-                  value={form.email}
-                  type="email"
-                  id="email"
-                  placeholder={
-                    language.teachers && language.teachers.email_placeholder
-                  }
-                  className="inp"
-                />
-              </div>
-              <div className="flex flex-direction">
-                <label htmlFor="phoneNumber">
-                  {language.teachers && language.teachers.phone_number_input}
-                </label>
-                <input
-                  required
-                  onInput={handleForm}
-                  value={form.phoneNumber}
-                  type="text"
-                  id="phoneNumber"
-                  className="inp"
-                  placeholder={
-                    language.teachers &&
-                    language.teachers.phone_number_placeholder
-                  }
-                />
-              </div>
-              <div className="flex flex-direction">
-                <label>
-                  {language.teachers && language.teachers.year_level}
-                </label>
-                <div className="selecte">
-                  <div onClick={handleClick} className="inp">
-                    {form.yearLevel.length > 0
-                      ? form.yearLevel.join(" , ")
-                      : `${
-                          language.teachers &&
-                          language.teachers.year_level_placeholder
-                        }`}
-                  </div>
-                  <article className="grid-3">{createYearLeve()}</article>
-                  <div className="selected-value flex">
-                    {form.yearLevel &&
-                      form.yearLevel.map((e) => (
-                        <span
-                          onClick={() => {
-                            const fltr = form.yearLevel.filter(
-                              (ele) => ele !== e
-                            );
-                            setClassesName([]);
-                            setSubjectName([]);
-                            setForm({
-                              ...form,
-                              yearLevel: fltr,
-                              classes: "",
-                              subjects: "",
-                            });
-                          }}
-                          key={e}
-                        >
-                          {e}
-                        </span>
-                      ))}
-                  </div>
-                </div>
-              </div>
-              {form.yearLevel && (
-                <>
-                  <div className="flex flex-direction">
-                    <label>
-                      {language.teachers && language.teachers.classes}
-                    </label>
-                    <div className="selecte">
-                      <div onClick={handleClick} className="inp">
-                        {classesName.length > 0
-                          ? classesName.join(" , ")
-                          : `${
-                              language.teachers &&
-                              language.teachers.classes_placeholder
-                            }`}
-                      </div>
-                      <article>
-                        {classes.length > 0 ? (
-                          classes.map((e, i) => {
-                            return (
-                              <h2
-                                onClick={(event) => selectClasses(event, e._id)}
-                                data-classes={`${e.yearLevel} : ${e.name}`}
-                                key={i}
-                              >
-                                {`${e.yearLevel} : ${e.name}`}
-                              </h2>
-                            );
-                          })
-                        ) : (
-                          <h2>loading</h2>
-                        )}
-                      </article>
-                      <div className="selected-value flex">
-                        {classesName.map((e, i) => {
-                          return (
-                            <span
-                              onClick={() => {
-                                const nameFltr = classesName.filter(
-                                  (name) => name !== e
-                                );
-                                setClassesName(nameFltr);
-                                const idFltr = form.classes.filter(
-                                  (e, index) => index !== i
-                                );
-                                setForm({ ...form, classes: idFltr });
-                              }}
-                              key={i}
-                            >
-                              {e}
-                            </span>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-direction">
-                    <label>
-                      {language.teachers && language.teachers.subjects}
-                    </label>
-                    <div className="selecte">
-                      <div onClick={handleClick} className="inp">
-                        {subjectName.length > 0
-                          ? subjectName.join(" , ")
-                          : `${
-                              language.teachers &&
-                              language.teachers.subjects_placeholder
-                            }`}
-                      </div>
-                      <article>
-                        {subject.length > 0 ? (
-                          subject.map((e, i) => {
-                            return (
-                              <h2
-                                onClick={(event) =>
-                                  selectSubjects(event, e._id)
-                                }
-                                data-subject={e.name}
-                                key={i}
-                              >
-                                {e.name}
-                              </h2>
-                            );
-                          })
-                        ) : (
-                          <h2>loading</h2>
-                        )}
-                      </article>
-                      <div className="selected-value flex">
-                        {subjectName.map((e, i) => {
-                          return (
-                            <span
-                              onClick={() => {
-                                const nameFltr = subjectName.filter(
-                                  (name) => name !== e
-                                );
-                                setSubjectName(nameFltr);
-                                const idFltr = form.subjects.filter(
-                                  (_, index) => index !== i
-                                );
-                                setForm({ ...form, subjects: idFltr });
-                              }}
-                              key={i}
-                            >
-                              {e}
-                            </span>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-            {DataError && <p className="error">{DataError}</p>}
-            <button className="btn">
-              {language.teachers && language.teachers.save_btn}
-            </button>
-          </form>
+          <SelectOptionInput
+            placeholder={
+              formik.values?.gender || language?.teachers?.gender_placeholder
+            }
+            label="gender"
+            options={[
+              { text: "male", value: genders.male },
+              { text: "female", value: genders.female },
+            ]}
+            onSelectOption={(opt) => formik.setFieldValue("gender", opt.value)}
+            errorText={formik?.errors?.gender}
+          />
+          <Input
+            title={language?.teachers?.phone_number}
+            onInput={formik.handleChange}
+            value={formik.values.phoneNumber}
+            placeholder={language?.teachers?.phone_number_placeholder}
+            name="phoneNumber"
+            errorText={formik.errors?.phoneNumber}
+          />
+          <Input
+            title={language?.teachers?.email}
+            onInput={formik.handleChange}
+            value={formik.values.email}
+            placeholder={language?.teachers?.email_placeholder}
+            name="email"
+            errorText={formik.errors?.email}
+          />
         </div>
-      </div>
-    </main>
+        <Button type="submit" isSending={handleSubmit.isPending}>
+          {language?.exams?.save_btn}
+        </Button>
+      </form>
+    </div>
   );
 };
 

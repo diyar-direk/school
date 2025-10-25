@@ -48,6 +48,7 @@ div.table-header > article .columns-visible {
   min-width: 20%;
   border-radius: 4px;
   animation: fadeIn 0.2s linear;
+  z-index: 2;
 }
 div.table-header > article .columns-visible > input {
   background-color: var(--section-color);
@@ -105,8 +106,6 @@ div.table thead th {
   font-size: 19px;
   color: white;
   padding: 10px;
-  min-width: 70px;
-  max-width: 100px;
 }
 div.table thead th.a-z .sort {
   rotate: -90deg;
@@ -252,7 +251,9 @@ tr:not(:last-of-type) td {
   cursor: pointer;
   border: none;
 }
-.pagination .page-container button:not(.btn) {
+
+.pagination .page-container button:not(.btn).active,
+.pagination .page-container button:not(.btn):hover {
   color: white;
   background-color: var(--main-color);
 }

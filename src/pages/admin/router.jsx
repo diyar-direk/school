@@ -6,7 +6,7 @@ import { roles } from "../../constants/enums";
 const AllAdmins = lazy(() => import("./AllAdmins"));
 const AddAdmin = lazy(() => import("./AddAdmin"));
 const UpdateAdmin = lazy(() => import("./UpdateAdmin"));
-const Profile = lazy(() => import("../Profile"));
+const AdminProfile = lazy(() => import("./AdminProfile"));
 export const adminRouter = [
   {
     path: pagesRoute.admin.page,
@@ -33,10 +33,10 @@ export const adminRouter = [
     ),
   },
   {
-    path: pagesRoute.admin.profile,
+    path: pagesRoute.admin.view(),
     element: (
       <AllowedTo roles={[roles.admin]}>
-        <Profile />
+        <AdminProfile />
       </AllowedTo>
     ),
   },

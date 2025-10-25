@@ -115,17 +115,19 @@ form.dashboard-form .inp {
   min-width: 300px;
 }
 
-form.dashboard-form .btn {
+form.dashboard-form .btn:not(.selected-value) {
   margin-top: 20px;
 }
 form.dashboard-form .btn.question {
   width: auto;
 }
-form.dashboard-form button {
-  margin-top: 30px;
-  font-size: 23px;
-  width: 150px;
+.array-of-values {
+  display: flex;
+  gap: 5px;
+  white-space: nowrap;
+  overflow-x: auto;
 }
+
 i.password {
   cursor: pointer;
 }
@@ -142,7 +144,7 @@ i.password {
 .overlay form.dashboard-form .flex-direction {
   gap: 10px;
 }
-.overlay form.dashboard-form .btn {
+.overlay form.dashboard-form .btn:not(.selected-value) {
   margin: 0;
   width: 100%;
   font-size: 20px;
@@ -285,10 +287,6 @@ form.quize i.false:hover {
     font-size: 17px;
   }
 
-  form.dashboard-form button {
-    font-size: 20px;
-    width: 100%;
-  }
   form.dashboard-form .flex-direction {
     min-width: 250px;
   }
@@ -340,9 +338,6 @@ form.quize i.false:hover {
   form.dashboard-form > div {
     gap: 10px;
   }
-  form.dashboard-form button {
-    font-size: 16px;
-  }
 
   form.dashboard-form {
     padding: 20px;
@@ -383,9 +378,6 @@ form.quize i.false:hover {
     font-size: 14px;
   }
 
-  form.dashboard-form button {
-    font-size: 15px;
-  }
   .add-question {
     font-size: 12px;
   }

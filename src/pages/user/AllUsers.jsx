@@ -14,6 +14,7 @@ import APIClient from "../../utils/ApiClient";
 import Filters from "../../components/table_toolbar/Filters";
 import SelectOptionInput from "../../components/inputs/SelectOptionInput";
 import { formatInputsData } from "./../../utils/formatInputsData";
+import AllowedTo from "../../components/AllowedTo";
 
 const apiClient = new APIClient(endPoints.users);
 
@@ -24,14 +25,14 @@ const column = [
     name: "createdAt",
     headerName: "createdAt",
     sort: true,
-    getCell: ({ row }) => dateFormatter(row.createdAt),
+    getCell: ({ row }) => dateFormatter(row.createdAt, "fullDate"),
   },
   {
     name: "updatedAt",
     headerName: "updatedAt",
     sort: true,
     hidden: true,
-    getCell: ({ row }) => dateFormatter(row.updatedAt),
+    getCell: ({ row }) => dateFormatter(row.updatedAt, "fullDate"),
   },
 ];
 const AllUsers = () => {
@@ -59,15 +60,17 @@ const AllUsers = () => {
       <div className="table-container">
         <TableToolBar>
           <Search setSearch={setSearch} />
-          <Delete
-            queryKey={endPoints.users}
-            data={data}
-            selectedItems={selectedItems}
-            setPage={setPage}
-            setSelectedItems={setSelectedItems}
-            endPoint={endPoints.users}
-          />
-          <Add path={pagesRoute.user.add} />
+          <AllowedTo roles={[roles.admin]}>
+            <Delete
+              queryKey={endPoints.users}
+              data={data}
+              selectedItems={selectedItems}
+              setPage={setPage}
+              setSelectedItems={setSelectedItems}
+              endPoint={endPoints.users}
+            />
+            <Add path={pagesRoute.user.add} />
+          </AllowedTo>
           <Filters>
             <SelectOptionInput
               placeholder={role?.text || "all roles"}

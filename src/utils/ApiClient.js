@@ -67,7 +67,7 @@ class APIClient {
   };
   deleteAll = async (ids) => {
     await axiosInstance.patch(`${this.endPoint}`, {
-      data: { ids },
+      ids,
     });
   };
   deleteOne = async ({ id }) => {

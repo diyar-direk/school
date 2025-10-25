@@ -5,7 +5,7 @@ import { roles } from "../../constants/enums";
 const AllTeachers = lazy(() => import("./AllTeachers"));
 const AddTeacher = lazy(() => import("./AddTeacher"));
 const UpdateTeacher = lazy(() => import("./UpdateTeacher"));
-const Profile = lazy(() => import("../Profile"));
+const TeacherProfile = lazy(() => import("./TeacherProfile"));
 
 export const teacherRouter = [
   {
@@ -25,7 +25,7 @@ export const teacherRouter = [
     ),
   },
   {
-    path: pagesRoute.teacher.update,
+    path: pagesRoute.teacher.update(),
     element: (
       <AllowedTo roles={[roles.admin]}>
         <UpdateTeacher />
@@ -33,10 +33,10 @@ export const teacherRouter = [
     ),
   },
   {
-    path: pagesRoute.teacher.profile,
+    path: pagesRoute.teacher.view(),
     element: (
-      <AllowedTo roles={[roles.admin]}>
-        <Profile />
+      <AllowedTo roles={[roles.admin, roles.teacher]}>
+        <TeacherProfile />
       </AllowedTo>
     ),
   },

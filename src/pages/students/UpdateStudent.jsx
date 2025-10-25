@@ -1,536 +1,170 @@
-import { useContext, useEffect, useRef, useState } from "react";
-import "../../components/form.css";
-import FormLoading from "../../components/FormLoading";
-import SendData from "../../components/response/SendData";
-import { useNavigate, useParams } from "react-router-dom";
+import { useContext } from "react";
 import { Context } from "../../context/Context";
-import axiosInstance from "../../utils/axios";
+import Input from "../../components/inputs/Input";
+import { useFormik } from "formik";
+import Button from "../../components/buttons/Button";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import APIClient from "./../../utils/ApiClient";
+import { endPoints } from "../../constants/endPoints";
+import SelectOptionInput from "../../components/inputs/SelectOptionInput";
+import { genders } from "../../constants/enums";
+import { useNavigate, useParams } from "react-router-dom";
+import { studentSchema } from "./../../schemas/student";
+import dateFormatter from "./../../utils/dateFormatter";
+
+const apiClient = new APIClient(endPoints.students);
 
 const UpdateStudent = () => {
   const { id } = useParams();
   const context = useContext(Context);
   const nav = useNavigate();
-  const language = context?.selectedLang;
-  const [form, setForm] = useState({
-    contactInfo: { email: "", phone: "" },
-    address: {
-      street: "",
-      city: "",
+  const { data } = useQuery({
+    queryKey: [endPoints.students, id],
+    queryFn: () => apiClient.getOne(id),
+  });
+  const formik = useFormik({
+    initialValues: {
+      firstName: data?.firstName || "",
+      middleName: data?.middleName || "",
+      lastName: data?.lastName || "",
+      dateOfBirth: data?.dateOfBirth || "",
+      phone: data?.phone || "",
+      email: data?.email || "",
+      gender: data?.gender || "",
+      address: data?.address || "",
+      enrollmentDate: dateFormatter(data?.enrollmentDate || new Date()),
+      guardianName: data?.guardianName || "",
+      guardianPhone: data?.guardianPhone || "",
+      guardianRelationship: data?.guardianRelationship || "",
     },
-    guardianContact: {
-      name: "",
-      phone: "",
-      relationship: "",
+    validationSchema: studentSchema,
+    onSubmit: (values) => handleSubmit.mutate(values),
+    enableReinitialize: true,
+  });
+  const queryClient = useQueryClient();
+  const handleSubmit = useMutation({
+    mutationFn: (data) => apiClient.updateData({ data, id }),
+    onSuccess: () => {
+      queryClient.invalidateQueries([endPoints.students]);
+      nav(-1);
     },
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    gender: "",
-    yearLevel: "",
-    dateOfBirth: "",
-    enrollmentDate: "",
-    classId: "",
   });
 
-  const [loading, setLoading] = useState(false);
-  const [DataError, setDataError] = useState(false);
-  const [classes, setClasses] = useState([]);
-  const [classesName, setClassesName] = useState(false);
-  const oldYear = useRef(null);
-  const [overlay, setOverlay] = useState(false);
-  const [response, setResponse] = useState(false);
-
-  useEffect(() => {
-    axiosInstance
-      .get(`students/${id}`)
-      .then((res) => {
-        const data = res.data.data;
-
-        const dateOfBirth = new Date(data.dateOfBirth)
-          .toISOString()
-          .slice(0, 16);
-        const enrollmentDate = new Date(data.enrollmentDate)
-          .toISOString()
-          .slice(0, 16);
-
-        const updatedForm = {
-          ...form,
-          contactInfo: {
-            email: data.contactInfo.email,
-            phone: data.contactInfo.phone,
-          },
-          address: {
-            street: data.address.street,
-            city: data.address.city,
-          },
-          guardianContact: {
-            name: data.guardianContact.name,
-            phone: data.guardianContact.phone,
-            relationship: data.guardianContact.relationship,
-          },
-          firstName: data.firstName,
-          middleName: data.middleName,
-          lastName: data.lastName,
-          gender: data.gender,
-          yearLevel: data.yearLevel,
-          dateOfBirth: dateOfBirth,
-          enrollmentDate: enrollmentDate,
-        };
-        oldYear.current = data.yearLevel;
-
-        if (data.classId) {
-          setClassesName(data.classId.name);
-          updatedForm.classId = data.classId._id;
-        }
-
-        setForm(updatedForm);
-      })
-      .catch((err) => {
-        console.log(err);
-        nav("/err-400");
-      });
-  }, []);
-
-  const responseFun = (complete = false) => {
-    setOverlay(true);
-
-    complete === true
-      ? setResponse(true)
-      : complete === "reapeted data"
-      ? setResponse(400)
-      : setResponse(false);
-    window.onclick = () => {
-      setOverlay(false);
-    };
-    setTimeout(() => {
-      setOverlay(false);
-    }, 3000);
-  };
-
-  const handleForm = (e) => {
-    const { id, value } = e.target;
-
-    if (id.includes(".")) {
-      const [parentKey, childKey] = id.split(".");
-      setForm((prevForm) => ({
-        ...prevForm,
-        [parentKey]: {
-          ...prevForm[parentKey],
-          [childKey]: value,
-        },
-      }));
-    } else {
-      setForm((prevForm) => ({
-        ...prevForm,
-        [id]: value,
-      }));
-    }
-  };
-
-  const handleClick = (e) => {
-    e.stopPropagation();
-    e.target.classList.toggle("active");
-  };
-
-  function selectMale(e) {
-    setForm({ ...form, gender: e.target.dataset.gender });
-    setDataError(false);
-  }
-
-  function selectYears(e) {
-    setForm({
-      ...form,
-      yearLevel: e.target.dataset.level,
-    });
-    setDataError(false);
-  }
-
-  function selectClasses(e, id) {
-    setForm({
-      ...form,
-      classId: id,
-    });
-    setClassesName(e.target.dataset.classes);
-    setDataError(false);
-  }
-
-  function createYearLeve() {
-    let h2 = [];
-    for (let index = 1; index < 13; index++) {
-      h2.push(
-        <h2 key={index} onClick={selectYears} data-level={index}>
-          {index}
-        </h2>
-      );
-    }
-    return h2;
-  }
-
-  useEffect(() => {
-    if (oldYear.current !== form.yearLevel) {
-      setClassesName("");
-      setForm({ ...form, classId: "" });
-    }
-
-    form.yearLevel &&
-      axiosInstance
-        .get(`classes?yearLevel=${form.yearLevel}&active=true`)
-        .then((res) => {
-          setClasses(res.data.data);
-        });
-  }, [form.yearLevel]);
-
-  const handelSubmit = async (e) => {
-    e.preventDefault();
-    if (!form.gender)
-      setDataError(`${language.error && language.error.please_choose_gender}`);
-    else if (!form.yearLevel)
-      setDataError(
-        `${language.error && language.error.please_choose_yearLevel}`
-      );
-    else if (!form.classId)
-      setDataError(`${language.error && language.error.please_choose_class}`);
-    else {
-      try {
-        const data = await axiosInstance.patch(`students/${id}`, form);
-        setForm({
-          contactInfo: { email: "", phone: "" },
-          address: {
-            street: "",
-            city: "",
-          },
-          guardianContact: {
-            name: "",
-            phone: "",
-            relationship: "",
-          },
-          firstName: "",
-          middleName: "",
-          lastName: "",
-          gender: "",
-          yearLevel: "",
-          dateOfBirth: "",
-          enrollmentDate: "",
-          classId: "",
-        });
-        if (data.status === 200) {
-          responseFun(true);
-          nav("/all_students");
-        }
-      } catch (error) {
-        console.log(error);
-        if (error.status === 400) responseFun("reapeted data");
-        else responseFun(false);
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
+  const language = context?.selectedLang;
 
   return (
-    <main>
-      <div
-        className={`${context?.isClosed ? "closed" : ""}  dashboard-container`}
-      >
-        <div className="container relative">
-          {overlay && (
-            <SendData
-              data={`${language.error && language.error.student}`}
-              response={response}
-            />
-          )}
-          <h1 className="title">
-            {" "}
-            {language.students && language.students.update_student}{" "}
-          </h1>
-          <form onSubmit={handelSubmit} className=" relative dashboard-form">
-            {loading && <FormLoading />}
-            <h1>
-              {language.students && language.students.please_complete_form}{" "}
-            </h1>
-            <div className="flex wrap ">
-              <div className="flex flex-direction">
-                <label htmlFor="firstName">
-                  {language.students && language.students.first_name}{" "}
-                </label>
-                <input
-                  onInput={handleForm}
-                  value={form.firstName}
-                  type="text"
-                  id="firstName"
-                  className="inp"
-                  required
-                  placeholder={
-                    language.students &&
-                    language.students.first_name_placeholder
-                  }
-                />
-              </div>
-              <div className="flex flex-direction">
-                <label htmlFor="middleName">
-                  {language.students && language.students.middle_name}
-                </label>
-                <input
-                  required
-                  onInput={handleForm}
-                  value={form.middleName}
-                  type="text"
-                  id="middleName"
-                  className="inp"
-                  placeholder={
-                    language.students &&
-                    language.students.middle_name_placeholder
-                  }
-                />
-              </div>
-              <div className="flex flex-direction">
-                <label htmlFor="lastName">
-                  {language.students && language.students.last_name}
-                </label>
-                <input
-                  required
-                  onInput={handleForm}
-                  value={form.lastName}
-                  type="text"
-                  id="lastName"
-                  placeholder={
-                    language.students && language.students.last_name_placeholder
-                  }
-                  className="inp"
-                />
-              </div>
+    <div className="container relative">
+      <form onSubmit={formik.handleSubmit} className="relative dashboard-form">
+        <h1>{language.exams && language.exams.please_complete_form}</h1>
+        <div className="flex wrap">
+          <Input
+            title={language?.teachers?.first_name}
+            onInput={formik.handleChange}
+            value={formik.values.firstName}
+            placeholder={language?.teachers?.first_name_placeholder}
+            name="firstName"
+            errorText={formik.errors?.firstName}
+          />
+          <Input
+            title={language?.teachers?.middle_name}
+            onInput={formik.handleChange}
+            value={formik.values.middleName}
+            placeholder={language?.teachers?.middle_name_placeholder}
+            name="middleName"
+            errorText={formik.errors?.middleName}
+          />
+          <Input
+            title={language?.teachers?.last_name}
+            onInput={formik.handleChange}
+            value={formik.values.lastName}
+            placeholder={language?.teachers?.last_name_placeholder}
+            name="lastName"
+            errorText={formik.errors?.lastName}
+          />
 
-              <div className="flex flex-direction">
-                <label>
-                  {language.students && language.students.gender_input}
-                </label>
-                <div className="selecte">
-                  <div onClick={handleClick} className="inp">
-                    {form.gender
-                      ? form.gender
-                      : `${
-                          language.students &&
-                          language.students.gender_placeholder
-                        }`}
-                  </div>
-                  <article>
-                    <h2 onClick={selectMale} data-gender="Male">
-                      {language.students && language.students.male}
-                    </h2>
-                    <h2 onClick={selectMale} data-gender="Female">
-                      {language.students && language.students.female}
-                    </h2>
-                  </article>
-                </div>
-              </div>
+          <SelectOptionInput
+            placeholder={
+              formik.values?.gender || language?.teachers?.gender_placeholder
+            }
+            label="gender"
+            options={[
+              { text: "male", value: genders.male },
+              { text: "female", value: genders.female },
+            ]}
+            onSelectOption={(opt) => formik.setFieldValue("gender", opt.value)}
+            errorText={formik?.errors?.gender}
+          />
+          <Input
+            title={"language?.teachers?.birth_date"}
+            onInput={formik.handleChange}
+            value={formik.values.dateOfBirth}
+            name="dateOfBirth"
+            type="date"
+            errorText={formik.errors?.dateOfBirth}
+          />
 
-              <div className="flex flex-direction">
-                <label htmlFor="contactInfo.email">
-                  {language.students && language.students.email}
-                </label>
-                <input
-                  required
-                  onInput={handleForm}
-                  value={form.contactInfo.email}
-                  type="email"
-                  id="contactInfo.email"
-                  placeholder={
-                    language.students && language.students.email_placeholder
-                  }
-                  className="inp"
-                />
-              </div>
-
-              <div className="flex flex-direction">
-                <label htmlFor="contactInfo.phone">
-                  {language.students && language.students.phone_number_input}
-                </label>
-                <input
-                  required
-                  onInput={handleForm}
-                  value={form.contactInfo.phone}
-                  type="text"
-                  id="contactInfo.phone"
-                  className="inp"
-                  placeholder={
-                    language.students &&
-                    language.students.phone_number_placeholder
-                  }
-                />
-              </div>
-
-              <div className="flex flex-direction">
-                <label htmlFor="dateOfBirth">
-                  {language.students && language.students.date_of_birth}
-                </label>
-                <input
-                  required
-                  onInput={handleForm}
-                  value={form.dateOfBirth.slice(0, 10)}
-                  type="date"
-                  id="dateOfBirth"
-                  className="inp"
-                />
-              </div>
-
-              <div className="flex flex-direction">
-                <label htmlFor="address.city">
-                  {language.students && language.students.city}
-                </label>
-                <input
-                  required
-                  onInput={handleForm}
-                  value={form.address.city}
-                  type="text"
-                  id="address.city"
-                  className="inp"
-                  placeholder={
-                    language.students && language.students.city_placeholder
-                  }
-                />
-              </div>
-
-              <div className="flex flex-direction">
-                <label htmlFor="address.street">
-                  {language.students && language.students.street}
-                </label>
-                <input
-                  required
-                  onInput={handleForm}
-                  value={form.address.street}
-                  type="text"
-                  id="address.street"
-                  className="inp"
-                  placeholder={
-                    language.students && language.students.street_placeholder
-                  }
-                />
-              </div>
-
-              <div className="flex flex-direction">
-                <label htmlFor="guardianContact.name">
-                  {language.students && language.students.guardian_name}
-                </label>
-                <input
-                  required
-                  onInput={handleForm}
-                  value={form.guardianContact.name}
-                  type="text"
-                  id="guardianContact.name"
-                  className="inp"
-                  placeholder={
-                    language.students &&
-                    language.students.guardian_name_placeholder
-                  }
-                />
-              </div>
-
-              <div className="flex flex-direction">
-                <label htmlFor="guardianContact.relationship">
-                  {language.students && language.students.relationship}
-                </label>
-                <input
-                  required
-                  onInput={handleForm}
-                  value={form.guardianContact.relationship}
-                  type="text"
-                  id="guardianContact.relationship"
-                  className="inp"
-                  placeholder={
-                    language.students &&
-                    language.students.relationship_placeholder
-                  }
-                />
-              </div>
-
-              <div className="flex flex-direction">
-                <label htmlFor="guardianContact.phone">
-                  {language.students && language.students.guardian_phone_input}
-                </label>
-                <input
-                  required
-                  onInput={handleForm}
-                  value={form.guardianContact.phone}
-                  type="text"
-                  id="guardianContact.phone"
-                  className="inp"
-                  placeholder={
-                    language.students &&
-                    language.students.guardian_phone_placeholder
-                  }
-                />
-              </div>
-
-              <div className="flex flex-direction">
-                <label>
-                  {language.students && language.students.year_level}
-                </label>
-                <div className="selecte">
-                  <div onClick={handleClick} className="inp">
-                    {form.yearLevel
-                      ? form.yearLevel
-                      : `${
-                          language.students &&
-                          language.students.year_level_placeholder
-                        }`}
-                  </div>
-                  <article className="grid-3">{createYearLeve()}</article>
-                </div>
-              </div>
-              {form.yearLevel && (
-                <>
-                  <div className="flex flex-direction">
-                    <label>
-                      {language.students && language.students.classes}
-                    </label>
-                    <div className="selecte">
-                      <div onClick={handleClick} className="inp">
-                        {classesName
-                          ? classesName
-                          : `${
-                              language.students &&
-                              language.students.classes_placeholder
-                            }`}
-                      </div>
-                      <article>
-                        {classes.map((e, i) => {
-                          return (
-                            <h2
-                              onClick={(event) => selectClasses(event, e._id)}
-                              data-classes={`${e.yearLevel} : ${e.name}`}
-                              key={i}
-                            >
-                              {`${e.yearLevel} : ${e.name}`}
-                            </h2>
-                          );
-                        })}
-                      </article>
-                    </div>
-                  </div>
-                </>
-              )}
-              <div className="flex flex-direction">
-                <label htmlFor="enrollmentDate">
-                  {language.students && language.students.enrollment_date}
-                </label>
-                <input
-                  required
-                  onInput={handleForm}
-                  value={form.enrollmentDate.slice(0, 10)}
-                  type="date"
-                  id="enrollmentDate"
-                  className="inp"
-                />
-              </div>
-            </div>
-            {DataError && <p className="error">{DataError}</p>}
-            <button className="btn">
-              {language.students && language.students.save_btn}{" "}
-            </button>
-          </form>
+          <Input
+            title={language?.teachers?.phone_number}
+            onInput={formik.handleChange}
+            value={formik.values?.phone}
+            placeholder={language?.teachers?.phone_number_placeholder}
+            name="phone"
+            errorText={formik.errors?.phone}
+          />
+          <Input
+            title={language?.teachers?.email}
+            onInput={formik.handleChange}
+            value={formik.values.email}
+            placeholder={language?.teachers?.email_placeholder}
+            name="email"
+            errorText={formik.errors?.email}
+          />
+          <Input
+            title={"language?.teachers?.address"}
+            onInput={formik.handleChange}
+            value={formik.values.address}
+            placeholder={"language?.teachers?.address_placeholder"}
+            name="address"
+            errorText={formik.errors?.address}
+          />
+          <Input
+            title={"language?.teachers?.enrollmentDate"}
+            onInput={formik.handleChange}
+            value={formik.values.enrollmentDate}
+            name="enrollmentDate"
+            type="date"
+            errorText={formik.errors?.enrollmentDate}
+          />
+          <Input
+            title={"language?.teachers?.guardianName"}
+            onInput={formik.handleChange}
+            value={formik.values.guardianName}
+            placeholder={"language?.teachers?.guardianName_placeholder"}
+            name="guardianName"
+            errorText={formik.errors?.guardianName}
+          />
+          <Input
+            title={"language?.teachers?.guardianPhone"}
+            onInput={formik.handleChange}
+            value={formik.values.guardianPhone}
+            placeholder={"language?.teachers?.guardianPhone_placeholder"}
+            name="guardianPhone"
+            errorText={formik.errors?.guardianPhone}
+          />
+          <Input
+            title={"language?.teachers?.guardianRelationship"}
+            onInput={formik.handleChange}
+            value={formik.values.guardianRelationship}
+            placeholder={"language?.teachers?.guardianRelationship_placeholder"}
+            name="guardianRelationship"
+            errorText={formik.errors?.guardianRelationship}
+          />
         </div>
-      </div>
-    </main>
+        <Button type="submit" isSending={handleSubmit.isPending}>
+          {language?.exams?.save_btn}
+        </Button>
+      </form>
+    </div>
   );
 };
 

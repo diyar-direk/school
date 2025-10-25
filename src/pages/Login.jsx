@@ -11,6 +11,7 @@ import axiosInstance from "../utils/axios";
 import { endPoints } from "./../constants/endPoints";
 import { useAuth } from "../context/AuthContext";
 import { pagesRoute } from "./../constants/pagesRoute";
+import { roles } from "../constants/enums";
 
 const Login = () => {
   const nav = useNavigate();
@@ -30,24 +31,35 @@ const Login = () => {
       try {
         const getToken = await axiosInstance.post(endPoints.login, values);
 
-        const token = getToken.data.token;
-        Cookies.set("school-token", token);
+        const accessToken = getToken.data.accessToken;
+        Cookies.set("accessToken", accessToken);
 
         const profile = await axiosInstance.get(endPoints.profile, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${accessToken}` },
         });
+
         const data = profile.data.user;
-        const isAdmin = data.role.includes("Admin");
-        const isTeacher = data.role.includes("Teacher");
-        const isStudent = data.role.includes("Student");
+        const refreshToken = data.refreshToken;
+        Cookies.set("refreshToken", refreshToken);
+        const isAdmin = data.role === roles.admin;
+        const isTeacher = data.role === roles.teacher;
+        const isStudent = data.role === roles.student;
+
+        const myProfilePath = isAdmin
+          ? pagesRoute.admin.view(data?._id)
+          : isTeacher
+          ? pagesRoute.teacher.view(data?.profileId?._id)
+          : pagesRoute.student.view(data?.profileId?._id);
+
         setUserDetails({
           isAdmin: isAdmin,
           isTeacher: isTeacher,
           isStudent: isStudent,
-          token: token,
+          myProfilePath,
           ...data,
         });
-        nav(`${pagesRoute.admin.profile}/${data?._id}`);
+
+        nav(myProfilePath);
       } catch (error) {}
     },
   });

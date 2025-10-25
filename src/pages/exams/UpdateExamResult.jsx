@@ -3,7 +3,7 @@ import { Context } from "../../context/Context";
 import Input from "../../components/inputs/Input";
 import { useFormik } from "formik";
 import Button from "../../components/buttons/Button";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import APIClient from "./../../utils/ApiClient";
 import { endPoints } from "../../constants/endPoints";
 import SelectInputApi from "./../../components/inputs/SelectInputApi";
@@ -11,22 +11,29 @@ import { formatInputsData } from "./../../utils/formatInputsData";
 import { examResultSchema } from "./../../schemas/examResult";
 import SelectOptionInput from "../../components/inputs/SelectOptionInput";
 import { examTypes } from "../../constants/enums";
+import { useParams } from "react-router-dom";
 const apiClient = new APIClient(endPoints["exam-results"]);
-const AddExamResult = () => {
+const UpdateExamResult = () => {
+  const { id } = useParams();
+  const { data } = useQuery({
+    queryKey: [endPoints["exam-results"], id],
+    queryFn: () => apiClient.getOne(id),
+  });
   const context = useContext(Context);
   const formik = useFormik({
     initialValues: {
-      studentId: "",
-      type: "",
-      examId: "",
-      score: "",
+      studentId: data?.studentId || "",
+      type: data?.type || "",
+      examId: data?.examId || "",
+      score: data?.score || "",
     },
     validationSchema: examResultSchema,
     onSubmit: (values) => handleSubmit.mutate(formatInputsData(values)),
+    enableReinitialize: true,
   });
   const queryClient = useQueryClient();
   const handleSubmit = useMutation({
-    mutationFn: (data) => apiClient.addData(data),
+    mutationFn: (data) => apiClient.updateData({ id, data }),
     onSuccess: () => {
       queryClient.invalidateQueries([endPoints["exam-results"]]);
       formik.resetForm();
@@ -93,4 +100,4 @@ const AddExamResult = () => {
   );
 };
 
-export default AddExamResult;
+export default UpdateExamResult;

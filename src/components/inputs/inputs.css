@@ -9,13 +9,15 @@
   cursor: text;
 }
 
-.inp .input-wrapper {
+.inp .input-wrapper,
+.inp textarea {
   border-radius: 4px;
   padding: 10px;
   background-color: var(--section-color);
   display: flex;
   align-items: center;
   gap: 10px;
+  border: none;
 }
 
 .inp div input {
@@ -39,7 +41,7 @@
 .select-input .placeholder {
   background-color: var(--section-color);
   border-radius: 4px;
-  padding: 6px 10px;
+  padding: 10px;
   cursor: pointer;
   color: var(--font-color);
   font-size: 14px;

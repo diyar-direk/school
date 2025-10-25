@@ -52,20 +52,19 @@ const AdminProfile = () => {
           <div className="flex-1">
             <h2 className="flex gap-10">
               <p>
-                {" "}
                 {data.teachersFemale
                   ? `${data.teachersFemale + data.teachersMale}`
                   : "..."}
               </p>
-              {language.dashboard && language.dashboard.teachers}
+              {language?.dashboard?.teachers}
             </h2>
             <div className="flex gap-20">
               <h3 className="center flex-direction">
-                {language.dashboard && language.dashboard.female} <br />
+                {language?.dashboard?.female} <br />
                 <span>{data.teachersFemale ? data.teachersFemale : "..."}</span>
               </h3>
               <h3 className="center flex-direction">
-                {language.dashboard && language.dashboard.male} <br />
+                {language?.dashboard?.male} <br />
                 <span>{data.teachersMale ? data.teachersMale : "..."}</span>
               </h3>
             </div>
@@ -76,20 +75,19 @@ const AdminProfile = () => {
           <div className="flex-1">
             <h2 className="flex gap-10">
               <p>
-                {" "}
                 {data.studentsMale
                   ? `${data.studentsFemale + data.studentsMale}`
                   : "..."}
               </p>
-              {language.dashboard && language.dashboard.stundets}
+              {language?.dashboard?.stundets}
             </h2>
             <div className="flex gap-20">
               <h3 className="center flex-direction">
-                {language.dashboard && language.dashboard.female} <br />
+                {language?.dashboard?.female} <br />
                 <span>{data.studentsFemale ? data.studentsFemale : "..."}</span>
               </h3>
               <h3 className="center flex-direction">
-                {language.dashboard && language.dashboard.male} <br />
+                {language?.dashboard?.male} <br />
                 <span>{data.studentsMale ? data.studentsMale : "..."}</span>
               </h3>
             </div>
@@ -100,7 +98,7 @@ const AdminProfile = () => {
           <div className="flex-1">
             <h2 className="flex gap-10">
               <p> {data.classes ? data.classes : "..."}</p>
-              {language.dashboard && language.dashboard.classes}
+              {language?.dashboard?.classes}
             </h2>
           </div>
         </article>
@@ -117,21 +115,21 @@ const AdminProfile = () => {
           </h2>
 
           <div className="flex">
-            <h2>{language.dashboard && language.dashboard.first_name}</h2>
+            <h2>{language?.dashboard?.first_name}</h2>
             <p> {data.firstName} </p>
           </div>
 
           <div className="flex">
-            <h2>{language.dashboard && language.dashboard.last_name}</h2>
+            <h2>{language?.dashboard?.last_name}</h2>
             <p> {data.lastName} </p>
           </div>
           <div className="flex">
-            <h2>{language.dashboard && language.dashboard.role}</h2>
+            <h2>{language?.dashboard?.role}</h2>
             <p> {data.role} </p>
           </div>
 
           <div className="flex">
-            <h2>{language.dashboard && language.dashboard.email}</h2>
+            <h2>{language?.dashboard?.email}</h2>
             <p className="email"> {data.email} </p>
           </div>
         </div>

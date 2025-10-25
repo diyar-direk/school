@@ -1,0 +1,108 @@
+import { useState } from "react";
+import Table from "../../components/table/Table";
+import TableToolBar from "../../components/table_toolbar/TableToolBar";
+import Search from "../../components/table_toolbar/Search";
+import Delete from "../../components/table_toolbar/Delete";
+import Add from "../../components/table_toolbar/Add";
+import APIClient from "./../../utils/ApiClient";
+import { endPoints } from "./../../constants/endPoints";
+import { useQuery } from "@tanstack/react-query";
+import { limit, roles } from "../../constants/enums";
+import dateFormatter from "../../utils/dateFormatter";
+import Button from "../../components/buttons/Button";
+import { Link } from "react-router-dom";
+import { spritObject } from "./../../utils/spritObject";
+import { pagesRoute } from "../../constants/pagesRoute";
+import AllowedTo from "../../components/AllowedTo";
+const apiClient = new APIClient(endPoints.courses);
+
+const column = [
+  { name: "name", headerName: "name", sort: true },
+  { name: "code", headerName: "code" },
+  { name: "description", headerName: "description", hidden: true },
+  {
+    name: "teacherId",
+    headerName: "teachers",
+    getCell: ({ row }) =>
+      spritObject(row.teacherId, (e) => (
+        <Link to={pagesRoute.teacher.view(e._id)} className="visit-text">
+          {e.firstName}
+        </Link>
+      )),
+    allowedTo: [roles.admin, roles.teacher],
+  },
+  {
+    name: "createdAt",
+    headerName: "createdAt",
+    sort: true,
+    getCell: ({ row }) => dateFormatter(row.createdAt,"fullDate"),
+  },
+  {
+    name: "updatedAt",
+    headerName: "updatedAt",
+    sort: true,
+    hidden: true,
+    getCell: ({ row }) => dateFormatter(row.updatedAt,"fullDate"),
+  },
+  {
+    name: "actions",
+    headerName: "actions",
+    className: "center",
+    getCell: ({ row }) => (
+      <Link to={pagesRoute.courses.update(row._id)}>
+        <Button>
+          <i className="fa-regular fa-pen-to-square"></i> update
+        </Button>
+      </Link>
+    ),
+    allowedTo: [roles.admin],
+  },
+];
+
+const Courses = () => {
+  const [page, setPage] = useState(1);
+  const [sort, setSort] = useState({});
+  const [search, setSearch] = useState("");
+  const { data, isFetching } = useQuery({
+    queryKey: [endPoints.courses, page, limit, sort, search],
+    queryFn: () => apiClient.getAll({ limit, page, sort, search }),
+  });
+
+  const [selectedItems, setSelectedItems] = useState(new Set());
+
+  return (
+    <div className="container">
+      <h1 className="title">subject</h1>
+      <div className="table-container flex-1">
+        <TableToolBar>
+          <Search setSearch={setSearch} />
+          <AllowedTo roles={[roles.admin]}>
+            <Delete
+              queryKey={endPoints.courses}
+              data={data}
+              selectedItems={selectedItems}
+              setPage={setPage}
+              setSelectedItems={setSelectedItems}
+              endPoint={endPoints.courses}
+            />
+            <Add path={pagesRoute.courses.add} />
+          </AllowedTo>
+        </TableToolBar>
+        <Table
+          colmuns={column}
+          currentPage={page}
+          data={data?.data}
+          dataLength={data?.totalCount}
+          loading={isFetching}
+          selectable
+          setPage={setPage}
+          selectedItems={selectedItems}
+          setSelectedItems={setSelectedItems}
+          setSort={setSort}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default Courses;
