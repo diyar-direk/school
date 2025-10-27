@@ -7,6 +7,7 @@ export const endPoints = {
   "delete-many": "delete-many",
   exams: "exams",
   courses: "courses",
+  "student-courses": "student-courses",
   teachers: "teachers",
   students: "students",
   "refresh-token": "users/refresh-token",

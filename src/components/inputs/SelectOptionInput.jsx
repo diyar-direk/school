@@ -1,41 +1,57 @@
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./inputs.css";
 import Button from "../buttons/Button";
+
 /**
- * @typedef utils
- * @property {array} options
- * @property {string} errorText
- * @property {string} label
- * @property {string} placeholder
- * @property {string} value
- * @property {()=> void} onIgnore
- * @property {()=> void} onSelectOption
- * @property {HTMLElement} addOption
+ * @typedef {Object} OptionItem
+ * @property {string} text - النص الذي سيُعرض داخل القائمة المنسدلة
+ * @property {any} [value] - القيمة المرتبطة بهذا الخيار (يمكن أن تكون أي نوع)
+ * @property {function(): void} [onSelectOption] - دالة اختيار مخصصة تُنفذ عند الضغط على هذا الخيار
+ * @property {Object} [props] - خصائص إضافية يمكن تمريرها لتخصيص كل خيار (className, style, إلخ)
  */
+
 /**
- *
- * @param {utils} props
+ * @typedef {Object} SelectOptionInputProps
+ * @property {string} label - عنوان الحقل
+ * @property {string} placeholder - النص المعروض عند عدم وجود قيمة محددة
+ * @property {OptionItem[]} options - قائمة الخيارات القابلة للعرض والاختيار
+ * @property {string} [value] - القيمة الحالية المحددة
+ * @property {function(OptionItem): void} onSelectOption - دالة تُستدعى عند اختيار أحد الخيارات
+ * @property {function(): void} [onIgnore] - دالة تُستدعى عند الضغط على زر الحذف
+ * @property {string} [errorText] - نص الخطأ لعرضه أسفل الحقل
+ * @property {React.ReactNode} [addOption] - عنصر إضافي يُعرض أعلى قائمة الخيارات (مثل زر "إضافة خيار")
+ * @property {Object} [optionListProps] - خصائص إضافية يمكن تمريرها إلى قائمة الخيارات (مثل style أو className)
+ * @property {Object} [wrapperProps] - خصائص إضافية يمكن تمريرها إلى الغلاف الرئيسي للمكون
+ */
+
+/**
+ * مكون لاختيار القيم من قائمة منسدلة قابلة للتخصيص
+ * @param {SelectOptionInputProps} props
  */
 const SelectOptionInput = ({
   label,
   placeholder,
   onIgnore,
   value,
-  options,
+  options = [],
   onSelectOption,
   errorText,
   addOption,
+  optionListProps = {},
+  wrapperProps = {},
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightIndex, setHighlightIndex] = useState(-1);
   const containerRef = useRef(null);
-  const toggelOptionArea = useCallback((e) => {
+
+  const toggleOptionArea = useCallback((e) => {
     e.stopPropagation();
     setIsOpen((prev) => !prev);
   }, []);
 
   const handleSelect = useCallback(
-    (option) => {
+    (option, e) => {
+      e?.stopPropagation();
       option.onSelectOption ? option.onSelectOption() : onSelectOption(option);
       setIsOpen(false);
       setHighlightIndex(-1);
@@ -86,41 +102,59 @@ const SelectOptionInput = ({
     }
   };
 
+  const optionListClassName = useMemo(
+    () => `options active ${optionListProps?.className || ""}`,
+    [optionListProps]
+  );
+
+  const wrapperClassName = useMemo(
+    () => `select-input inp ${wrapperProps?.className || ""}`,
+    [wrapperProps]
+  );
+
   return (
     <div
-      className="select-input inp"
+      {...wrapperProps}
       ref={containerRef}
       onKeyDown={handleKeyDown}
+      className={wrapperClassName}
     >
       <label
         tabIndex={0}
         onFocus={() => setIsOpen(true)}
-        onClick={toggelOptionArea}
+        onClick={toggleOptionArea}
         className="title"
       >
         {label}
       </label>
-      <div onClick={toggelOptionArea} className="placeholder center relative">
-        <span className="flex-1 ellipsis"> {placeholder}</span>
+
+      <div onClick={toggleOptionArea} className="placeholder center relative">
+        <span className="flex-1 ellipsis">{placeholder}</span>
         <i className="fa-solid fa-chevron-down"></i>
-        <article className={`${isOpen ? "active " : ""}options`}>
-          {addOption}
-          {options?.map((opt, index) => (
-            <h3
-              key={opt.text}
-              onClick={() => handleSelect(opt)}
-              className={highlightIndex === index ? "highlight" : ""}
-            >
-              {opt?.text}
-            </h3>
-          ))}
-        </article>
+
+        {isOpen && (
+          <article {...optionListProps} className={optionListClassName}>
+            {addOption}
+            {options?.map((opt, index) => (
+              <h3
+                key={opt.text || index}
+                onClick={(e) => handleSelect(opt, e)}
+                className={highlightIndex === index ? "highlight" : ""}
+                {...opt.props}
+              >
+                {opt.text}
+              </h3>
+            ))}
+          </article>
+        )}
       </div>
+
       {value && (
         <Button onClick={onIgnore} btnStyleType="outlined" btnType="delete">
           {value}
         </Button>
       )}
+
       {errorText && <p className="field-error">{errorText}</p>}
     </div>
   );

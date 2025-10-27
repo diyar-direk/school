@@ -11,7 +11,12 @@ const examTypes = {
   Exam: "Exam",
   Quiz: "Quiz",
 };
+const courseStatus = {
+  Active: "Active",
+  Completed: "Completed",
+  Dropped: "Dropped",
+};
 
 const limit = 10;
 
-export { roles, limit, genders, examTypes };
+export { roles, limit, genders, examTypes, courseStatus };
