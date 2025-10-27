@@ -1,0 +1,49 @@
+import "./teacher.css";
+import { useInfiniteFetch } from "./../../hooks/useInfiniteFetch";
+import { endPoints } from "./../../constants/endPoints";
+import { Link, useParams } from "react-router-dom";
+import { pagesRoute } from "../../constants/pagesRoute";
+const TeacherCourse = () => {
+  const { id } = useParams();
+  const { data, loadMoreRef, isFetching } = useInfiniteFetch({
+    endPoint: endPoints.courses,
+    teacherId: id,
+    fields: "name,code,description",
+  });
+  const courses = data?.pages?.[0]?.data;
+  if (courses?.length === 0 && !isFetching) return <h3> no course yet </h3>;
+
+  return (
+    <>
+      <div className="grid-3">
+        {courses?.map((e) => (
+          <Link
+            className="teacher-course"
+            key={e?._id}
+            to={pagesRoute.courses.view(e?._id)}
+          >
+            <div>
+              <h3>name</h3>
+              <span> {e?.name} </span>
+            </div>
+            <div>
+              <h3>code</h3>
+              <span> {e?.code} </span>
+            </div>
+            {e?.description && (
+              <div>
+                <h3>description</h3>
+                <span>{e?.description}</span>
+              </div>
+            )}
+          </Link>
+        ))}
+
+        <div ref={loadMoreRef} />
+      </div>
+      {isFetching && <h3> loading... </h3>}
+    </>
+  );
+};
+
+export default TeacherCourse;

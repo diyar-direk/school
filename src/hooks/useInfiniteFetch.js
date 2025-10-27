@@ -18,7 +18,9 @@ export const useInfiniteFetch = ({ endPoint, ...params }) => {
 
     getNextPageParam: (lastPage, allPages) => {
       const nextPage = allPages.length + 1;
-      return nextPage <= lastPage.totalPages ? nextPage : undefined;
+      const totalPages = Math.ceil(lastPage.totalCount / lastPage.limit);
+
+      return nextPage <= totalPages ? nextPage : undefined;
     },
   });
 

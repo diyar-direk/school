@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import "../../components/profile.css";
 import { Context } from "../../context/Context";
 import { useAuth } from "../../context/AuthContext";
@@ -8,6 +8,11 @@ import { pagesRoute } from "./../../constants/pagesRoute";
 import { useQuery } from "@tanstack/react-query";
 import { endPoints } from "../../constants/endPoints";
 import APIClient from "./../../utils/ApiClient";
+import StudentCourse from "./StudentCourse";
+import AddStudentCourse from "./AddStudentCourse";
+import { useInfiniteFetch } from "../../hooks/useInfiniteFetch";
+import AllowedTo from "./../../components/AllowedTo";
+import { roles } from "../../constants/enums";
 const apiClient = new APIClient(endPoints.students);
 const StudentProfile = () => {
   const { isAdmin } = useAuth();
@@ -19,6 +24,19 @@ const StudentProfile = () => {
 
   const context = useContext(Context);
   const language = context?.selectedLang;
+
+  const {
+    data: course,
+    isFetching,
+    loadMoreRef,
+  } = useInfiniteFetch({
+    endPoint: endPoints["student-courses"],
+    studentId: id,
+  });
+  const courses = course?.pages?.[0]?.data;
+
+  const [updatedCourse, setUpdatedCourse] = useState(null);
+  console.log(updatedCourse);
 
   return (
     <div className="container">
@@ -90,6 +108,28 @@ const StudentProfile = () => {
           </div>
         </div>
       </div>
+      <h1 className="title"> courses </h1>
+      <AllowedTo roles={[roles.admin]}>
+        <AddStudentCourse
+          studentId={id}
+          isUpdate={updatedCourse}
+          setIsUpdate={setUpdatedCourse}
+        />
+      </AllowedTo>
+      {courses?.length === 0 && !isFetching && <h3> no course yet </h3>}
+      <div className="grid-3" style={{ marginTop: "10px" }}>
+        {courses?.map((e) => (
+          <StudentCourse
+            key={e?._id}
+            data={e}
+            studentId={id}
+            setUpdatedCourse={setUpdatedCourse}
+          />
+        ))}
+
+        <div ref={loadMoreRef} />
+      </div>
+      {isFetching && <h3> loading... </h3>}
     </div>
   );
 };

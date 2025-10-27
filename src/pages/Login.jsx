@@ -16,7 +16,7 @@ import { roles } from "../constants/enums";
 const Login = () => {
   const nav = useNavigate();
   const context = useContext(Context);
-  const language = context && context.selectedLang;
+  const language = context?.selectedLang;
   const { setUserDetails } = useAuth();
   const formik = useFormik({
     initialValues: {
@@ -41,7 +41,6 @@ const Login = () => {
         });
 
         const data = profile.data.user;
-
         const isAdmin = data.role === roles.admin;
         const isTeacher = data.role === roles.teacher;
         const isStudent = data.role === roles.student;

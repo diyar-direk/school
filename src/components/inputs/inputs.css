@@ -116,3 +116,24 @@
 .highlight {
   background-color: var(--section-color);
 }
+.course-status.select-input.Completed .placeholder {
+  background-color: rgba(0, 0, 255, 0.134);
+  color: blue;
+}
+.course-status.select-input.Active .placeholder {
+  background-color: rgba(0, 128, 0, 0.067);
+  color: green;
+}
+.course-status.select-input.Dropped .placeholder {
+  color: red;
+  background-color: rgba(255, 0, 0, 0.119);
+}
+.course-status.select-input h3.completed {
+  color: blue;
+}
+.course-status.select-input h3.active {
+  color: green;
+}
+.course-status.select-input h3.dropped {
+  color: red;
+}

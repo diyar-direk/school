@@ -22,6 +22,7 @@ export const pagesRoute = {
     page: "/courses/all",
     add: "/courses/add",
     update: (id = ":id") => `/courses/update/${id}`,
+    view: (id = ":id") => `/courses/view/${id}`,
   },
   teacher: {
     page: "/teacher/all",

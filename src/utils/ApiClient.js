@@ -75,7 +75,7 @@ class APIClient {
   };
   addData = async (data) => {
     const res = await axiosInstance.post(this.endPoint, data);
-    return res.data;
+    return res?.data?.data || res?.data;
   };
   updateData = async ({ data, id }) => {
     const res = await axiosInstance.patch(`${this.endPoint}/${id}`, data);

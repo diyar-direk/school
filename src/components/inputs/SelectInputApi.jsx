@@ -91,7 +91,11 @@ const SelectInputApi = ({
 
   return (
     <div className="select-input inp">
-      {label && <label className="title font-color">{label}</label>}
+      {label && (
+        <label className="title font-color" onClick={toggleOpen}>
+          {label}
+        </label>
+      )}
 
       <div className="placeholder center relative" onClick={toggleOpen}>
         <span className="flex-1 ellipsis"> {placeholder}</span>

@@ -1,0 +1,37 @@
+.teacher-course {
+  padding: 15px;
+  background-color: var(--body-color);
+  border-radius: 4px;
+  box-shadow: var(--box-shadow);
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+.teacher-course div {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: var(--font-color);
+  flex-wrap: wrap;
+}
+.teacher-course div h3 {
+  text-transform: capitalize;
+}
+.teacher-course div h3::after {
+  content: ":";
+}
+.teacher-course::before {
+  content: "";
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.144);
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  transition: 0.4s;
+}
+.teacher-course:hover::before {
+  opacity: 1;
+}

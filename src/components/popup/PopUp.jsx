@@ -5,6 +5,7 @@
  */
 
 import { memo, useMemo } from "react";
+import "./popups.css";
 
 /**
  * @param {divProps & React.HTMLAttributes<HTMLDivElement>} props
@@ -21,9 +22,9 @@ const PopUp = ({
     return (
       <div className="overlay" onClick={onClose}>
         <div
+          {...props}
           onClick={(e) => e.stopPropagation()}
           className={popupClassName}
-          {...props}
         >
           {children}
         </div>

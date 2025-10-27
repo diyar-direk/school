@@ -8,6 +8,7 @@ import APIClient from "./../../utils/ApiClient";
 import { endPoints } from "../../constants/endPoints";
 import { pagesRoute } from "../../constants/pagesRoute";
 import dateFormatter from "./../../utils/dateFormatter";
+import TeacherCourse from "./TeacherCourse";
 const apiClient = new APIClient(endPoints.teachers);
 const TeacherProfile = () => {
   const { id } = useParams();
@@ -62,7 +63,7 @@ const TeacherProfile = () => {
           </div>
 
           <div className="flex">
-            <h2>email:</h2>
+            <h2>{language?.teachers?.email}:</h2>
             <p className="email"> {data?.email} </p>
           </div>
 
@@ -76,6 +77,8 @@ const TeacherProfile = () => {
           </div>
         </div>
       </div>
+      <h1 className="title"> courses </h1>
+      <TeacherCourse />
     </div>
   );
 };

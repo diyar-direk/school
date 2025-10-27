@@ -1,0 +1,92 @@
+.student-course {
+  padding: 15px;
+  border-radius: 4px;
+  background-color: var(--body-color);
+}
+.student-course div {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.student-course div h3 {
+  text-transform: capitalize;
+}
+.student-course div h3::after {
+  content: ":";
+}
+
+.student-course div span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.student-course.Active {
+  background-color: rgba(0, 128, 0, 0.067);
+  color: green;
+}
+
+.student-course.Completed {
+  background-color: rgba(0, 0, 255, 0.068);
+  color: blue;
+}
+
+.student-course.Dropped {
+  background-color: rgba(255, 0, 0, 0.103);
+  color: red;
+}
+.student-course .options {
+  display: flex;
+  justify-content: flex-end;
+  position: relative;
+  user-select: none;
+}
+.student-course .options > i {
+  cursor: pointer;
+}
+.student-course .options > div {
+  position: absolute;
+  background-color: var(--body-color);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+  top: calc(100% + 2px);
+}
+.student-course .options > div span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  text-transform: capitalize;
+  color: var(--font-color);
+  padding: 4px;
+  width: 100%;
+}
+.student-course .options > div span:hover {
+  background-color: var(--section-color);
+}
+.student-course .options > div span.delete i {
+  color: red;
+}
+.student-course .options > div span.update i {
+  color: blue;
+}
+.student-course .options > div span i {
+  font-size: 12px;
+}
+
+.add-course-popup {
+  min-width: 50%;
+}
+.add-course-popup div.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+.add-course-popup div.actions button {
+  flex: 1;
+}

@@ -78,8 +78,6 @@ export const AuthProvider = ({ children }) => {
           if (isRefreshing) {
             return new Promise((resolve) => {
               addSubscriber((newToken) => {
-                console.log(newToken);
-
                 originalRequest.headers.Authorization = `Bearer ${newToken}`;
                 resolve(axiosInstance(originalRequest));
               });
