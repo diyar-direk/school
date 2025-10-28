@@ -22,13 +22,14 @@ const Button = ({
   btnStyleType = "contained",
   btnType = "main",
   className = "",
-  ...props
+  onClick,
+  ...rest
 }) => {
   const buttonClassName = useMemo(
     () =>
-      `btn ${isSending ? "sending" : ""} ${
-        btnStyleType || "contained"
-      } ${btnType} ${className || ""}`,
+      `btn ${
+        isSending ? "sending" : ""
+      } ${btnStyleType} ${btnType} ${className}`,
     [className, isSending, btnStyleType, btnType]
   );
 
@@ -39,9 +40,10 @@ const Button = ({
 
   return (
     <button
+      onClick={onClick}
       disabled={disabled || isSending}
       className={buttonClassName}
-      {...props}
+      {...rest}
     >
       {isSending && <article className="btn-loader" />}
       {buttonText}
