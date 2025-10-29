@@ -13,4 +13,5 @@ export const endPoints = {
   "refresh-token": "users/refresh-token",
   "exam-results": "exam-results",
   "time-table": "time-table",
+  attendances: "attendances",
 };

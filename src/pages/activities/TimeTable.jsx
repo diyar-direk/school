@@ -116,7 +116,7 @@ const TimeTable = () => {
     <div className="container">
       <DeleteTimeTable
         isOpen={selectedItems}
-        endPoint={endPoints["time-table"]}
+        endPoint={`${endPoints["time-table"]}/${endPoints["delete-many"]}`}
         setIsOpen={setSelectedItems}
       />
       <TimeTableForm

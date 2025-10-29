@@ -1,6 +1,10 @@
 import { useContext, useState } from "react";
 import { Context } from "../../context/Context";
-
+import APIClient from "./../../utils/ApiClient";
+import { endPoints } from "./../../constants/endPoints";
+import { useQuery } from "@tanstack/react-query";
+import { limit } from "../../constants/enums";
+const api = new APIClient(endPoints.attendances);
 const Attendence = () => {
   const context = useContext(Context);
   const [form, setForm] = useState({
@@ -13,6 +17,11 @@ const Attendence = () => {
   let currentMonth = currentDate.getMonth();
   let currentYear = currentDate.getFullYear();
   let daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+  const { data } = useQuery({
+    queryKey: [endPoints.attendances],
+    queryFn: () => api.getAll({ limit }),
+  });
 
   return (
     <>
