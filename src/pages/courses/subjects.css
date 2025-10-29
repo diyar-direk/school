@@ -52,6 +52,51 @@
   color: white;
 }
 
+.attendace-table {
+  overflow-x: auto;
+  width: 100%;
+  max-width: 100%;
+  overflow-y: hidden;
+  white-space: nowrap;
+}
+.attendace-table table {
+  width: 100%;
+  max-width: 100%;
+  border-spacing: 0px;
+}
+.attendace-table table thead tr {
+  background-color: var(--main-color);
+  color: white;
+}
+.attendace-table table thead tr th {
+  padding: 8px;
+  border-inline: solid 1px #3774a7;
+  text-transform: capitalize;
+}
+.attendace-table table tbody tr:nth-child(odd) {
+  background-color: var(--body-color);
+}
+.attendace-table table tbody tr:nth-child(even) {
+  background-color: var(--border-color);
+}
+.attendace-table table tbody tr td {
+  padding: 8px;
+  text-transform: capitalize;
+  border-inline: solid 1px var(--section-color);
+}
+.attendace-table table tbody tr td div {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--section-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.attendace-table table tbody tr td div i {
+  color: white;
+}
+
 @media (max-width: 900px) {
   .subjects form.dashboard-form label {
     font-size: 16px;

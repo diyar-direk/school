@@ -9,6 +9,7 @@ const CourseView = lazy(() => import("./CourseView"));
 const CourseTimeTable = lazy(() => import("./components/CourseTimeTable"));
 const CourseExams = lazy(() => import("./components/CourseExams"));
 const CourseStudents = lazy(() => import("./components/CourseStudents"));
+const Attendance = lazy(() => import("./components/Attendance"));
 
 export const coursesRouter = [
   {
@@ -46,6 +47,10 @@ export const coursesRouter = [
       {
         path: pagesRoute.courses.students(),
         element: <CourseStudents />,
+      },
+      {
+        path: pagesRoute.courses.attendance(),
+        element: <Attendance />,
       },
     ],
   },

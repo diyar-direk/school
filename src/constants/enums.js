@@ -25,7 +25,21 @@ const dayes = {
   Friday: "Friday",
   Saturday: "Saturday",
 };
+const attendanceStatus = {
+  Present: "Present",
+  Absent: "Absent",
+  Excused: "Excused",
+  Late: "Late",
+};
 
 const limit = 10;
 
-export { roles, limit, genders, examTypes, courseStatus, dayes };
+export {
+  roles,
+  limit,
+  genders,
+  examTypes,
+  courseStatus,
+  dayes,
+  attendanceStatus,
+};
