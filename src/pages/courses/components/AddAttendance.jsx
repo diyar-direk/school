@@ -1,0 +1,48 @@
+import PopUp from "../../../components/popup/PopUp";
+import Button from "../../../components/buttons/Button";
+import { attendanceStatusIcon } from "./Attendance";
+import { attendanceStatus } from "../../../constants/enums";
+import dateFormatter from "./../../../utils/dateFormatter";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { addAttendance, updateAttendance } from "./api";
+import { endPoints } from "../../../constants/endPoints";
+
+const AddAttendance = ({ selectedData, onClose }) => {
+  const { student, date, courseId, isUpdate, _id } = selectedData;
+  const queryClient = useQueryClient();
+  const handleSubmit = useMutation({
+    mutationFn: (status) =>
+      isUpdate
+        ? updateAttendance({ status, id: _id })
+        : addAttendance({ studentId: student?._id, date, courseId, status }),
+    onSuccess: () => {
+      queryClient.invalidateQueries([endPoints.attendances, courseId]);
+      onClose();
+    },
+  });
+
+  return (
+    <PopUp isOpen={student} onClose={onClose} className="attendace-pop-up">
+      <h1>
+        {student?.firstName} {student?.lastName} attendance on
+        {dateFormatter(date)}
+      </h1>
+      <div className="actions">
+        {Object.values(attendanceStatus).map((e) => (
+          <Button
+            key={e}
+            style={{
+              background: attendanceStatusIcon[e].bg,
+            }}
+            onClick={() => handleSubmit.mutate(e)}
+          >
+            {attendanceStatusIcon[e].icon}
+            {e}
+          </Button>
+        ))}
+      </div>
+    </PopUp>
+  );
+};
+
+export default AddAttendance;

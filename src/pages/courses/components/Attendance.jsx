@@ -1,23 +1,22 @@
 import { useParams } from "react-router-dom";
 import { endPoints } from "../../../constants/endPoints";
-import APIClient from "../../../utils/ApiClient";
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { attendanceStatus } from "../../../constants/enums";
-
-const api = new APIClient(endPoints.attendances);
+import AddAttendance from "./AddAttendance";
+import { getAllAttendance } from "./api";
 
 const Attendance = () => {
   const { id } = useParams();
 
   const { data } = useQuery({
     queryKey: [endPoints.attendances, id],
-    queryFn: () => api.getAll({ page: 1, limit: 1000, courseId: id }),
+    queryFn: () => getAllAttendance({ courseId: id }),
   });
 
   const groupedData = useMemo(
     () =>
-      data?.data?.reduce((acc, item) => {
+      data?.reduce((acc, item) => {
         const studentId = item.studentId._id;
         const fullName = `${item.studentId.firstName} ${item.studentId.lastName}`;
 
@@ -35,6 +34,7 @@ const Attendance = () => {
   );
 
   const studentsAttendance = groupedData ? Object.values(groupedData) : [];
+  const [selectedData, setSelectedData] = useState({});
 
   const today = new Date();
   const year = today.getFullYear();
@@ -50,47 +50,73 @@ const Attendance = () => {
       });
 
       return record ? (
-        <div style={{ background: attendanceStatusIcon[record?.status].bg }}>
+        <div
+          style={{ background: attendanceStatusIcon[record?.status].bg }}
+          onDoubleClick={() =>
+            setSelectedData({
+              student: record?.studentId,
+              date: record.date,
+              _id: record._id,
+              isUpdate: true,
+            })
+          }
+        >
           {attendanceStatusIcon[record?.status].icon}
         </div>
       ) : (
-        <div></div>
+        <div
+          onDoubleClick={() =>
+            setSelectedData({
+              student: studentData?.[0]?.studentId,
+              date: `${year}-${month + 1}-${day}`,
+              courseId: id,
+              isUpdate: false,
+            })
+          }
+        ></div>
       );
     },
-    [month]
+    [month, id, year]
   );
+  const onClose = useCallback(() => {
+    setSelectedData({});
+  }, []);
 
   return (
-    <div className="attendace-table">
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            {days.map((day) => (
-              <th key={day}>{day}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {studentsAttendance.map((student) => (
-            <tr key={student.name}>
-              <td>{student.name}</td>
+    <>
+      <div className="attendace-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
               {days.map((day) => (
-                <td key={day}>{getStatusForDay(student.data, day)}</td>
+                <th key={day}>{day}</th>
               ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {studentsAttendance.map((student) => (
+              <tr key={student.name}>
+                <td>{student.name}</td>
+                {days.map((day) => (
+                  <td key={day}>{getStatusForDay(student.data, day)}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <AddAttendance selectedData={selectedData} onClose={onClose} />
+    </>
   );
 };
 
 export default Attendance;
 
-const attendanceStatusIcon = {
+export const attendanceStatusIcon = {
   [attendanceStatus.Present]: {
     icon: <i className="fa-solid fa-check" />,
+    bg: "green",
   },
   [attendanceStatus.Absent]: {
     icon: <i className="fa-solid fa-xmark" />,
@@ -98,6 +124,10 @@ const attendanceStatusIcon = {
   },
   [attendanceStatus.Excused]: {
     icon: <i className="fa-solid fa-hand-point-up" />,
+    bg: "orange",
   },
-  [attendanceStatus.Late]: { icon: <i className="fa-solid fa-exclamation" /> },
+  [attendanceStatus.Late]: {
+    icon: <i className="fa-solid fa-exclamation" />,
+    bg: "gray",
+  },
 };

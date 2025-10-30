@@ -1,52 +1,34 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { Context } from "../../context/Context";
 import { useAuth } from "../../context/AuthContext";
-import axiosInstance from "../../utils/axios";
+import { useQuery } from "@tanstack/react-query";
+import { endPoints } from "../../constants/endPoints";
+import { classCount, coursesCount } from "./api";
 const AdminProfile = () => {
   const context = useContext(Context);
   const language = context?.selectedLang;
 
   const { userDetails } = useAuth();
-  const [data, setData] = useState({
-    email: "",
-    firstName: "",
-    lastName: "",
-    role: "",
-    teachersFemale: false,
-    teachersMale: false,
-    studentsMale: false,
-    studentsFemale: false,
-    classes: false,
-  });
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const teachers = await axiosInstance.get("teachers/count-gender");
-        const students = await axiosInstance.get("students/count-gender");
-        const classes = await axiosInstance.get("classes/count");
 
-        setData({
-          teachersFemale: teachers.data.numberOfFemaleTeachers,
-          teachersMale: teachers.data.numberOfMaleTeachers,
-          studentsMale: students.data.numberOfFemaleStudents,
-          studentsFemale: students.data.numberOfMaleStudents,
-          email: userDetails?.profileId?.email,
-          firstName: userDetails?.profileId?.firstName,
-          lastName: userDetails?.profileId?.lastName,
-          role: userDetails?.role,
-          classes: classes.data.numberOfDocuments,
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
-  }, []);
+  const { data } = useQuery({
+    queryKey: [
+      endPoints.classes,
+      endPoints.courses,
+      endPoints.teachers,
+      endPoints.students,
+    ],
+    queryFn: async () => {
+      const [classes, courses, teachers, students] = await Promise.all(
+        classCount(),
+        coursesCount()
+      );
+    },
+  });
 
   return (
     <div className="container">
-      <div className="grid-3 admin-page gap-20">
+      {/* <div className="grid-3 admin-page gap-20">
         <article className="center">
           <i className="fa-solid fa-people-group teacher"></i>
           <div className="flex-1">
@@ -133,7 +115,7 @@ const AdminProfile = () => {
             <p className="email"> {data.email} </p>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
