@@ -23,8 +23,15 @@ const column = [
   {
     name: "studentId",
     headerName: "studentId",
-    getCell: ({ row }) =>
-      `${row?.studentId?.firstName} ${row?.studentId?.middleName} ${row?.studentId?.lastName}`,
+    getCell: ({ row }) => (
+      <Link
+        className="visit-text"
+        to={pagesRoute.student.view(row?.studentId?._id)}
+      >
+        {row?.studentId?.firstName} {row?.studentId?.middleName}
+        {row?.studentId?.lastName}
+      </Link>
+    ),
   },
   {
     name: "examId",

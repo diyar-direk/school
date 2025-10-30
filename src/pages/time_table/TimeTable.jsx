@@ -14,6 +14,8 @@ import { formatInputsData } from "../../utils/formatInputsData";
 import Button from "../../components/buttons/Button";
 import TimeTableForm from "./TimeTableForm";
 import DeleteTimeTable from "./DeleteTimeTable";
+import { Link } from "react-router-dom";
+import { pagesRoute } from "../../constants/pagesRoute";
 
 const apiClient = new APIClient(endPoints["time-table"]);
 
@@ -75,7 +77,14 @@ const TimeTable = () => {
       {
         name: "courseId",
         headerName: "course",
-        getCell: ({ row }) => row?.courseId?.name,
+        getCell: ({ row }) => (
+          <Link
+            className="visit-text"
+            to={pagesRoute.courses.view(row?.courseId?._id)}
+          >
+            {row?.courseId?.name}
+          </Link>
+        ),
       },
       {
         name: "classId",

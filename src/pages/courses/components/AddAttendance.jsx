@@ -14,7 +14,12 @@ const AddAttendance = ({ selectedData, onClose }) => {
     mutationFn: (status) =>
       isUpdate
         ? updateAttendance({ status, id: _id })
-        : addAttendance({ studentId: student?._id, date, courseId, status }),
+        : addAttendance({
+            studentId: student?._id || student,
+            date,
+            courseId,
+            status,
+          }),
     onSuccess: () => {
       queryClient.invalidateQueries([endPoints.attendances, courseId]);
       onClose();

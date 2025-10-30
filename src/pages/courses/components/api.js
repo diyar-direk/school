@@ -21,3 +21,13 @@ export const updateAttendance = async ({ status, id }) => {
     await axiosInstance.patch(`${endPoints.attendances}/${id}`, { status });
   } catch {}
 };
+
+export const getStudentCourse = async ({ ...params }) => {
+  try {
+    const { data } = await axiosInstance.get(endPoints["student-courses"], {
+      params: { ...params },
+    });
+
+    return data.data;
+  } catch {}
+};

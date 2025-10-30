@@ -1,74 +1,118 @@
 import { useParams } from "react-router-dom";
 import { endPoints } from "../../../constants/endPoints";
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { attendanceStatus } from "../../../constants/enums";
 import AddAttendance from "./AddAttendance";
-import { getAllAttendance } from "./api";
+import { getAllAttendance, getStudentCourse } from "./api";
 
 const Attendance = () => {
   const { id } = useParams();
+  const today = new Date();
+  const defaultMonth = `${today.getFullYear()}-${String(
+    today.getMonth() + 1
+  ).padStart(2, "0")}`;
+  const [selectedMonth, setSelectedMonth] = useState(defaultMonth);
+  const [year, month] = selectedMonth.split("-").map(Number);
+  const [days, setDays] = useState([]);
 
-  const { data } = useQuery({
-    queryKey: [endPoints.attendances, id],
-    queryFn: () => getAllAttendance({ courseId: id }),
+  useEffect(() => {
+    const daysInMonth = new Date(year, month, 0).getDate();
+    setDays(Array.from({ length: daysInMonth }, (_, i) => i + 1));
+  }, [year, month]);
+
+  const startDate = `${year}-${String(month).padStart(2, "0")}-01`;
+  const endDate = `${year}-${String(month).padStart(2, "0")}-${String(
+    new Date(year, month, 0).getDate()
+  ).padStart(2, "0")}`;
+
+  const { data: students } = useQuery({
+    queryKey: [endPoints["student-courses"], id],
+    queryFn: () => getStudentCourse({ courseId: id }),
   });
 
-  const groupedData = useMemo(
-    () =>
-      data?.reduce((acc, item) => {
-        const studentId = item.studentId._id;
-        const fullName = `${item.studentId.firstName} ${item.studentId.lastName}`;
+  const { data, isFetching } = useQuery({
+    queryKey: [endPoints.attendances, id, startDate, endDate],
+    queryFn: () =>
+      getAllAttendance({
+        courseId: id,
+        [`date[gte]`]: startDate,
+        [`date[lte]`]: endDate,
+      }),
+  });
 
-        if (!acc[studentId]) {
-          acc[studentId] = {
-            name: fullName,
-            data: [],
-          };
-        }
+  const studentsAttendance = useMemo(() => {
+    const allStudents = students || [];
+    const attendanceData = data || [];
 
-        acc[studentId].data.push(item);
-        return acc;
-      }, {}),
-    [data]
-  );
+    const uniqueStudents = allStudents.reduce((acc, curr) => {
+      const id = curr.studentId._id;
+      if (!acc.some((s) => s.studentId._id === id)) {
+        acc.push(curr);
+      }
+      return acc;
+    }, []);
 
-  const studentsAttendance = groupedData ? Object.values(groupedData) : [];
+    const groupedAttendance = attendanceData.reduce((acc, item) => {
+      const studentId = item.studentId._id;
+      if (!acc[studentId]) acc[studentId] = [];
+      acc[studentId].push(item);
+      return acc;
+    }, {});
+
+    return uniqueStudents.map((student) => {
+      const fullName = `${student.studentId.firstName} ${student.studentId.lastName}`;
+      return {
+        name: fullName,
+        studentId: student.studentId._id,
+        data: groupedAttendance[student.studentId._id] || [],
+      };
+    });
+  }, [students, data]);
+
   const [selectedData, setSelectedData] = useState({});
 
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-
   const getStatusForDay = useCallback(
-    (studentData, day) => {
+    (student, day) => {
+      const { data: studentData, studentId } = student;
+
       const record = studentData.find((item) => {
         const date = new Date(item.date);
-        return date.getDate() === day && date.getMonth() === month;
+        return (
+          date.getDate() === day &&
+          date.getMonth() + 1 === month &&
+          date.getFullYear() === year
+        );
       });
 
-      return record ? (
+      if (record) {
+        return (
+          <div
+            style={{
+              background: attendanceStatusIcon[record.status].bg,
+            }}
+            onDoubleClick={() =>
+              setSelectedData({
+                student: record.studentId,
+                date: record.date,
+                _id: record._id,
+                isUpdate: true,
+              })
+            }
+          >
+            {attendanceStatusIcon[record.status].icon}
+          </div>
+        );
+      }
+
+      return (
         <div
-          style={{ background: attendanceStatusIcon[record?.status].bg }}
           onDoubleClick={() =>
             setSelectedData({
-              student: record?.studentId,
-              date: record.date,
-              _id: record._id,
-              isUpdate: true,
-            })
-          }
-        >
-          {attendanceStatusIcon[record?.status].icon}
-        </div>
-      ) : (
-        <div
-          onDoubleClick={() =>
-            setSelectedData({
-              student: studentData?.[0]?.studentId,
-              date: `${year}-${month + 1}-${day}`,
+              student: studentId,
+              date: `${year}-${String(month).padStart(2, "0")}-${String(
+                day
+              ).padStart(2, "0")}`,
               courseId: id,
               isUpdate: false,
             })
@@ -78,12 +122,26 @@ const Attendance = () => {
     },
     [month, id, year]
   );
+
   const onClose = useCallback(() => {
     setSelectedData({});
   }, []);
 
+  if (isFetching) return <h3>loading ...</h3>;
+
+  if (studentsAttendance.length === 0)
+    return <h3> لا يوجد طلاب في هذا الكورس </h3>;
+
   return (
     <>
+      <div className="attendance-controls">
+        <input
+          type="month"
+          value={selectedMonth}
+          onChange={(e) => setSelectedMonth(e.target.value)}
+        />
+      </div>
+
       <div className="attendace-table">
         <table>
           <thead>
@@ -96,10 +154,10 @@ const Attendance = () => {
           </thead>
           <tbody>
             {studentsAttendance.map((student) => (
-              <tr key={student.name}>
+              <tr key={student.studentId}>
                 <td>{student.name}</td>
                 {days.map((day) => (
-                  <td key={day}>{getStatusForDay(student.data, day)}</td>
+                  <td key={day}>{getStatusForDay(student, day)}</td>
                 ))}
               </tr>
             ))}

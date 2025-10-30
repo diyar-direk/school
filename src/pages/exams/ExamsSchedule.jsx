@@ -26,7 +26,14 @@ const column = [
   {
     name: "courseId",
     headerName: "courseId",
-    getCell: ({ row }) => row.courseId?.name,
+    getCell: ({ row }) => (
+      <Link
+        className="visit-text"
+        to={pagesRoute.courses.view(row?.courseId?._id)}
+      >
+        {row?.courseId?.name}
+      </Link>
+    ),
   },
   {
     name: "date",
