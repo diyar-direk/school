@@ -17,6 +17,7 @@ import Filters from "./../../components/table_toolbar/Filters";
 import SelectOptionInput from "../../components/inputs/SelectOptionInput";
 import { formatInputsData } from "./../../utils/formatInputsData";
 import AllowedTo from "../../components/AllowedTo";
+import { useAuth } from "../../context/AuthContext";
 
 const column = [
   {
@@ -37,6 +38,7 @@ const column = [
     headerName: "createdAt",
     sort: true,
     getCell: ({ row }) => dateFormatter(row.createdAt, "fullDate"),
+    alloewdTo: [roles.admin],
   },
   {
     name: "updatedAt",
@@ -44,11 +46,13 @@ const column = [
     sort: true,
     hidden: true,
     getCell: ({ row }) => dateFormatter(row.updatedAt, "fullDate"),
+    alloewdTo: [roles.admin],
   },
   {
     name: "actions",
     headerName: "actions",
     className: "center",
+    alloewdTo: [roles.admin],
     getCell: ({ row }) => (
       <div className="center gap-10">
         <Link to={pagesRoute.teacher.update(row._id)}>
@@ -80,7 +84,8 @@ const AllTeachers = () => {
       }),
   });
   const [selectedItems, setSelectedItems] = useState(new Set());
-
+  const { userDetails } = useAuth();
+  const { role } = userDetails;
   const language = context?.selectedLang;
 
   return (
@@ -119,7 +124,7 @@ const AllTeachers = () => {
           data={data?.data}
           dataLength={data?.totalCount}
           loading={isFetching}
-          selectable
+          selectable={role === roles.admin}
           setPage={setPage}
           selectedItems={selectedItems}
           setSelectedItems={setSelectedItems}

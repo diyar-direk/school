@@ -46,11 +46,19 @@ export const coursesRouter = [
       },
       {
         path: pagesRoute.courses.students(),
-        element: <CourseStudents />,
+        element: (
+          <AllowedTo roles={[roles.admin, roles.teacher]}>
+            <CourseStudents />
+          </AllowedTo>
+        ),
       },
       {
         path: pagesRoute.courses.attendance(),
-        element: <Attendance />,
+        element: (
+          <AllowedTo roles={[roles.admin, roles.teacher]}>
+            <Attendance />
+          </AllowedTo>
+        ),
       },
     ],
   },

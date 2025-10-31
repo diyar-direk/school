@@ -9,6 +9,8 @@ import { endPoints } from "../../constants/endPoints";
 import { pagesRoute } from "../../constants/pagesRoute";
 import dateFormatter from "./../../utils/dateFormatter";
 import TeacherCourse from "./TeacherCourse";
+import AllowedTo from "../../components/AllowedTo";
+import { roles } from "../../constants/enums";
 const apiClient = new APIClient(endPoints.teachers);
 const TeacherProfile = () => {
   const { id } = useParams();
@@ -71,10 +73,12 @@ const TeacherProfile = () => {
             <h2>{language?.teachers?.phone_number}:</h2>
             <p>{data?.phoneNumber}</p>
           </div>
-          <div className="flex">
-            <h2>{"language?.teachers?.created_at"}:</h2>
-            <p>{dateFormatter(data?.createdAt, "fullDate")}</p>
-          </div>
+          <AllowedTo roles={[roles.admin]}>
+            <div className="flex">
+              <h2>{"language?.teachers?.created_at"}:</h2>
+              <p>{dateFormatter(data?.createdAt, "fullDate")}</p>
+            </div>
+          </AllowedTo>
         </div>
       </div>
       <h1 className="title"> courses </h1>

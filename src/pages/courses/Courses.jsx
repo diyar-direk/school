@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import { spritObject } from "./../../utils/spritObject";
 import { pagesRoute } from "../../constants/pagesRoute";
 import AllowedTo from "../../components/AllowedTo";
+import { useAuth } from "../../context/AuthContext";
 
 const apiClient = new APIClient(endPoints.courses);
 
@@ -46,6 +47,7 @@ const column = [
     headerName: "createdAt",
     sort: true,
     getCell: ({ row }) => dateFormatter(row.createdAt, "fullDate"),
+    alloewdTo: [roles.admin],
   },
   {
     name: "updatedAt",
@@ -53,11 +55,13 @@ const column = [
     sort: true,
     hidden: true,
     getCell: ({ row }) => dateFormatter(row.updatedAt, "fullDate"),
+    alloewdTo: [roles.admin],
   },
   {
     name: "actions",
     headerName: "actions",
     className: "center",
+    alloewdTo: [roles.admin],
     getCell: ({ row }) => (
       <div className="flex gap-10">
         <Link to={pagesRoute.courses.update(row._id)}>
@@ -87,6 +91,9 @@ const Courses = () => {
 
   const [selectedItems, setSelectedItems] = useState(new Set());
 
+  const { userDetails } = useAuth();
+  const { role } = userDetails;
+
   return (
     <div className="container">
       <h1 className="title">subject</h1>
@@ -111,7 +118,7 @@ const Courses = () => {
           data={data?.data}
           dataLength={data?.totalCount}
           loading={isFetching}
-          selectable
+          selectable={role === roles.admin}
           setPage={setPage}
           selectedItems={selectedItems}
           setSelectedItems={setSelectedItems}

@@ -65,6 +65,7 @@ const column = [
     headerName: "createdAt",
     sort: true,
     getCell: ({ row }) => dateFormatter(row.createdAt, "fullDate"),
+    alloewdTo: [roles.admin],
   },
   {
     name: "updatedAt",
@@ -72,11 +73,13 @@ const column = [
     sort: true,
     hidden: true,
     getCell: ({ row }) => dateFormatter(row.updatedAt, "fullDate"),
+    alloewdTo: [roles.admin],
   },
   {
     name: "actions",
     headerName: "actions",
     className: "center",
+    alloewdTo: [roles.admin],
     getCell: ({ row }) => (
       <Link to={pagesRoute.examResult.update(row?._id)}>
         <Button> update</Button>
@@ -89,7 +92,9 @@ const ExamResult = () => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState({});
-  const { isStudent, userDetails } = useAuth();
+  const { userDetails } = useAuth();
+  const { isStudent, role } = userDetails;
+
   const [filters, setFilters] = useState({
     examId: null,
     studentId: isStudent ? userDetails?.profileId?._id : null,
@@ -189,7 +194,7 @@ const ExamResult = () => {
           data={data?.data}
           dataLength={data?.totalCount}
           loading={isFetching}
-          selectable
+          selectable={role === roles.admin}
           setPage={setPage}
           selectedItems={selectedItems}
           setSelectedItems={setSelectedItems}

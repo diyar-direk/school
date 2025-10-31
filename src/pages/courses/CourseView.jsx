@@ -8,6 +8,8 @@ import dateFormatter from "../../utils/dateFormatter";
 import "../../components/profile.css";
 import "./subjects.css";
 import { spritObject } from "../../utils/spritObject";
+import AllowedTo from "../../components/AllowedTo";
+import { roles } from "../../constants/enums";
 
 const api = new APIClient(endPoints.courses);
 const CourseView = () => {
@@ -66,8 +68,10 @@ const CourseView = () => {
       <div className="course-pages">
         <NavLink to={pagesRoute.courses.timeTable(id)}> time table </NavLink>
         <NavLink to={pagesRoute.courses.exams(id)}> exams</NavLink>
-        <NavLink to={pagesRoute.courses.students(id)}> students</NavLink>
-        <NavLink to={pagesRoute.courses.attendance(id)}> attendance</NavLink>
+        <AllowedTo roles={[roles.admin, roles.teacher]}>
+          <NavLink to={pagesRoute.courses.students(id)}> students</NavLink>
+          <NavLink to={pagesRoute.courses.attendance(id)}> attendance</NavLink>
+        </AllowedTo>
       </div>
       <Outlet />
     </div>

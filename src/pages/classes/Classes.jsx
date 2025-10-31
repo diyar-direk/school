@@ -64,6 +64,7 @@ const Classes = () => {
         name: "createdAt",
         headerName: "createdAt",
         sort: true,
+        allowedTo: [roles.admin],
         getCell: ({ row }) => dateFormatter(row.createdAt, "fullDate"),
       },
       {
@@ -71,6 +72,7 @@ const Classes = () => {
         headerName: "updatedAt",
         sort: true,
         hidden: true,
+        allowedTo: [roles.admin],
         getCell: ({ row }) => dateFormatter(row.updatedAt, "fullDate"),
       },
       {
@@ -117,14 +119,16 @@ const Classes = () => {
         <div className="table-container flex-1">
           <TableToolBar>
             <Search setSearch={setSearch} />
-            <Delete
-              queryKey={endPoints.classes}
-              data={data}
-              selectedItems={selectedItems}
-              setPage={setPage}
-              setSelectedItems={setSelectedItems}
-              endPoint={endPoints.classes}
-            />
+            {isAdmin && (
+              <Delete
+                queryKey={endPoints.classes}
+                data={data}
+                selectedItems={selectedItems}
+                setPage={setPage}
+                setSelectedItems={setSelectedItems}
+                endPoint={endPoints.classes}
+              />
+            )}
           </TableToolBar>
           <Table
             colmuns={column}
@@ -132,7 +136,7 @@ const Classes = () => {
             data={data?.data}
             dataLength={data?.totalCount}
             loading={isFetching}
-            selectable
+            selectable={isAdmin}
             setPage={setPage}
             selectedItems={selectedItems}
             setSelectedItems={setSelectedItems}

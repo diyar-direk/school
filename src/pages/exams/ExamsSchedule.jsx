@@ -16,6 +16,7 @@ import Filters from "./../../components/table_toolbar/Filters";
 import SelectInputApi from "./../../components/inputs/SelectInputApi";
 import { formatInputsData } from "./../../utils/formatInputsData";
 import AllowedTo from "../../components/AllowedTo";
+import { useAuth } from "../../context/AuthContext";
 
 const column = [
   {
@@ -39,7 +40,7 @@ const column = [
     name: "date",
     headerName: "date",
     sort: true,
-    getCell: ({ row }) => dateFormatter(row.date),
+    getCell: ({ row }) => dateFormatter(row.date, "fullDate"),
   },
   {
     name: "duration",
@@ -56,6 +57,7 @@ const column = [
     headerName: "createdAt",
     sort: true,
     getCell: ({ row }) => dateFormatter(row.createdAt, "fullDate"),
+    alloewdTo: [roles.admin],
   },
   {
     name: "updatedAt",
@@ -63,11 +65,13 @@ const column = [
     sort: true,
     hidden: true,
     getCell: ({ row }) => dateFormatter(row.updatedAt, "fullDate"),
+    alloewdTo: [roles.admin],
   },
   {
     name: "actions",
     headerName: "actions",
     className: "center",
+    alloewdTo: [roles.admin],
     getCell: ({ row }) => (
       <Link to={pagesRoute.exam.update(row?._id)}>
         <Button> update</Button>
@@ -94,7 +98,8 @@ const ExamSchedule = () => {
   });
 
   const [selectedItems, setSelectedItems] = useState(new Set());
-
+  const { userDetails } = useAuth();
+  const { role } = userDetails;
   return (
     <div className="container">
       <h1 className="title">exams</h1>
@@ -133,7 +138,7 @@ const ExamSchedule = () => {
           data={data?.data}
           dataLength={data?.totalCount}
           loading={isFetching}
-          selectable
+          selectable={role === roles.admin}
           setPage={setPage}
           selectedItems={selectedItems}
           setSelectedItems={setSelectedItems}

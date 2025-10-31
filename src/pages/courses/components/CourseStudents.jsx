@@ -1,9 +1,11 @@
 import "../../students/student.css";
-import { courseStatus } from "../../../constants/enums";
+import { courseStatus, roles } from "../../../constants/enums";
 import { useInfiniteFetch } from "../../../hooks/useInfiniteFetch";
 import { endPoints } from "../../../constants/endPoints";
 import { Link, useParams } from "react-router-dom";
 import { pagesRoute } from "../../../constants/pagesRoute";
+import AddStudentsToCourse from "./AddStudentsToCourse";
+import AllowedTo from "../../../components/AllowedTo";
 const CourseStudents = () => {
   const { id } = useParams();
   const {
@@ -19,6 +21,10 @@ const CourseStudents = () => {
   return (
     <>
       {students?.length === 0 && !isFetching && <h3> no students yet </h3>}
+
+      <AllowedTo roles={[roles.admin]}>
+        <AddStudentsToCourse courseId={id} />
+      </AllowedTo>
 
       <div className="grid-3" style={{ marginTop: "10px" }}>
         {students?.map((data) => (

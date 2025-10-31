@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { endPoints } from "../../../constants/endPoints";
-import { limit } from "../../../constants/enums";
+import { limit, roles } from "../../../constants/enums";
 import TableToolBar from "../../../components/table_toolbar/TableToolBar";
 import Search from "../../../components/table_toolbar/Search";
 import Table from "../../../components/table/Table";
@@ -36,6 +36,7 @@ const column = [
     headerName: "createdAt",
     sort: true,
     getCell: ({ row }) => dateFormatter(row.createdAt, "fullDate"),
+    alloewdTo: [roles.admin],
   },
   {
     name: "updatedAt",
@@ -43,6 +44,7 @@ const column = [
     sort: true,
     hidden: true,
     getCell: ({ row }) => dateFormatter(row.updatedAt, "fullDate"),
+    alloewdTo: [roles.admin],
   },
 ];
 const apiClient = new APIClient(endPoints.exams);

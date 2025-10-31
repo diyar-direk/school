@@ -16,6 +16,7 @@ import TimeTableForm from "./TimeTableForm";
 import DeleteTimeTable from "./DeleteTimeTable";
 import { Link } from "react-router-dom";
 import { pagesRoute } from "../../constants/pagesRoute";
+import AllowedTo from "./../../components/AllowedTo";
 
 const apiClient = new APIClient(endPoints["time-table"]);
 
@@ -123,18 +124,20 @@ const TimeTable = () => {
 
   return (
     <div className="container">
-      <DeleteTimeTable
-        isOpen={selectedItems}
-        endPoint={`${endPoints["time-table"]}/${endPoints["delete-many"]}`}
-        setIsOpen={setSelectedItems}
-      />
-      <TimeTableForm
-        day={daysOfWeek[dayNumber]}
-        setIsOpen={setIsOpen}
-        isOpen={isOpen}
-        isUpdate={isUpdate}
-        setIsUpdate={setIsUpdate}
-      />
+      <AllowedTo roles={[roles.admin]}>
+        <DeleteTimeTable
+          isOpen={selectedItems}
+          endPoint={`${endPoints["time-table"]}/${endPoints["delete-many"]}`}
+          setIsOpen={setSelectedItems}
+        />
+        <TimeTableForm
+          day={daysOfWeek[dayNumber]}
+          setIsOpen={setIsOpen}
+          isOpen={isOpen}
+          isUpdate={isUpdate}
+          setIsUpdate={setIsUpdate}
+        />
+      </AllowedTo>
       <h1 className="title">time table</h1>
       <div className="table-container flex-1">
         <TableToolBar>
@@ -145,13 +148,15 @@ const TimeTable = () => {
             </h2>
             <h2 onClick={increment}>next</h2>
           </div>
-          <IconButton
-            color="secondry-color"
-            title="add new data"
-            onClick={() => setIsOpen(true)}
-          >
-            <i className="fa-solid fa-plus" />
-          </IconButton>
+          <AllowedTo roles={[roles.admin]}>
+            <IconButton
+              color="secondry-color"
+              title="add new data"
+              onClick={() => setIsOpen(true)}
+            >
+              <i className="fa-solid fa-plus" />
+            </IconButton>
+          </AllowedTo>
           <Filters>
             <SelectInputApi
               endPoint={endPoints.courses}

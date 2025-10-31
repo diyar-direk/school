@@ -62,12 +62,13 @@ const UpdateExamSchedule = () => {
             placeholder={formik.values?.courseId?.name || "select course "}
             optionLabel={(opt) => opt?.name}
             onChange={(opt) => formik.setFieldValue("courseId", opt)}
+            errorText={formik.errors?.courseId}
           />
           <Input
             title={"language?.admins?.last_name"}
             onInput={formik.handleChange}
             value={formik.values.date}
-            type="date"
+            type="datetime-local"
             name="date"
             errorText={formik.errors?.date}
           />
