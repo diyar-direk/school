@@ -6,6 +6,7 @@ import { studentRouter } from "./students/router";
 import { teacherRouter } from "./teachers/router";
 import { usersRouter } from "./user/router";
 import { timeTableRouter } from "./time_table/router";
+import { quizeRouter } from "./quizes/router";
 
 export const dashboardRouter = [
   ...classesRouter,
@@ -16,4 +17,5 @@ export const dashboardRouter = [
   ...adminRouter,
   ...usersRouter,
   ...timeTableRouter,
+  ...quizeRouter,
 ];

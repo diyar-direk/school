@@ -1,324 +1,178 @@
-import { useContext, useEffect, useState } from "react";
-
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { endPoints } from "../../constants/endPoints";
+import { limit, roles } from "../../constants/enums";
+import TableToolBar from "../../components/table_toolbar/TableToolBar";
+import Search from "../../components/table_toolbar/Search";
+import Delete from "../../components/table_toolbar/Delete";
+import Add from "../../components/table_toolbar/Add";
+import { pagesRoute } from "../../constants/pagesRoute";
+import Table from "../../components/table/Table";
+import dateFormatter from "../../utils/dateFormatter";
 import { Link } from "react-router-dom";
-import { Context } from "../../context/Context";
+import Button from "../../components/buttons/Button";
+import APIClient from "../../utils/ApiClient";
+import Filters from "../../components/table_toolbar/Filters";
+import SelectInputApi from "../../components/inputs/SelectInputApi";
+import { formatInputsData } from "../../utils/formatInputsData";
+import AllowedTo from "../../components/AllowedTo";
 import { useAuth } from "../../context/AuthContext";
-import axiosInstance from "../../utils/axios";
+
+const column = [
+  {
+    name: "title",
+    headerName: "title",
+  },
+  {
+    name: "description",
+    headerName: "description",
+    hidden: true,
+  },
+  {
+    name: "courseId",
+    headerName: "courseId",
+    getCell: ({ row }) => (
+      <Link
+        className="visit-text"
+        to={pagesRoute.courses.view(row?.courseId?._id)}
+      >
+        {row?.courseId?.name}
+      </Link>
+    ),
+  },
+  {
+    name: "classId",
+    headerName: "classId",
+    getCell: ({ row }) => row?.classId?.name,
+  },
+  {
+    name: "date",
+    headerName: "date",
+    sort: true,
+    getCell: ({ row }) => dateFormatter(row.date, "fullDate"),
+  },
+  {
+    name: "duration",
+    headerName: "duration",
+    sort: true,
+  },
+  {
+    name: "totalMarks",
+    headerName: "totalMarks",
+    sort: true,
+  },
+  {
+    name: "createdAt",
+    headerName: "createdAt",
+    sort: true,
+    getCell: ({ row }) => dateFormatter(row.createdAt, "fullDate"),
+    alloewdTo: [roles.admin],
+  },
+  {
+    name: "updatedAt",
+    headerName: "updatedAt",
+    sort: true,
+    hidden: true,
+    getCell: ({ row }) => dateFormatter(row.updatedAt, "fullDate"),
+    alloewdTo: [roles.admin],
+  },
+  {
+    name: "actions",
+    headerName: "actions",
+    className: "center",
+    alloewdTo: [roles.admin],
+    getCell: ({ row }) => (
+      <Link to={pagesRoute.quize.update(row?._id)}>
+        <Button> update</Button>
+      </Link>
+    ),
+  },
+];
+const apiClient = new APIClient(endPoints.quizzes);
 const AllQuizes = () => {
-  const context = useContext(Context);
-  const { userDetails } = useAuth();
-  const isAdmin = userDetails?.isAdmin;
-  const isStudent = userDetails?.isStudent;
-  const isTeacher = userDetails?.isTeacher;
-  const [searchData, setSearchData] = useState([]);
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [overlay, setOverlay] = useState(false);
-  const [dataLength, setDataLength] = useState(0);
-  const [activePage, setActivePage] = useState(1);
-  const divsCount = 10;
-  const language = context?.selectedLang;
-  const studentLevel = userDetails?.userDetails?.yearLevel;
-
-  const [yearLevel, setYearLevel] = useState(studentLevel);
-
-  const createPags = (dataCount, dataLength) => {
-    const pages = Math.ceil(dataLength / dataCount);
-    let h3Pages = [];
-
-    for (let i = 0; i < pages; i++) {
-      h3Pages.push(
-        <h3
-          onClick={updateData}
-          data-page={i + 1}
-          key={i}
-          className={`${i === 0 ? "active" : ""}`}
-        >
-          {i + 1}
-        </h3>
-      );
-    }
-
-    return h3Pages;
-  };
-
-  function updateData(e) {
-    if (activePage !== +e.target.dataset.page) {
-      setSearchData([]);
-      setSelectedItems([]);
-      setLoading(true);
-      const pages = document.querySelectorAll("div.table .pagination h3");
-      pages.forEach((e) => e.classList.remove("active"));
-      e.target.classList.add("active");
-      setActivePage(+e.target.dataset.page);
-    }
-  }
-
-  window.addEventListener("click", () => {
-    const overlayDiv = document.querySelector(".overlay");
-    if (overlayDiv) {
-      setOverlay(false);
-      if (selectedItems.length <= 1) {
-        setSelectedItems([]);
-      }
-    }
-    const selectDiv = document.querySelector(".selecte .inp.active");
-    selectDiv && selectDiv.classList.remove("active");
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState({});
+  const [filters, setFilters] = useState({ courseId: null });
+  const { data, isFetching } = useQuery({
+    queryKey: [
+      endPoints.quizzes,
+      page,
+      search,
+      sort,
+      formatInputsData(filters),
+    ],
+    queryFn: () =>
+      apiClient.getAll({
+        page,
+        search,
+        sort,
+        limit,
+        ...formatInputsData(filters),
+      }),
   });
 
-  const fetchData = async () => {
-    setLoading(true);
-    setSearchData([]);
-    let URL = `quizzes?limit=${divsCount}&page=${activePage}&sort=-date&active=true`;
-    if (yearLevel) URL += `&yearLevel=${yearLevel}`;
-
-    try {
-      const data = await axiosInstance.get(URL);
-
-      setDataLength(data.data.numberOfQuizzes);
-      setSearchData(data.data.data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchData();
-  }, [activePage, yearLevel]);
-
-  const openOptions = (e) => {
-    e.stopPropagation();
-    const div = document.querySelectorAll("div.table tbody td div.options");
-    div.forEach((ele, i) => {
-      if (+e.target.dataset.index !== i) {
-        ele.classList.remove("active-div");
-      }
-    });
-    div[e.target.dataset.index].classList.toggle("active-div");
-  };
-
-  window.onclick = () => {
-    const activeDiv = document.querySelector(
-      "div.table tbody td div.options.active-div"
-    );
-
-    activeDiv && activeDiv.classList.remove("active-div");
-  };
-
-  const tableData =
-    searchData &&
-    searchData.map((e, i) => {
-      const currentDate = new Date();
-      const startDate = new Date(e.date);
-      const endDate = new Date(e.endDate);
-      const canTake =
-        isStudent && currentDate >= startDate && currentDate < endDate;
-
-      return (
-        <tr key={e._id}>
-          <td>{e.title}</td>
-          <td> {e.description} </td>
-          <td> {e.subjectId.name} </td>
-          <td>
-            {e.yearLevel} : {e.classId.name}
-          </td>
-
-          <td />
-          <td> {e.duration} </td>
-          {isAdmin && (
-            <td>
-              <i
-                onClick={openOptions}
-                className="options fa-solid fa-ellipsis"
-                data-index={i}
-              ></i>
-              <div className="options">
-                <div
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    setOverlay(true);
-                    setSelectedItems([e._id]);
-                  }}
-                  className="flex delete"
-                >
-                  <i className="fa-solid fa-trash"></i>
-                  {language.exams && language.exams.delete}
-                </div>
-                <Link to={`/update_quiz/${e._id}`} className="flex update">
-                  <i className="fa-regular fa-pen-to-square"></i>
-                  {language.exams && language.exams.update}
-                </Link>
-              </div>
-            </td>
-          )}
-          {isStudent && (
-            <td className="student-quiz">
-              {isStudent && canTake && (
-                <Link
-                  to={`/take_quiz/${e._id}`}
-                  className="fa-solid fa-play c-pointer start c-green"
-                >
-                  {language.quizzes && language.quizzes.start}
-                </Link>
-              )}
-              {isStudent && currentDate < startDate && (
-                <i className="fa-solid disabled start">
-                  {language.quizzes && language.quizzes.waiting}.
-                </i>
-              )}
-              {isStudent && currentDate > endDate && (
-                <span className="missed-quiz">
-                  {language.quizzes && language.quizzes.allready_done}
-                </span>
-              )}
-            </td>
-          )}
-        </tr>
-      );
-    });
-
-  const deleteOne = async () => {
-    try {
-      const data = await axiosInstance.patch(
-        `quizzes/deactivate/${selectedItems[0]}`,
-        []
-      );
-      data && fetchData();
-
-      setSelectedItems([]);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setOverlay(false);
-    }
-  };
-  function selectFilterYears(e) {
-    setYearLevel(parseInt(e.target.dataset.level));
-  }
-  const handleClick = (e) => {
-    e.stopPropagation();
-    e.target.classList.toggle("active");
-  };
-
-  function createYearLeveFltr() {
-    let h2 = [];
-    for (let index = 1; index < 13; index++) {
-      h2.push(
-        <h2 key={index} onClick={selectFilterYears} data-level={index}>
-          {index}
-        </h2>
-      );
-    }
-    return h2;
-  }
-
+  const [selectedItems, setSelectedItems] = useState(new Set());
+  const { userDetails } = useAuth();
+  const { role } = userDetails;
   return (
-    <main>
-      <div
-        className={`${context?.isClosed ? "closed" : ""}  dashboard-container`}
-      >
-        {overlay && (
-          <div className="overlay">
-            <div className="change-status">
-              <h1>{`${language.exams && language.exams.confirm_delete}(${
-                selectedItems.length
-              })`}</h1>
-              <div className="flex gap-20">
-                <div
-                  onClick={() => {
-                    if (selectedItems.length === 1) deleteOne();
-                  }}
-                  className="false center"
-                >
-                  <h2>{language.exams && language.exams.delete}</h2>
-                  <i className="fa-solid fa-trash"></i>
-                </div>
-                <div
-                  onClick={() => {
-                    setOverlay(false);
-                    if (selectedItems.length === 1) setSelectedItems([]);
-                  }}
-                  className="none center"
-                >
-                  <h2>{language.exams && language.exams.cancel_btn}</h2>
-                  <i className="fa-solid fa-ban"></i>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-        <div className="container">
-          <h1 className="title">
-            {language.quizzes && language.quizzes.all_quizzes}
-          </h1>
-          <div className="tabel-container">
-            <div className="table">
-              {isAdmin && (
-                <div className="flex search gap-20">
-                  <Link to={"/add_quiz"} className="btn">
-                    <i className="fa-regular fa-square-plus"></i>{" "}
-                    {language.quizzes.add_a_quiz}
-                  </Link>
-                  <div className="flex flex-direction">
-                    <div className="selecte">
-                      <div onClick={handleClick} className="inp">
-                        {yearLevel
-                          ? `${language.class && language.class.year_level}: ` +
-                            yearLevel
-                          : `${language.class && language.class.year_level} : ${
-                              language.class && language.class.all_years
-                            }`}
-                      </div>
-                      <article className="grid-3">
-                        <h2 data-level={false} onClick={selectFilterYears}>
-                          {language.class && language.class.all_years}
-                        </h2>
-                        {createYearLeveFltr()}
-                      </article>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <table className={`${tableData.length === 0 ? "loading" : ""}`}>
-                <thead>
-                  <tr>
-                    <th>title</th>
-                    <th>description</th>
-                    <th>subject</th>
-                    <th>class</th>
-                    <th>date</th>
-                    <th>duration</th>
-                    {!isTeacher && <th></th>}
-                  </tr>
-                </thead>
-                <tbody
-                  className={`${tableData.length === 0 ? "relative" : ""}`}
-                >
-                  {tableData.length > 0
-                    ? tableData
-                    : !loading && (
-                        <div className="table-loading">
-                          {language.exams && language.exams.no_data}
-                        </div>
-                      )}
-                  {loading && (
-                    <div className="table-loading">
-                      {language.exams && language.exams.loading}
-                    </div>
-                  )}
-                </tbody>
-              </table>
-
-              <div className="pagination flex">
-                {createPags(divsCount, dataLength)}
-              </div>
-            </div>
-          </div>
-        </div>
+    <div className="container">
+      <h1 className="title">lang.quizes</h1>
+      <div className="table-container flex-1">
+        <TableToolBar>
+          <Search setSearch={setSearch} />
+          <AllowedTo roles={[roles.admin]}>
+            <Delete
+              queryKey={endPoints.quizzes}
+              data={data}
+              selectedItems={selectedItems}
+              setPage={setPage}
+              setSelectedItems={setSelectedItems}
+              endPoint={endPoints.quizzes}
+            />
+            <Add path={pagesRoute.quize.add} />
+          </AllowedTo>
+          <Filters>
+            <SelectInputApi
+              endPoint={endPoints.courses}
+              label="course"
+              placeholder={filters?.courseId?.name || "all courses"}
+              optionLabel={(opt) => opt?.name}
+              onChange={(opt) => setFilters({ ...filters, courseId: opt })}
+              addOption={
+                <h3 onClick={() => setFilters({ ...filters, courseId: null })}>
+                  all courses
+                </h3>
+              }
+            />
+            <SelectInputApi
+              endPoint={endPoints.classes}
+              label="class"
+              placeholder={filters?.classId?.name || "any class"}
+              optionLabel={(opt) => opt?.name}
+              onChange={(opt) => setFilters({ ...filters, classId: opt })}
+              addOption={
+                <h3 onClick={() => setFilters({ ...filters, classId: null })}>
+                  any class
+                </h3>
+              }
+            />
+          </Filters>
+        </TableToolBar>
+        <Table
+          colmuns={column}
+          currentPage={page}
+          data={data?.data}
+          dataLength={data?.totalCount}
+          loading={isFetching}
+          selectable={role === roles.admin}
+          setPage={setPage}
+          selectedItems={selectedItems}
+          setSelectedItems={setSelectedItems}
+          setSort={setSort}
+        />
       </div>
-    </main>
+    </div>
   );
 };
 

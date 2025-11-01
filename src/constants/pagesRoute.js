@@ -53,6 +53,7 @@ export const pagesRoute = {
   quize: {
     page: "/quize/all",
     add: "/quize/add",
+    update: (id = ":id") => `/quize/update/${id}`,
   },
   login: "/login",
 };
