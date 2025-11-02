@@ -134,13 +134,20 @@ button.sending:disabled {
 .icon-button.body-color > *:not(.icon-button-hover) {
   background-color: var(--body-color);
 }
+.icon-button.delete > *:not(.icon-button-hover) {
+  background-color: #c22323;
+  color: white;
+}
+
 .icon-button.secondry-color > *:not(.icon-button-hover) {
   background-color: var(--section-color);
 }
 .icon-button:not(.main):hover > *:not(.icon-button-hover) {
   background-color: var(--border-color);
 }
-
+.icon-button.delete:hover > *:not(.icon-button-hover) {
+  background-color: #8b2222;
+}
 .icon-button-hover::before {
   content: "";
   position: absolute;

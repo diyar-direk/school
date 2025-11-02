@@ -32,6 +32,16 @@ const attendanceStatus = {
   Late: "Late",
 };
 
+const questionTypes = {
+  TOF: "true-false",
+  MC: "multiple-choice",
+};
+
+const tofQuestionStatus = {
+  true: "true",
+  false: "false",
+};
+
 const limit = 10;
 
 export {
@@ -42,4 +52,6 @@ export {
   courseStatus,
   dayes,
   attendanceStatus,
+  questionTypes,
+  tofQuestionStatus,
 };

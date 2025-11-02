@@ -4,7 +4,7 @@ import { useMemo } from "react";
  * @property {string} [className]
  * @property {string} [title]
  * @property {"top" | "bottom" | "left" | "right"} [placement]
- * @property {"body-color" | "secondry-color" | "main"} [color]
+ * @property {"body-color" | "secondry-color" | "main" | "delete"} [color]
  */
 
 /**

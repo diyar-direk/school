@@ -1,3 +1,33 @@
+.questions-section > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-start;
+  position: relative;
+}
+.questions-section > div .remove-question {
+  position: absolute;
+  right: 0;
+  top: -10px;
+}
+.questions-section > div .true .placeholder {
+  background-color: rgba(18, 92, 18, 0.153);
+  color: rgb(14, 123, 14);
+}
+.questions-section > div .false .placeholder {
+  background-color: rgba(255, 0, 0, 0.153);
+  color: red;
+}
+.questions-section > div .multi-questions {
+  width: 100%;
+}
+.questions-section > div .multi-questions > div {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
 .quiz-title > div {
   color: var(--font-color);
 }
