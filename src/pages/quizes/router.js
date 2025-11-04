@@ -5,6 +5,7 @@ import { roles } from "../../constants/enums";
 const AllQuizes = lazy(() => import("./AllQuizes"));
 const AddQuiz = lazy(() => import("./AddQuiz"));
 const UpdateQuiz = lazy(() => import("./UpdateQuiz"));
+const TakeQuiz = lazy(() => import("./TakeQuiz"));
 export const quizeRouter = [
   {
     path: pagesRoute.quize.page,
@@ -23,6 +24,14 @@ export const quizeRouter = [
     element: (
       <AllowedTo roles={[roles.admin, roles.teacher]}>
         <UpdateQuiz />
+      </AllowedTo>
+    ),
+  },
+  {
+    path: pagesRoute.quize.take(),
+    element: (
+      <AllowedTo roles={[roles.student]}>
+        <TakeQuiz />
       </AllowedTo>
     ),
   },

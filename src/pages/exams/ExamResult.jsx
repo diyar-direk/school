@@ -65,7 +65,7 @@ const column = [
     headerName: "createdAt",
     sort: true,
     getCell: ({ row }) => dateFormatter(row.createdAt, "fullDate"),
-    alloewdTo: [roles.admin],
+    allowedTo: [roles.admin],
   },
   {
     name: "updatedAt",
@@ -73,13 +73,13 @@ const column = [
     sort: true,
     hidden: true,
     getCell: ({ row }) => dateFormatter(row.updatedAt, "fullDate"),
-    alloewdTo: [roles.admin],
+    allowedTo: [roles.admin],
   },
   {
     name: "actions",
     headerName: "actions",
     className: "center",
-    alloewdTo: [roles.admin],
+    allowedTo: [roles.admin],
     getCell: ({ row }) => (
       <Link to={pagesRoute.examResult.update(row?._id)}>
         <Button> update</Button>

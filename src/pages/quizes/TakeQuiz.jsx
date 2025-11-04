@@ -2,58 +2,68 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Context } from "../../context/Context";
 import "./quiz.css";
-import FormLoading from "../../components/FormLoading";
 import { useAuth } from "../../context/AuthContext";
 import axiosInstance from "../../utils/axios";
+import ConfirmPopUp from "../../components/popup/ConfirmPopUp";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { endPoints } from "../../constants/endPoints";
+import { useFormik } from "formik";
+import {
+  examTypes,
+  questionTypes,
+  tofQuestionStatus,
+} from "../../constants/enums";
+import Button from "../../components/buttons/Button";
+import { pagesRoute } from "../../constants/pagesRoute";
 const TakeQuiz = () => {
   const { id } = useParams();
   const context = useContext(Context);
-  const [canTake, setCanTake] = useState(true);
-  const { userDetails: user } = useAuth();
-  const userDetails = user?.userDetails?.userDetails;
-  const studentId = user?.userDetails?.userDetails?._id;
-  const nav = useNavigate();
-  const name = `${userDetails?.firstName} ${userDetails?.middleName} ${userDetails?.lastName}`;
-  const [data, setData] = useState([]);
-  const [time, setTime] = useState(0);
-  const [remainingTime, setRemainingTime] = useState("");
-  const [answers, setAnswers] = useState([]);
-  const [studentAnswers, setStudentAnswers] = useState([]);
-  const [takedScore, setTakedScore] = useState(0);
-  const [overlay, setOverlay] = useState(false);
-  const [endTime, setEndTime] = useState(false);
-  const language = context && context.selectedLang;
 
-  window.addEventListener("click", () => {
-    overlay && setOverlay(false);
+  const { userDetails } = useAuth();
+  const { profileId } = userDetails;
+  const studentId = profileId?._id;
+  const [time, setTime] = useState(0);
+
+  const nav = useNavigate();
+
+  const { data: checkIfHasScore } = useQuery({
+    queryKey: [endPoints.quizzes, id, studentId],
+    queryFn: async () => {
+      try {
+        const { data } = await axiosInstance.get(endPoints["exam-results"], {
+          params: {
+            studentId,
+            examId: id,
+          },
+        });
+        return data?.data;
+      } catch (error) {}
+    },
   });
 
-  useEffect(() => {
-    axiosInstance
-      .get(`exam-results?student=${studentId}&active=true&exam=${id}&limit=1`)
-      .then((res) => {
-        if (res.data.data.length > 0) {
-          setCanTake(false);
-          setTakedScore(res.data.data[0].score);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        err.status === 400 && nav("/err-400");
-      });
-  }, []);
+  const { data } = useQuery({
+    queryKey: [endPoints.quizzes, id],
+    queryFn: async () => {
+      try {
+        const { data } = await axiosInstance.get(`${endPoints.quizzes}/${id}`);
+        const { data: res } = data;
+        setTime(
+          new Date(new Date(res?.date).getTime() + res?.duration * 60000)
+        );
+
+        return data.data;
+      } catch {}
+    },
+    enabled: checkIfHasScore?.length !== 0,
+  });
+
+  const name = `${profileId?.firstName} ${profileId?.middleName} ${profileId?.lastName}`;
+  const [remainingTime, setRemainingTime] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const language = context?.selectedLang;
 
   useEffect(() => {
-    if (!canTake) return;
-    axiosInstance.get(`quizzes/${id}`).then((res) => {
-      setData(res.data.data);
-      setAnswers(res.data.data.questions);
-      setTime(new Date(res.data.data.endDate));
-    });
-  }, [canTake]);
-
-  useEffect(() => {
-    if (!time || !canTake) return;
+    if (!time) return;
 
     const intervalId = setInterval(() => {
       const currentTime = new Date();
@@ -62,7 +72,7 @@ const TakeQuiz = () => {
       if (ms <= 0) {
         clearInterval(intervalId);
         setRemainingTime("00:00:00");
-        submitQuiz();
+        formik.handleSubmit();
         return;
       }
 
@@ -78,179 +88,176 @@ const TakeQuiz = () => {
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [time, canTake]);
+  }, [time]);
 
-  const questions = data?.questions?.map((e, i) => {
-    return (
-      <>
-        <h3 key={i - 10}> {`Q-${i + 1}`} </h3>
-        {e.type === "true-false" && (
-          <div key={i + 10} className="center wrap justify-start gap-10">
-            <h2 className="flex-1 true-false"> {e.text} </h2>
-            <div className="flex gap-10">
-              <i
-                onClick={(icon) => {
-                  icon.target.classList.add("active");
-                  icon.target.nextElementSibling.classList.remove("active");
-                  const fltr = answers.filter((ele) => ele !== e);
-                  setAnswers([...fltr, { ...e, studentAnswer: "true" }]);
-                  setStudentAnswers([...fltr, { ...e, studentAnswer: "true" }]);
-                }}
-                className="fa-solid fa-check true"
-              ></i>
-              <i
-                onClick={(icon) => {
-                  icon.target.classList.add("active");
-                  icon.target.previousElementSibling.classList.remove("active");
-                  const fltr = answers.filter((ele) => ele !== e);
-                  setAnswers([...fltr, { ...e, studentAnswer: "false" }]);
-                  setStudentAnswers([
-                    ...fltr,
-                    { ...e, studentAnswer: "false" },
-                  ]);
-                }}
-                className="fa-solid fa-xmark false"
-              ></i>
-            </div>
-          </div>
-        )}
-        {e.type === "multiple-choice" && (
-          <div key={i + 10} className="center wrap justify-start gap-10">
-            <h2 className="flex-1">{e.text}</h2>
-            <article className={`w-100 multi ans-${i}`}>
-              {e.choices?.map((ele, index) => (
-                <div
-                  onClick={(div) => {
-                    const allDivs = document.querySelectorAll(
-                      `.multi.ans-${i} > div`
-                    );
-                    allDivs.forEach((e) => e.classList.remove("active"));
-                    div.target.classList.add("active");
-                    const fltr = answers.filter(
-                      (q) => q !== e && q.quastionId !== e._id
-                    );
-                    setAnswers([
-                      ...fltr,
-                      { ...ele, studentAnswer: true, quastionId: e._id },
-                    ]);
-                    setStudentAnswers([
-                      ...fltr,
-                      { ...ele, studentAnswer: true, quastionId: e._id },
-                    ]);
-                  }}
-                  className="center gap-10"
-                >
-                  <div className="radio"></div>
-                  <h4 className="flex-1"> {`${index + 1}: ${ele.text}`} </h4>
-                </div>
-              ))}
-            </article>
-          </div>
-        )}
-      </>
-    );
+  const query = useQueryClient();
+
+ const submitQuiz = useMutation({
+    mutationFn: async (values) => {
+      const { answers } = values;
+      const questions = data.questions;
+      let correctCount = 0;
+      questions.forEach((q) => {
+        const studentAns = answers.find((a) => a.questionId === q._id);
+        if (!studentAns) return;
+        if (q.type === questionTypes.TOF) {
+          if (studentAns.studentAnswer === q.correctAnswer) {
+            correctCount++;
+          }
+        } else if (q.type === questionTypes.MC) {
+          const correctChoice = q.choices.find((c) => c.isCorrect);
+          if (
+            correctChoice &&
+            studentAns.studentAnswer === correctChoice.text
+          ) {
+            correctCount++;
+          }
+        }
+      });
+      const score = (correctCount / questions.length) * 100;
+
+      try {
+        await axiosInstance.post(endPoints["exam-results"], {
+          studentId,
+          score,
+          type: examTypes.Quiz,
+          examId: id,
+        });
+      } catch {}    },
+    onSuccess: ()*1=> {
+      nav(pagesRoute?.examResult?.page);
+      query.invalidateQueries([endPoints.quizzes, endPoints["exam-results"]]);
+    },
   });
 
-  const submitQuiz = async (e) => {
-    e?.preventDefault();
-    setEndTime(true);
-    let ans = 0;
-    studentAnswers.forEach((e) => {
-      if (e.studentAnswer)
-        if (
-          e.studentAnswer === e.correctAnswer ||
-          e.studentAnswer === e.isCorrect
-        )
-          ans++;
-    });
-    const score =
-      studentAnswers.length > 0
-        ? parseFloat(((ans * 100) / studentAnswers.length).toFixed(2))
-        : 0;
-    const form = {
-      exam: id,
-      student: studentId,
-      score,
-      type: "Quiz",
-    };
+  const formik = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      answers:
+        data?.questions?.map((q) => ({
+          questionId: q._id,
+          studentAnswer: "",
+        })) || [],
+    },
+    onSubmit: (v) => submitQuiz.mutate(v),
+  });
 
-    try {
-      await axiosInstance.post(`exam-results`, form);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  if (checkIfHasScore?.length > 0)
+    return (
+      <h1 className="center text-capitalize font-color">
+        {language?.take_quiz?.you_allready_took_and_scored}
+        {checkIfHasScore?.[0]?.score}
+      </h1>
+    );
+
+  if (!data?.questions?.length) return <p>Loading questions...</p>;
 
   return (
-    <main>
-      <div
-        className={`${context?.isClosed ? "closed" : ""}  dashboard-container`}
-      >
-        <div className="container relative">
-          {overlay && (
-            <div className="overlay">
-              <div className="change-status">
-                <h1>
-                  {language.take_quiz && language.take_quiz.confirm_sending}
-                </h1>
-                <div className="flex gap-20">
-                  <div onClick={submitQuiz} className="send center">
-                    <h2>{language.take_quiz && language.take_quiz.submit}</h2>
-                    <i className="fa-solid fa-share"></i>
-                  </div>
-                  <div
-                    onClick={() => {
-                      setOverlay(false);
-                    }}
-                    className="none center"
-                  >
-                    <h2>{language.take_quiz && language.take_quiz.cancel}</h2>
-                    <i className="fa-solid fa-ban"></i>
-                  </div>
-                </div>
-              </div>
+    <>
+      <div className="container relative">
+        <ConfirmPopUp
+          isOpen={isOpen}
+          heading={language?.take_quiz?.confirm_sending}
+          onConfirm={formik.handleSubmit}
+          confirmText={language?.take_quiz?.submit}
+          cancelText={language?.take_quiz?.cancel}
+          onClose={() => setIsOpen(false)}
+        />
+
+        <>
+          <div className="center between quiz-title">
+            <h1 className="title">{data?.subjectId?.name}</h1>
+            <div>
+              <h2 className="text-capitalize">{name}</h2>
+              <h3 className="text-capitalize">
+                {data?.duration}
+                {language?.take_quiz?.minutes}
+              </h3>
             </div>
-          )}
-          {endTime && <FormLoading />}
-          {canTake ? (
-            <>
-              <div className="center between quiz-title">
-                <h1 className="title">{data.subjectId?.name}</h1>
-                <div>
-                  <h2 className="text-capitalize">{name}</h2>
-                  <h3 className="text-capitalize">
-                    {data.duration}
-                    {language.take_quiz && language.take_quiz.minutes}{" "}
-                  </h3>
+          </div>
+          <h2 className="time gap-10 center text-capitalize">
+            {language?.take_quiz?.remainig_time}
+            <span> {remainingTime} </span>
+          </h2>
+
+          {data.questions.map((q, i) => (
+            <div key={q._id} className="questions-space">
+              <h3>{`Q-${i + 1}`}</h3>
+
+              {q.type === questionTypes.TOF && (
+                <div className="center wrap justify-start gap-10">
+                  <h2 className="flex-1 true-false">{q.text}</h2>
+                  <div className="flex gap-10">
+                    {Object.values(tofQuestionStatus).map((option) => {
+                      const isActive =
+                        formik.values.answers[i]?.studentAnswer === option;
+                      return (
+                        <label key={option}>
+                          <input
+                            type="radio"
+                            name={`answers[${i}].studentAnswer`}
+                            value={option}
+                            checked={isActive}
+                            onChange={formik.handleChange}
+                            hidden
+                          />
+                          {option === tofQuestionStatus.true && (
+                            <i
+                              className={`fa-solid fa-check true ${
+                                isActive ? "active" : ""
+                              }`}
+                            />
+                          )}
+                          {option === tofQuestionStatus.false && (
+                            <i
+                              className={`fa-solid fa-xmark false ${
+                                isActive ? "active" : ""
+                              }`}
+                            />
+                          )}
+                        </label>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-              <h2 className="time gap-10 center text-capitalize">
-                {language.take_quiz && language.take_quiz.remainig_time}{" "}
-                <span> {remainingTime} </span>
-              </h2>
+              )}
 
-              <div className="questions-space">{questions}</div>
+              {q.type === questionTypes.MC && (
+                <div className="center wrap justify-start gap-10">
+                  <h2 className="flex-1">{q.text}</h2>
+                  <article className="w-100 multi">
+                    {q.choices?.map((choice, index) => {
+                      const isActive =
+                        formik.values.answers[i]?.studentAnswer === choice.text;
 
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setOverlay(true);
-                }}
-                className="btn"
-              >
-                {language.take_quiz && language.take_quiz.finish_this_quiz}
-              </button>
-            </>
-          ) : (
-            <h1 className=" center text-capitalize font-color">
-              {language.take_quiz &&
-                language.take_quiz.you_allready_took_and_scored}{" "}
-              {takedScore}
-            </h1>
-          )}
-        </div>
+                      return (
+                        <label key={choice._id || index} className="flex-1">
+                          <input
+                            type="radio"
+                            name={`answers[${i}].studentAnswer`}
+                            value={choice.text}
+                            checked={isActive}
+                            onChange={formik.handleChange}
+                            hidden
+                          />
+                          <div className={`flex-1 ${isActive ? "active" : ""}`}>
+                            <h4 className="flex-1">{choice.text}</h4>
+                          </div>
+                        </label>
+                      );
+                    })}
+                  </article>
+                </div>
+              )}
+            </div>
+          ))}
+
+          <Button onClick={() => setIsOpen(true)}>
+            {language?.take_quiz?.finish_this_quiz}
+          </Button>
+        </>
       </div>
-    </main>
+    </>
   );
 };
 

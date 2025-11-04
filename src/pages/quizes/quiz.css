@@ -65,12 +65,12 @@ h2.time span {
 }
 .questions-space > div h2 {
   font-size: 20px;
-  padding: 10px 20px;
 }
 .questions-space > div h2:not(.true-false) {
   color: var(--main-color);
 }
 .questions-space > div h2.true-false {
+  padding: 10px 20px;
   background: var(--body-color);
   border-radius: 6px;
   color: var(--font-color);
@@ -97,35 +97,48 @@ h2.time span {
 .questions-space > div i.false.active {
   background-color: #e60404;
   color: white;
-  border: dashed 1.5px var(--section-color);
+  border: dashed 1.5px transparent;
 }
 .questions-space > div i.true:hover,
 .questions-space > div i.true.active {
-  border: dashed 1.5px var(--section-color);
+  border: dashed 1.5px transparent;
   background-color: #0e9e32;
   color: white;
 }
-.questions-space > div article > div {
-  font-size: 20px;
-  background-color: var(--body-color);
-  margin-bottom: 10px;
-  border-radius: 6px;
-  padding: 10px;
+.multi {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.questions-space > div article > label div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   cursor: pointer;
-  color: var(--font-color);
 }
-.questions-space > div article > div:hover,
-.questions-space > div article > div.active {
-  background-color: #01f7ff17;
-}
-.questions-space > div article > div.active .radio,
-.questions-space > div article > div:hover .radio {
-  background-color: #00aeff;
+.questions-space > div article > label div::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: transparent;
   outline: solid 2px #00aeff;
 }
+.questions-space > div article > label h4 {
+  font-size: 20px;
+  background-color: var(--body-color);
+  border-radius: 6px;
+  padding: 10px;
+  color: var(--font-color);
+}
+.questions-space > div article > label:hover h4,
+.questions-space > div article > label .active h4 {
+  background-color: #01f7ff17;
+}
 
-.questions-space > div article.multi > div h4 {
-  pointer-events: none;
+.questions-space > div article > label div.active::before {
+  background-color: #00aeff;
+  border: solid 2px var(--section-color);
 }
 
 @media (max-width: 1000px) {

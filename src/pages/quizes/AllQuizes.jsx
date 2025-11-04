@@ -89,7 +89,7 @@ const AllQuizes = () => {
         headerName: "createdAt",
         sort: true,
         getCell: ({ row }) => dateFormatter(row.createdAt, "fullDate"),
-        alloewdTo: [roles.admin],
+        allowedTo: [roles.admin],
       },
       {
         name: "updatedAt",
@@ -97,11 +97,12 @@ const AllQuizes = () => {
         sort: true,
         hidden: true,
         getCell: ({ row }) => dateFormatter(row.updatedAt, "fullDate"),
-        alloewdTo: [roles.admin],
+        allowedTo: [roles.admin],
       },
       {
         name: "status",
         headerName: "status",
+        allowedTo: [roles.student],
         getCell: ({ row }) => {
           const now = new Date();
           const start = new Date(row.date);
@@ -114,7 +115,12 @@ const AllQuizes = () => {
             return <div className="quize-status done"> exam finished </div>;
           } else {
             return (
-              <Link className="quize-status started">exam is running now</Link>
+              <Link
+                className="quize-status started"
+                to={pagesRoute.quize.take(row?._id)}
+              >
+                exam is running now
+              </Link>
             );
           }
         },
@@ -122,7 +128,7 @@ const AllQuizes = () => {
       {
         name: "actions",
         headerName: "actions",
-        alloewdTo: [roles.admin, roles.teacher],
+        allowedTo: [roles.admin, roles.teacher],
         getCell: ({ row }) =>
           (role === roles.admin ||
             row.courseId?.teacherId?.includes(profileId?._id)) && (
