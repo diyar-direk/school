@@ -15,6 +15,8 @@ import Filters from "../../components/table_toolbar/Filters";
 import SelectOptionInput from "../../components/inputs/SelectOptionInput";
 import { formatInputsData } from "./../../utils/formatInputsData";
 import AllowedTo from "../../components/AllowedTo";
+import { Link } from "react-router-dom";
+import Button from "../../components/buttons/Button";
 
 const apiClient = new APIClient(endPoints.users);
 
@@ -33,6 +35,18 @@ const column = [
     sort: true,
     hidden: true,
     getCell: ({ row }) => dateFormatter(row.updatedAt, "fullDate"),
+  },
+  {
+    name: "actions",
+    headerName: "actions",
+    getCell: ({ row }) => (
+      <Link className="center" to={pagesRoute.user.password(row?._id)}>
+        <Button btnStyleType="outlined">
+          <i className="fa-solid fa-key" />
+          update password
+        </Button>
+      </Link>
+    ),
   },
 ];
 const AllUsers = () => {

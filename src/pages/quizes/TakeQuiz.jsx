@@ -15,17 +15,30 @@ import {
 } from "../../constants/enums";
 import Button from "../../components/buttons/Button";
 import { pagesRoute } from "../../constants/pagesRoute";
+import Skeleton from "../../components/skeleton/Skeleton";
 const TakeQuiz = () => {
   const { id } = useParams();
   const context = useContext(Context);
+  /* TODO add up all the answers in an object that looks like this data:[{
+questionId:4ffds03205h30fn23,
+answer:true
+},
+{
+questionId:4ffds03205h30fn23,
+answer:false
+},
 
+] 
+
+
+
+*/
   const { userDetails } = useAuth();
   const { profileId } = userDetails;
   const studentId = profileId?._id;
   const [time, setTime] = useState(0);
 
   const nav = useNavigate();
-
   const { data: checkIfHasScore } = useQuery({
     queryKey: [endPoints.quizzes, id, studentId],
     queryFn: async () => {
@@ -41,7 +54,7 @@ const TakeQuiz = () => {
     },
   });
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [endPoints.quizzes, id],
     queryFn: async () => {
       try {
@@ -92,7 +105,7 @@ const TakeQuiz = () => {
 
   const query = useQueryClient();
 
- const submitQuiz = useMutation({
+  const submitQuiz = useMutation({
     mutationFn: async (values) => {
       const { answers } = values;
       const questions = data.questions;
@@ -123,8 +136,9 @@ const TakeQuiz = () => {
           type: examTypes.Quiz,
           examId: id,
         });
-      } catch {}    },
-    onSuccess: ()*1=> {
+      } catch {}
+    },
+    onSuccess: () => {
       nav(pagesRoute?.examResult?.page);
       query.invalidateQueries([endPoints.quizzes, endPoints["exam-results"]]);
     },
@@ -151,6 +165,13 @@ const TakeQuiz = () => {
     );
 
   if (!data?.questions?.length) return <p>Loading questions...</p>;
+
+  if (isLoading)
+    return (
+      <div className="container">
+        <Skeleton height="200px" />
+      </div>
+    );
 
   return (
     <>
@@ -262,3 +283,53 @@ const TakeQuiz = () => {
 };
 
 export default TakeQuiz;
+
+/*
+{
+1- quizId
+2- get student id from their token
+3- [{questionId:1,answer:"test"}*4]
+}
+4- "questions": [
+            {
+                "text": "dsadsa",
+                "type": "true-false",
+                "choices": [],
+                "correctAnswer": "true",
+                "_id": "69088b01a3fe60741d584636"
+            },
+            {
+                "text": "dsadsa",
+                "type": "multiple-choice",
+                "choices": [
+                    {
+                        "text": "test",
+                        "isCorrect": false,
+                        "_id": "6909ff51482373964a4a0bb3"
+                    },
+                    {
+                        "text": "true",
+                        "isCorrect": true,
+                        "_id": "6909ff51482373964a4a0bb4"
+                    },
+                    {
+                        "text": "false",
+                        "isCorrect": false,
+                        "_id": "6909ff51482373964a4a0bb5"
+                    },
+                    {
+                        "text": "false",
+                        "isCorrect": false,
+                        "_id": "6909ff51482373964a4a0bb6"
+                    },
+                    {
+                        "text": "dsadsa",
+                        "isCorrect": false,
+                        "_id": "6909ff51482373964a4a0bb7"
+                    }
+                ],
+                "correctAnswer": "",
+                "_id": "6909ff51482373964a4a0bb2"
+            }
+        ],
+*/

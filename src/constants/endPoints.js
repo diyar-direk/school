@@ -16,4 +16,5 @@ export const endPoints = {
   attendances: "attendances",
   count: "admins/count",
   quizzes: "quizzes",
+  updatePassword: "users/update-password",
 };

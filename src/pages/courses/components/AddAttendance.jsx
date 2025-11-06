@@ -4,7 +4,7 @@ import { attendanceStatusIcon } from "./Attendance";
 import { attendanceStatus } from "../../../constants/enums";
 import dateFormatter from "./../../../utils/dateFormatter";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addAttendance, updateAttendance } from "./api";
+import { addAttendance, deleteAttendance, updateAttendance } from "./api";
 import { endPoints } from "../../../constants/endPoints";
 
 const AddAttendance = ({ selectedData, onClose }) => {
@@ -20,6 +20,13 @@ const AddAttendance = ({ selectedData, onClose }) => {
             courseId,
             status,
           }),
+    onSuccess: () => {
+      queryClient.invalidateQueries([endPoints.attendances, courseId]);
+      onClose();
+    },
+  });
+  const handleDelete = useMutation({
+    mutationFn: () => deleteAttendance([_id]),
     onSuccess: () => {
       queryClient.invalidateQueries([endPoints.attendances, courseId]);
       onClose();
@@ -45,6 +52,13 @@ const AddAttendance = ({ selectedData, onClose }) => {
             {e}
           </Button>
         ))}
+        <Button
+          btnType="delete"
+          btnStyleType="contained"
+          onClick={handleDelete.mutate}
+        >
+          <i className="fa-solid fa-trash" /> delete status
+        </Button>
       </div>
     </PopUp>
   );

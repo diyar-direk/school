@@ -9,12 +9,13 @@ import { endPoints } from "../../constants/endPoints";
 import { courseSchema } from "../../schemas/course";
 import SelectInputApi from "../../components/inputs/SelectInputApi";
 import { useNavigate, useParams } from "react-router-dom";
+import Skeleton from "./../../components/skeleton/Skeleton";
 const apiClient = new APIClient(endPoints.courses);
 const UpdateCourse = () => {
   const context = useContext(Context);
   const { id } = useParams();
   const nav = useNavigate();
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [endPoints.courses, id],
     queryFn: () => apiClient.getOne(id),
   });
@@ -59,6 +60,13 @@ const UpdateCourse = () => {
     },
     [formik]
   );
+
+  if (isLoading)
+    return (
+      <div className="container">
+        <Skeleton height="150px" />
+      </div>
+    );
 
   return (
     <div className="container relative">

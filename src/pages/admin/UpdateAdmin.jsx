@@ -8,12 +8,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import APIClient from "./../../utils/ApiClient";
 import { endPoints } from "../../constants/endPoints";
 import { useNavigate, useParams } from "react-router-dom";
+import Skeleton from "./../../components/skeleton/Skeleton";
 const apiClient = new APIClient(endPoints.admins);
 const AddAdmin = () => {
   const context = useContext(Context);
   const { id } = useParams();
   const nav = useNavigate();
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [endPoints.admins, id],
     queryFn: () => apiClient.getOne(id),
   });
@@ -44,6 +45,13 @@ const AddAdmin = () => {
   });
 
   const language = context?.selectedLang;
+
+  if (isLoading)
+    return (
+      <div className="container">
+        <Skeleton height="100px" />
+      </div>
+    );
 
   return (
     <div className="container relative">

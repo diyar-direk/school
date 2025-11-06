@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
   const logout = useCallback(() => {
     setUserDetails(null);
     Cookies.remove("refreshToken");
+    Cookies.remove("accessToken");
     nav(pagesRoute.login);
   }, [nav]);
 
@@ -129,11 +130,17 @@ export const AuthProvider = ({ children }) => {
   }, [logout]);
 
   const getUserDetails = useCallback(async () => {
+    const accessToken = Cookies.get("accessToken");
+    if (!accessToken) return setUserLoading(false);
     try {
       setUserLoading(true);
       const { data: user } = await axiosInstance.get(
         endPoints.profile,
-        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
         { withCredentials: true }
       );
       const { user: data } = user;

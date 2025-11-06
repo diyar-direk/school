@@ -7,6 +7,7 @@ import { endPoints } from "../../constants/endPoints";
 import { countDocs } from "./api";
 import "../../components/profile.css";
 import { pagesRoute } from "../../constants/pagesRoute";
+import Skeleton from "./../../components/skeleton/Skeleton";
 const AdminProfile = () => {
   const context = useContext(Context);
   const language = context?.selectedLang;
@@ -14,10 +15,17 @@ const AdminProfile = () => {
   const { userDetails } = useAuth();
   const { profileId } = userDetails;
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [endPoints.count],
     queryFn: () => countDocs(),
   });
+
+  if (isLoading)
+    return (
+      <div className="container">
+        <Skeleton height="200px" />
+      </div>
+    );
 
   return (
     <div className="container">

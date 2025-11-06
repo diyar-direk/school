@@ -13,11 +13,12 @@ import AddStudentCourse from "./AddStudentCourse";
 import { useInfiniteFetch } from "../../hooks/useInfiniteFetch";
 import AllowedTo from "./../../components/AllowedTo";
 import { roles } from "../../constants/enums";
+import Skeleton from "../../components/skeleton/Skeleton";
 const apiClient = new APIClient(endPoints.students);
 const StudentProfile = () => {
   const { isAdmin } = useAuth();
   const { id } = useParams();
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [endPoints.students, id],
     queryFn: () => apiClient.getOne(id),
   });
@@ -36,6 +37,13 @@ const StudentProfile = () => {
   const courses = course?.pages?.[0]?.data;
 
   const [updatedCourse, setUpdatedCourse] = useState(null);
+
+  if (isLoading)
+    return (
+      <div className="container">
+        <Skeleton height="200px" />
+      </div>
+    );
 
   return (
     <div className="container">

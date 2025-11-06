@@ -31,3 +31,14 @@ export const getStudentCourse = async ({ ...params }) => {
     return data.data;
   } catch {}
 };
+
+export const deleteAttendance = async (ids) => {
+  try {
+    await axiosInstance.patch(
+      `${endPoints.attendances}/${endPoints["delete-many"]}`,
+      {
+        ids,
+      }
+    );
+  } catch {}
+};

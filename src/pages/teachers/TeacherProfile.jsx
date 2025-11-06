@@ -11,10 +11,11 @@ import dateFormatter from "./../../utils/dateFormatter";
 import TeacherCourse from "./TeacherCourse";
 import AllowedTo from "../../components/AllowedTo";
 import { roles } from "../../constants/enums";
+import Skeleton from "../../components/skeleton/Skeleton";
 const apiClient = new APIClient(endPoints.teachers);
 const TeacherProfile = () => {
   const { id } = useParams();
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [endPoints.teachers, id],
     queryFn: () => apiClient.getOne(id),
   });
@@ -24,6 +25,13 @@ const TeacherProfile = () => {
   const { isAdmin } = userDetails;
 
   const language = context?.selectedLang;
+
+  if (isLoading)
+    return (
+      <div className="container">
+        <Skeleton height="200px" />
+      </div>
+    );
 
   return (
     <div className="container">

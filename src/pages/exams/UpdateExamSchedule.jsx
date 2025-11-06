@@ -11,12 +11,13 @@ import dateFormatter from "../../utils/dateFormatter";
 import SelectInputApi from "./../../components/inputs/SelectInputApi";
 import { formatInputsData } from "./../../utils/formatInputsData";
 import { useNavigate, useParams } from "react-router-dom";
+import Skeleton from "./../../components/skeleton/Skeleton";
 const apiClient = new APIClient(endPoints.exams);
 const UpdateExamSchedule = () => {
   const context = useContext(Context);
   const nav = useNavigate();
   const { id } = useParams();
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [endPoints.exams, id],
     queryFn: () => apiClient.getOne(id),
   });
@@ -42,6 +43,13 @@ const UpdateExamSchedule = () => {
   });
 
   const language = context?.selectedLang;
+
+  if (isLoading)
+    return (
+      <div className="container">
+        <Skeleton height="200px" />
+      </div>
+    );
 
   return (
     <div className="container relative">

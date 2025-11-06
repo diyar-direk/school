@@ -41,8 +41,9 @@ export const pagesRoute = {
     view: (id = ":id") => `/admin/view/${id}`,
   },
   user: {
-    page: "/all_users",
-    add: "/add_user",
+    page: "/users/all",
+    add: "/users/add",
+    password: (id = ":userId") => `/users/password/${id}`,
   },
   attendance: {
     page: "attendance",

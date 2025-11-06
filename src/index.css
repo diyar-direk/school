@@ -159,6 +159,7 @@ body {
   --box-shadow: 0 0 16px #eeeeee;
   background-color: var(--section-color);
   overflow-x: hidden;
+  --aside-color: #e7e9eb;
 }
 body.dark {
   --border-color: #83838340;
@@ -166,6 +167,7 @@ body.dark {
   --section-color: #181a1e;
   --font-color: #ccc;
   --box-shadow: 0 0 16px #171717;
+  --aside-color: #222223;
 }
 
 body.arabic {

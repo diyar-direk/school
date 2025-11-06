@@ -11,6 +11,7 @@ import { genders } from "../../constants/enums";
 import { useNavigate, useParams } from "react-router-dom";
 import { studentSchema } from "./../../schemas/student";
 import dateFormatter from "./../../utils/dateFormatter";
+import Skeleton from "./../../components/skeleton/Skeleton";
 
 const apiClient = new APIClient(endPoints.students);
 
@@ -18,7 +19,7 @@ const UpdateStudent = () => {
   const { id } = useParams();
   const context = useContext(Context);
   const nav = useNavigate();
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [endPoints.students, id],
     queryFn: () => apiClient.getOne(id),
   });
@@ -51,6 +52,12 @@ const UpdateStudent = () => {
   });
 
   const language = context?.selectedLang;
+  if (isLoading)
+    return (
+      <div className="container">
+        <Skeleton height="200px" />
+      </div>
+    );
 
   return (
     <div className="container relative">

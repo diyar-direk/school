@@ -10,12 +10,13 @@ import { teacherSchema } from "./../../schemas/teacher";
 import SelectOptionInput from "../../components/inputs/SelectOptionInput";
 import { genders } from "../../constants/enums";
 import { useParams } from "react-router-dom";
+import Skeleton from "../../components/skeleton/Skeleton";
 
 const apiClient = new APIClient(endPoints.teachers);
 const UpdateTeacher = () => {
   const context = useContext(Context);
   const { id } = useParams();
-  const { data } = useQuery({
+  const { data,isLoading } = useQuery({
     queryKey: [endPoints.teachers, id],
     queryFn: () => apiClient.getOne(id),
   });
@@ -42,6 +43,13 @@ const UpdateTeacher = () => {
   });
 
   const language = context?.selectedLang;
+
+  if (isLoading)
+    return (
+      <div className="container">
+        <Skeleton height="200px" />
+      </div>
+    );
 
   return (
     <div className="container relative">

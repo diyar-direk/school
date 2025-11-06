@@ -10,16 +10,24 @@ import "./subjects.css";
 import { spritObject } from "../../utils/spritObject";
 import AllowedTo from "../../components/AllowedTo";
 import { roles } from "../../constants/enums";
+import Skeleton from "../../components/skeleton/Skeleton";
 
 const api = new APIClient(endPoints.courses);
 const CourseView = () => {
   const { id } = useParams();
   const { userDetails } = useAuth();
-  const { isAdmin } = userDetails;
-  const { data } = useQuery({
+  const { isAdmin, porfileId, isTeacher } = userDetails;
+  const { data, isLoading } = useQuery({
     queryKey: [endPoints.courses, id],
     queryFn: () => api.getOne(id),
   });
+
+  if (isLoading)
+    return (
+      <div className="container">
+        <Skeleton height="200px" />
+      </div>
+    );
 
   return (
     <div className="container">
@@ -70,7 +78,10 @@ const CourseView = () => {
         <NavLink to={pagesRoute.courses.exams(id)}> exams</NavLink>
         <AllowedTo roles={[roles.admin, roles.teacher]}>
           <NavLink to={pagesRoute.courses.students(id)}> students</NavLink>
-          <NavLink to={pagesRoute.courses.attendance(id)}> attendance</NavLink>
+          {(data?.teacherId?.some((e) => e?._id === porfileId?._id) ||
+            isAdmin) && (
+            <NavLink to={pagesRoute.courses.attendance(id)}>attendance</NavLink>
+          )}
         </AllowedTo>
       </div>
       <Outlet />

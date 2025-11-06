@@ -4,6 +4,7 @@ import AllowedTo from "../../components/AllowedTo";
 import { roles } from "../../constants/enums";
 const AllUsers = lazy(() => import("./AllUsers"));
 const AddUser = lazy(() => import("./AddUser"));
+const UpdatePassword = lazy(() => import("./UpdatePassword"));
 
 export const usersRouter = [
   {
@@ -19,6 +20,14 @@ export const usersRouter = [
     element: (
       <AllowedTo roles={[roles.admin]}>
         <AddUser />
+      </AllowedTo>
+    ),
+  },
+  {
+    path: pagesRoute.user.password(),
+    element: (
+      <AllowedTo roles={[roles.admin]}>
+        <UpdatePassword />
       </AllowedTo>
     ),
   },

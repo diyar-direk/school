@@ -12,10 +12,11 @@ import { examResultSchema } from "./../../schemas/examResult";
 import SelectOptionInput from "../../components/inputs/SelectOptionInput";
 import { examTypes } from "../../constants/enums";
 import { useParams } from "react-router-dom";
+import Skeleton from "../../components/skeleton/Skeleton";
 const apiClient = new APIClient(endPoints["exam-results"]);
 const UpdateExamResult = () => {
   const { id } = useParams();
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [endPoints["exam-results"], id],
     queryFn: () => apiClient.getOne(id),
   });
@@ -41,6 +42,13 @@ const UpdateExamResult = () => {
   });
 
   const language = context?.selectedLang;
+
+  if (isLoading)
+    return (
+      <div className="container">
+        <Skeleton height="200px" />
+      </div>
+    );
 
   return (
     <div className="container relative">

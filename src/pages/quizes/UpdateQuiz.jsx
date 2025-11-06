@@ -16,6 +16,7 @@ import APIClient from "./../../utils/ApiClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import Skeleton from "../../components/skeleton/Skeleton";
 const UpdateQuiz = () => {
   const context = useContext(Context);
   const { userDetails } = useAuth();
@@ -26,7 +27,7 @@ const UpdateQuiz = () => {
   const api = new APIClient(endPoints.quizzes);
 
   const { id } = useParams();
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [endPoints.quizzes, id],
     queryFn: () => api.getOne(id),
   });
@@ -38,6 +39,13 @@ const UpdateQuiz = () => {
       nav(-1);
     },
   });
+
+  if (isLoading)
+    return (
+      <div className="container">
+        <Skeleton height="200px" />
+      </div>
+    );
 
   return (
     <>
