@@ -23,8 +23,9 @@ export const AuthProvider = ({ children }) => {
 
   const nav = useNavigate();
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
     setUserDetails(null);
+    await axiosInstance.post("/users/logout");
     Cookies.remove("refreshToken");
     Cookies.remove("accessToken");
     nav(pagesRoute.login);
@@ -73,7 +74,7 @@ export const AuthProvider = ({ children }) => {
         const originalRequest = error.config;
         const status = error.response?.status;
 
-        if (status === 403 && !originalRequest._retry) {
+        if (status === 401 && !originalRequest._retry) {
           originalRequest._retry = true;
           setUserLoading(false);
 
