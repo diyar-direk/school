@@ -17,7 +17,7 @@ export const examRouter = [
   {
     path: pagesRoute.exam.add,
     element: (
-      <AllowedTo roles={[roles.admin]}>
+      <AllowedTo roles={[roles.admin, roles.teacher]}>
         <AddExam />
       </AllowedTo>
     ),
@@ -25,7 +25,7 @@ export const examRouter = [
   {
     path: pagesRoute.exam.update(),
     element: (
-      <AllowedTo roles={[roles.admin]}>
+      <AllowedTo roles={[roles.admin, roles.teacher]}>
         <UpdateExamSchedule />
       </AllowedTo>
     ),

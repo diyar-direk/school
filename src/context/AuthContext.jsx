@@ -27,6 +27,7 @@ export const AuthProvider = ({ children }) => {
     setUserDetails(null);
     await axiosInstance.post(endPoints.logout);
     Cookies.remove("accessToken");
+    Cookies.remove("refreshToken");
     nav(pagesRoute.login);
   }, [nav]);
 
@@ -111,13 +112,13 @@ export const AuthProvider = ({ children }) => {
           }
         }
 
+        if (status === 403) logout();
+
         const message =
           error?.response?.data?.message ||
           error?.data?.message ||
           "Something went wrong";
         toast.error(message);
-
-        if (status === 403) logout();
 
         return Promise.reject(error);
       }

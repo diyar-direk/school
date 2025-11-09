@@ -65,6 +65,9 @@ const Login = () => {
     },
   });
 
+  const token = Cookies.get("accessToken");
+  if (token) return nav("/");
+
   return (
     <main className="center section-color">
       <form onSubmit={formik.handleSubmit} className="login relative">

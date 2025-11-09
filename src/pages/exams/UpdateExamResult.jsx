@@ -9,10 +9,10 @@ import { endPoints } from "../../constants/endPoints";
 import SelectInputApi from "./../../components/inputs/SelectInputApi";
 import { formatInputsData } from "./../../utils/formatInputsData";
 import { examResultSchema } from "./../../schemas/examResult";
-import SelectOptionInput from "../../components/inputs/SelectOptionInput";
-import { examTypes } from "../../constants/enums";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Skeleton from "../../components/skeleton/Skeleton";
+import AllowedTo from "../../components/AllowedTo";
+import { roles } from "../../constants/enums";
 const apiClient = new APIClient(endPoints["exam-results"]);
 const UpdateExamResult = () => {
   const { id } = useParams();
@@ -21,6 +21,7 @@ const UpdateExamResult = () => {
     queryFn: () => apiClient.getOne(id),
   });
   const context = useContext(Context);
+  const nav = useNavigate();
   const formik = useFormik({
     initialValues: {
       studentId: data?.studentId || "",
@@ -37,7 +38,7 @@ const UpdateExamResult = () => {
     mutationFn: (data) => apiClient.updateData({ id, data }),
     onSuccess: () => {
       queryClient.invalidateQueries([endPoints["exam-results"]]);
-      formik.resetForm();
+      nav(-1);
     },
   });
 
@@ -57,38 +58,30 @@ const UpdateExamResult = () => {
       <form onSubmit={formik.handleSubmit} className="relative dashboard-form">
         <h1>{language.exams && language.exams.please_complete_form}</h1>
         <div className="flex wrap">
-          <SelectInputApi
-            endPoint={endPoints.students}
-            label="student"
-            optionLabel={(opt) =>
-              `${opt?.firstName} ${opt?.middleName} ${opt?.lastName}`
-            }
-            placeholder={
-              formik.values.studentId
-                ? `${formik.values.studentId?.firstName} ${formik.values.studentId?.middleName} ${formik.values.studentId?.lastName}`
-                : "select student"
-            }
-            onChange={(opt) => formik.setFieldValue("studentId", opt)}
-            errorText={formik.errors?.studentId}
-          />
-          <SelectInputApi
-            endPoint={endPoints.exams}
-            label="exam"
-            placeholder={formik.values?.examId?.title || "select exam"}
-            optionLabel={(opt) => opt?.title}
-            onChange={(opt) => formik.setFieldValue("examId", opt)}
-            errorText={formik.errors?.examId}
-          />
-          <SelectOptionInput
-            label="type"
-            options={[
-              { text: "exam", value: examTypes.Exam },
-              { text: "quiz", value: examTypes.Quiz },
-            ]}
-            onSelectOption={(opt) => formik.setFieldValue("type", opt.value)}
-            placeholder={formik.values?.type || "select type"}
-            errorText={formik.errors?.type}
-          />
+          <AllowedTo roles={[roles.admin]}>
+            <SelectInputApi
+              endPoint={endPoints.students}
+              label="student"
+              optionLabel={(opt) =>
+                `${opt?.firstName} ${opt?.middleName} ${opt?.lastName}`
+              }
+              placeholder={
+                formik.values.studentId
+                  ? `${formik.values.studentId?.firstName} ${formik.values.studentId?.middleName} ${formik.values.studentId?.lastName}`
+                  : "select student"
+              }
+              onChange={(opt) => formik.setFieldValue("studentId", opt)}
+              errorText={formik.errors?.studentId}
+            />
+            <SelectInputApi
+              endPoint={endPoints.exams}
+              label="exam"
+              placeholder={formik.values?.examId?.title || "select exam"}
+              optionLabel={(opt) => opt?.title}
+              onChange={(opt) => formik.setFieldValue("examId", opt)}
+              errorText={formik.errors?.examId}
+            />
+          </AllowedTo>
 
           <Input
             title={"language?.exam?.score"}

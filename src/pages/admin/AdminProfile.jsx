@@ -13,7 +13,7 @@ const AdminProfile = () => {
   const language = context?.selectedLang;
 
   const { userDetails } = useAuth();
-  const { profileId } = userDetails;
+  const { profileId } = userDetails || {};
 
   const { data, isLoading } = useQuery({
     queryKey: [endPoints?.count],

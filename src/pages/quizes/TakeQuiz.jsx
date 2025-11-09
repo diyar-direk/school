@@ -16,7 +16,7 @@ const TakeQuiz = () => {
   const { id } = useParams();
   const context = useContext(Context);
   const { userDetails } = useAuth();
-  const { profileId } = userDetails;
+  const { profileId } = userDetails || {};
   const [time, setTime] = useState(0);
 
   const nav = useNavigate();

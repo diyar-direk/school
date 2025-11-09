@@ -12,9 +12,12 @@ import SelectInputApi from "./../../components/inputs/SelectInputApi";
 import { formatInputsData } from "./../../utils/formatInputsData";
 import { useNavigate, useParams } from "react-router-dom";
 import Skeleton from "./../../components/skeleton/Skeleton";
+import { useAuth } from "../../context/AuthContext";
 const apiClient = new APIClient(endPoints.exams);
 const UpdateExamSchedule = () => {
   const context = useContext(Context);
+  const { userDetails } = useAuth();
+  const { isTeacher, profileId } = userDetails || {};
   const nav = useNavigate();
   const { id } = useParams();
   const { data, isLoading } = useQuery({
@@ -71,6 +74,7 @@ const UpdateExamSchedule = () => {
             optionLabel={(opt) => opt?.name}
             onChange={(opt) => formik.setFieldValue("courseId", opt)}
             errorText={formik.errors?.courseId}
+            params={{ teacherId: isTeacher ? profileId?._id : null }}
           />
           <Input
             title={"language?.admins?.last_name"}

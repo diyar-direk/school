@@ -48,7 +48,7 @@ const navbarLinks = [
   {
     title: (lang) => lang.teachers,
     type: "multi",
-    showIf: [roles.admin, roles.teacher],
+    showIf: [roles.admin],
     icon: <i className="fa-solid fa-people-group" />,
     children: [
       {
@@ -66,7 +66,7 @@ const navbarLinks = [
   {
     title: (lang) => lang.students,
     type: "multi",
-    showIf: [roles.admin, roles.teacher],
+    showIf: [roles.admin],
     icon: <i className="fa-solid fa-children" />,
     children: [
       {
@@ -106,7 +106,7 @@ const navbarLinks = [
       },
       {
         title: (lang) => lang.exam_results,
-        showIf: [roles.admin, roles.teacher, roles.student],
+        showIf: [roles.admin, roles.student],
         to: pagesRoute.examResult.page,
       },
       {

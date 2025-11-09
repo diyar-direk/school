@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { endPoints } from "../../constants/endPoints";
 import { examTypes, limit, roles } from "../../constants/enums";
@@ -9,7 +9,7 @@ import Add from "../../components/table_toolbar/Add";
 import { pagesRoute } from "../../constants/pagesRoute";
 import Table from "../../components/table/Table";
 import dateFormatter from "../../utils/dateFormatter";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Button from "../../components/buttons/Button";
 import APIClient from "../../utils/ApiClient";
 import Filters from "./../../components/table_toolbar/Filters";
@@ -18,6 +18,7 @@ import { formatInputsData } from "./../../utils/formatInputsData";
 import AllowedTo from "../../components/AllowedTo";
 import { useAuth } from "../../context/AuthContext";
 import SelectOptionInput from "../../components/inputs/SelectOptionInput";
+import AddExamResultPopup from "./AddExamResultPopup";
 
 const column = [
   {
@@ -79,7 +80,7 @@ const column = [
     name: "actions",
     headerName: "actions",
     className: "center",
-    allowedTo: [roles.admin],
+    allowedTo: [roles.admin, roles.teacher],
     getCell: ({ row }) => (
       <Link to={pagesRoute.examResult.update(row?._id)}>
         <Button> update</Button>
@@ -93,10 +94,13 @@ const ExamResult = () => {
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState({});
   const { userDetails } = useAuth();
-  const { isStudent, role } = userDetails;
+  const { isStudent, role, isAdmin } = userDetails || {};
+
+  const { state } = useLocation();
+  const { examId, courseId } = state || {};
 
   const [filters, setFilters] = useState({
-    examId: null,
+    examId,
     studentId: isStudent ? userDetails?.profileId?._id : null,
     type: null,
   });
@@ -120,13 +124,32 @@ const ExamResult = () => {
 
   const [selectedItems, setSelectedItems] = useState(new Set());
 
+  const handleStudentFilter = useMemo(
+    () => ({
+      endPoint: courseId ? endPoints["student-courses"] : endPoints.students,
+      label: "student",
+      placeholder: filters?.studentId
+        ? `${filters?.studentId?.firstName} ${filters?.studentId?.lastName}`
+        : "all students",
+      optionLabel: (opt) => {
+        if (courseId)
+          return `${opt?.studentId?.firstName} ${opt?.studentId?.middleName} ${opt?.studentId?.lastName}`;
+        else return `${opt?.firstName} ${opt?.middleName} ${opt?.lastName}`;
+      },
+      onChange: (opt) =>
+        setFilters({ ...filters, studentId: courseId ? opt.studentId : opt }),
+    }),
+    [courseId, filters]
+  );
+
   return (
     <div className="container">
       <h1 className="title">exams result</h1>
       <div className="table-container flex-1">
         <TableToolBar>
           <Search setSearch={setSearch} />
-          <AllowedTo roles={[roles.admin]}>
+
+          <AllowedTo roles={[roles.teacher, roles.admin]}>
             <Delete
               queryKey={endPoints.exams}
               data={data}
@@ -135,22 +158,20 @@ const ExamResult = () => {
               setSelectedItems={setSelectedItems}
               endPoint={endPoints.exams}
             />
-            <Add path={pagesRoute.examResult.add} />
+            {courseId ? (
+              <AddExamResultPopup examId={examId} />
+            ) : (
+              isAdmin && <Add path={pagesRoute.examResult.add} />
+            )}
           </AllowedTo>
           <Filters>
             <AllowedTo roles={[roles.admin, roles.teacher]}>
               <SelectInputApi
-                endPoint={endPoints.students}
-                label="student"
-                placeholder={
-                  filters?.studentId
-                    ? `${filters?.studentId?.firstName} ${filters?.studentId?.lastName}`
-                    : "all students"
-                }
-                optionLabel={(opt) =>
-                  `${opt?.firstName} ${opt?.middleName} ${opt?.lastName}`
-                }
-                onChange={(opt) => setFilters({ ...filters, studentId: opt })}
+                endPoint={handleStudentFilter.endPoint}
+                label={handleStudentFilter.label}
+                placeholder={handleStudentFilter.placeholder}
+                optionLabel={handleStudentFilter.optionLabel}
+                onChange={handleStudentFilter.onChange}
                 addOption={
                   <h3
                     onClick={() => setFilters({ ...filters, studentId: null })}
@@ -160,18 +181,24 @@ const ExamResult = () => {
                 }
               />
             </AllowedTo>
-            <SelectInputApi
-              endPoint={endPoints.exams}
-              label="exam"
-              placeholder={filters?.examId?.title || "any exam"}
-              optionLabel={(opt) => opt?.title}
-              onChange={(opt) => setFilters({ ...filters, examId: opt })}
-              addOption={
-                <h3 onClick={() => setFilters({ ...filters, examId: null })}>
-                  any exam
-                </h3>
-              }
-            />
+            {!examId && (
+              <AllowedTo roles={[roles.admin]}>
+                <SelectInputApi
+                  endPoint={endPoints.exams}
+                  label="exam"
+                  placeholder={filters?.examId?.title || "any exam"}
+                  optionLabel={(opt) => opt?.title}
+                  onChange={(opt) => setFilters({ ...filters, examId: opt })}
+                  addOption={
+                    <h3
+                      onClick={() => setFilters({ ...filters, examId: null })}
+                    >
+                      any exam
+                    </h3>
+                  }
+                />
+              </AllowedTo>
+            )}
             <SelectOptionInput
               addOption={
                 <h3 onClick={() => setFilters({ ...filters, type: null })}>
