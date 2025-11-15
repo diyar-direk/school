@@ -8,6 +8,7 @@ export const endPoints = {
   exams: "exams",
   courses: "courses",
   "student-courses": "student-courses",
+  "create-many": "create-many",
   teachers: "teachers",
   students: "students",
   "refresh-token": "users/refresh-token",

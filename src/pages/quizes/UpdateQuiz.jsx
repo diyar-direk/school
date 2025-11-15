@@ -61,12 +61,18 @@ const UpdateQuiz = () => {
           }}
           validationSchema={quizeSchema}
           enableReinitialize
-          onSubmit={(values) =>
+          onSubmit={(values) => {
+            const start = new Date(values.date);
+            const end = new Date(
+              start.getTime() + Number(values.duration) * 60000
+            );
+
             handleSubmit.mutate({
               ...values,
               courseId: values?.courseId?._id,
-            })
-          }
+              endDate: end.toISOString(),
+            });
+          }}
         >
           {(formik) => (
             <form onSubmit={formik.handleSubmit}>

@@ -8,7 +8,6 @@ import APIClient from "../../utils/ApiClient";
 import { endPoints } from "../../constants/endPoints";
 import { courseSchema } from "../../schemas/course";
 import SelectInputApi from "../../components/inputs/SelectInputApi";
-import SelectOptionInput from "../../components/inputs/SelectOptionInput";
 import { courseStatus } from "../../constants/enums";
 import axiosInstance from "../../utils/axios";
 const apiClient = new APIClient(endPoints.courses);
@@ -22,7 +21,6 @@ const AddCourse = () => {
       description: "",
       teacherId: [],
       students: [],
-      status: "",
     },
     validationSchema: courseSchema,
     onSubmit: (values) => handleSubmit.mutate(values),
@@ -37,18 +35,17 @@ const AddCourse = () => {
   });
   const addStudentCourse = useMutation({
     mutationFn: async (courseId) => {
-      if (formik.values.students?.length > 0)
-        try {
-          await Promise.all(
-            formik.values.students.map((student) =>
-              axiosInstance.post(endPoints["student-courses"], {
-                studentId: student?._id,
-                courseId,
-                status: formik.values.status || courseStatus.Active,
-              })
-            )
-          );
-        } catch {}
+      if (formik.values.students?.length > 0) {
+        const docs = formik?.values?.students?.map((e) => ({
+          studentId: e._id,
+          courseId,
+          status: courseStatus.Active,
+        }));
+        await axiosInstance.patch(
+          `${endPoints["student-courses"]}/${endPoints["create-many"]}`,
+          { docs }
+        );
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries([endPoints["student-courses"]]);
@@ -124,31 +121,6 @@ const AddCourse = () => {
           />
         </div>
         <div className="flex wrap" style={{ marginTop: "10px" }}>
-          <SelectOptionInput
-            label="course status"
-            wrapperProps={{
-              className: `course-status ${formik.values.status}`,
-            }}
-            placeholder={formik.values.status || "course status"}
-            options={[
-              {
-                text: "Active",
-                value: courseStatus.Active,
-                props: { className: "active" },
-              },
-              {
-                text: "completed",
-                value: courseStatus.Completed,
-                props: { className: "completed" },
-              },
-              {
-                text: "Dropped",
-                value: courseStatus.Dropped,
-                props: { className: "dropped" },
-              },
-            ]}
-            onSelectOption={(e) => formik.setFieldValue("status", e.value)}
-          />
           <SelectInputApi
             endPoint={endPoints.students}
             label="students"
