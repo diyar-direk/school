@@ -96,3 +96,14 @@
 .add-course-popup div.actions button {
   flex: 1;
 }
+
+@media (max-width: 800px) {
+  .add-course-popup {
+    min-width: 70%;
+  }
+}
+@media (max-width: 500px) {
+  .add-course-popup {
+    min-width: 90%;
+  }
+}

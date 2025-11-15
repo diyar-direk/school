@@ -4,3 +4,9 @@
 .overlay .popup.grid-3 > div {
   flex-direction: column;
 }
+
+@media (max-width: 800px) {
+  .overlay .popup.grid-3 {
+    width: 90%;
+  }
+}

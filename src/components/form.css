@@ -139,9 +139,7 @@ i.password {
 .overlay form label {
   margin: 0;
 }
-.overlay form input {
-  margin: 5px 0;
-}
+
 .overlay .dashboard-form .flex-direction {
   gap: 10px;
 }
@@ -359,9 +357,16 @@ form.quize i.false:hover {
   form.login {
     width: 80%;
   }
+  .inp .input-wrapper .password {
+    font-size: 12px;
+  }
 }
 
 @media (max-width: 500px) {
+  .dashboard-form .inp {
+    min-width: auto;
+    flex: 48%;
+  }
   .dashboard-form .flex-direction {
     min-width: auto;
     flex: 100%;

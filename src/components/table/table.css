@@ -280,26 +280,6 @@ body.arabic .pagination .page-container {
   }
 }
 
-.icon-delete {
-  color: #b61212;
-  cursor: pointer;
-}
-.icon-edit {
-  color: #2b4a69;
-  cursor: pointer;
-}
-
-.icon-delete:hover {
-  color: rgb(204, 20, 20);
-}
-.icon-edit:hover {
-  color: #1670ac;
-}
-
-.icon-eye {
-  color: green;
-}
-
 .visit-text {
   color: var(--font-color);
 }
@@ -315,5 +295,84 @@ body.arabic .pagination .page-container {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (max-width: 800px) {
+  .table-container .table-toolbar .table-toolbar-search {
+    padding: 7px;
+  }
+  .table-container .table-toolbar .table-toolbar-search i {
+    font-size: 15px;
+  }
+  .table-container .table-toolbar .table-toolbar-search input {
+    font-size: 13px;
+  }
+  div.table thead th {
+    font-size: 16px;
+  }
+  div.table tbody td {
+    font-size: 15px;
+  }
+  div.table-header > article .columns-visible > input {
+    font-size: 11px;
+  }
+  div.table-header > article .columns-visible > div label {
+    font-size: 14px;
+  }
+  div.table-header > article .columns-visible > div input {
+    width: 11px;
+    height: 11px;
+  }
+  div.table-header > article .columns-visible .btn {
+    font-size: 11px;
+  }
+  .pagination h2 {
+    font-size: 16px;
+    padding: 6px;
+  }
+  .pagination .page-container button {
+    width: 20px;
+    height: 20px;
+    font-size: 13px;
+  }
+}
+@media (max-width: 600px) {
+  .table-container .table-toolbar {
+    padding: 10px;
+  }
+  div.table-header > article > i {
+    font-size: 17px;
+  }
+  .table-container .table-toolbar .table-toolbar-search {
+    padding: 6px;
+  }
+  .table-container .table-toolbar .table-toolbar-search i {
+    font-size: 13px;
+  }
+  .table-container .table-toolbar .table-toolbar-search input {
+    font-size: 12px;
+  }
+  div.table thead th {
+    font-size: 14px;
+  }
+  div.table tbody td {
+    font-size: 12px;
+  }
+  div.table-header > article .columns-visible > div label {
+    font-size: 13px;
+  }
+  div.table-header > article .columns-visible > div input {
+    width: 10px;
+    height: 10px;
+  }
+  .pagination h2 {
+    font-size: 13px;
+    padding: 5px;
+  }
+  .pagination .page-container button {
+    width: 18x;
+    height: 18x;
+    font-size: 11px;
   }
 }

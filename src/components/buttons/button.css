@@ -176,3 +176,28 @@ button.sending:disabled {
   transform: translateY(-50%);
   left: -3px;
 }
+
+@media (max-width: 800px) {
+  .btn {
+    letter-spacing: 0px;
+    gap: 5px;
+  }
+  .icon-button > *:not(.icon-button-hover) {
+    width: 35px;
+    height: 35px;
+    font-size: 14px;
+  }
+  .icon-button .icon-button-hover {
+    font-size: 11px;
+  }
+}
+@media (max-width: 600px) {
+  .icon-button > *:not(.icon-button-hover) {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+  .icon-button .icon-button-hover {
+    padding: 4px 6px;
+  }
+}

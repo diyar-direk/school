@@ -299,9 +299,13 @@ div.profile .info > .flex p:not(.email) {
   }
 }
 @media (max-width: 600px) {
+  .admin-page > article {
+    padding: 10px;
+    gap: 5px;
+  }
   .admin-page > article i {
-    width: 55px;
-    height: 55px;
+    width: 50px;
+    height: 50px;
   }
   .admin-page > article i {
     font-size: 14px;

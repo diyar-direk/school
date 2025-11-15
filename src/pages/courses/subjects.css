@@ -144,4 +144,11 @@
   .subjects form.dashboard-form .inp {
     font-size: 15px;
   }
+  .course-pages {
+    margin: 10px 0 20px;
+  }
+  .course-pages a {
+    padding: 6px;
+    font-size: 14px;
+  }
 }

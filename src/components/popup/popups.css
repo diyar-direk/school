@@ -37,3 +37,9 @@ table .overlay {
   background-color: transparent;
   backdrop-filter: blur(1px);
 }
+
+@media (max-width: 800px) {
+  .overlay .popup {
+    padding: 20px;
+  }
+}
