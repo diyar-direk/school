@@ -1,6 +1,5 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import "../../components/profile.css";
-import { Context } from "../../context/Context";
 import { useAuth } from "../../context/AuthContext";
 import dateFormatter from "../../utils/dateFormatter";
 import { Link, useParams } from "react-router-dom";
@@ -14,6 +13,7 @@ import { useInfiniteFetch } from "../../hooks/useInfiniteFetch";
 import AllowedTo from "./../../components/AllowedTo";
 import { roles } from "../../constants/enums";
 import Skeleton from "../../components/skeleton/Skeleton";
+import { useTranslation } from "react-i18next";
 const apiClient = new APIClient(endPoints.students);
 const StudentProfile = () => {
   const { isAdmin } = useAuth();
@@ -23,8 +23,7 @@ const StudentProfile = () => {
     queryFn: () => apiClient.getOne(id),
   });
 
-  const context = useContext(Context);
-  const language = context?.selectedLang;
+  const { t } = useTranslation();
 
   const {
     data: course,
@@ -53,7 +52,7 @@ const StudentProfile = () => {
           <i className="photo fa-solid fa-user"></i>
           {isAdmin && (
             <Link to={pagesRoute.student.update(id)} className="center gap-10">
-              {language?.students?.edit_btn}
+              {t("students.edit_btn")}
               <i className="fa-regular fa-pen-to-square"></i>
             </Link>
           )}
@@ -68,32 +67,32 @@ const StudentProfile = () => {
           )}
 
           <div className="flex">
-            <h2>{"language?.students?.name"} :</h2>
+            <h2>{t("students.name")} :</h2>
             <p>
               {data?.firstName} {data?.middleName} {data?.lastName}
             </p>
           </div>
           <div className="flex">
-            <h2>{language?.students?.gender} :</h2>
+            <h2>{t("students.gender")} :</h2>
             <p> {data?.gender} </p>
           </div>
 
           <div className="flex">
-            <h2>{language?.students?.date_of_birth} :</h2>
+            <h2>{t("students.date_of_birth")} :</h2>
             <p> {dateFormatter(data?.dateOfBirth)} </p>
           </div>
 
           <div className="flex">
-            <h2>{language?.students?.email} :</h2>
+            <h2>{t("students.email")} :</h2>
             <p className="email">{data?.email}</p>
           </div>
           <div className="flex">
-            <h2>{language?.students?.phone} :</h2>
+            <h2>{t("students.phone")} :</h2>
             <p>{data?.phoneNumber}</p>
           </div>
 
           <div className="flex">
-            <h2>{language?.students?.enrollment_date} :</h2>
+            <h2>{t("students.enrollment_date")} :</h2>
             <p>{dateFormatter(data?.enrollmentDate)}</p>
           </div>
 

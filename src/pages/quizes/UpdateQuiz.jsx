@@ -1,6 +1,4 @@
-import { useContext } from "react";
 import "../../components/form.css";
-import { Context } from "../../context/Context";
 import { FieldArray, Formik } from "formik";
 import SelectOptionInput from "../../components/inputs/SelectOptionInput";
 import { quizeSchema } from "../../schemas/quizeSchema";
@@ -18,11 +16,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import Skeleton from "../../components/skeleton/Skeleton";
 import "./quiz.css";
+import { useTranslation } from "react-i18next";
 const UpdateQuiz = () => {
-  const context = useContext(Context);
   const { userDetails } = useAuth();
   const { profileId, role } = userDetails || {};
-  const language = context && context.selectedLang;
+  const { t } = useTranslation();
+
   const nav = useNavigate();
   const queryClient = useQueryClient();
   const api = new APIClient(endPoints.quizzes);
@@ -78,12 +77,12 @@ const UpdateQuiz = () => {
           {(formik) => (
             <form onSubmit={formik.handleSubmit}>
               <div className="dashboard-form">
-                <h1>{language?.exams?.please_complete_form}</h1>
+                <h1>{t("exams.please_complete_form")}</h1>
                 <div className="flex wrap">
                   <Input
                     errorText={formik.errors?.title}
-                    title={language?.quizzes?.exam_title}
-                    placeholder={language?.quizzes?.exam_title_placeholder}
+                    title={t("quizzes.exam_title")}
+                    placeholder={t("quizzes.exam_title_placeholder")}
                     name="title"
                     onChange={formik.handleChange}
                     value={formik?.values?.title}
@@ -105,7 +104,7 @@ const UpdateQuiz = () => {
 
                   <Input
                     errorText={formik.errors?.date}
-                    title={language?.quizzes?.quiz_date}
+                    title={t("quizzes.quiz_date")}
                     name="date"
                     onChange={formik.handleChange}
                     value={formik?.values?.date}
@@ -114,20 +113,18 @@ const UpdateQuiz = () => {
 
                   <Input
                     errorText={formik.errors?.duration}
-                    title={"language?.quizzes?.duration"}
-                    placeholder={"language?.quizzes?.duration"}
+                    title={t("quizzes?.duration")}
                     name="duration"
                     onChange={formik.handleChange}
+                    placeholder={t("quizzes?.duration")}
                     value={formik?.values?.duration}
                     type="number"
                   />
 
                   <Input
                     errorText={formik.errors?.description}
-                    title={language?.quizzes?.exam_discreption}
-                    placeholder={
-                      language?.quizzes?.exam_discreption_placeholder
-                    }
+                    title={t("quizzes.exam_discreption")}
+                    placeholder={t("quizzes.exam_discreption_placeholder")}
                     name="description"
                     onChange={formik.handleChange}
                     value={formik?.values?.description}
@@ -137,7 +134,7 @@ const UpdateQuiz = () => {
                 </div>
               </div>
               <h1 style={{ color: "var(--font-color)", marginBottom: "10px" }}>
-                Questions
+                {t("quizzes.questions")}
               </h1>
 
               <FieldArray name="questions">
@@ -157,8 +154,8 @@ const UpdateQuiz = () => {
                         <div key={index} className="dashboard-form">
                           <Input
                             errorText={questionError?.text}
-                            title={`Question ${index + 1}`}
-                            placeholder="Enter question text"
+                            title={`${t("quizzes.question")} ${index + 1}`}
+                            placeholder={t("quizzes.enter_question_text")}
                             name={`questions[${index}].text`}
                             onChange={formik.handleChange}
                             value={q.text}
@@ -167,8 +164,8 @@ const UpdateQuiz = () => {
                           />
 
                           <SelectOptionInput
-                            placeholder={q.type || "Select type"}
-                            label="select type"
+                            placeholder={q.type || t("quizzes.select_type")}
+                            label={t("quizzes.select_type")}
                             options={questionTypeOptions}
                             errorText={questionError?.type}
                             onSelectOption={(e) =>
@@ -183,14 +180,15 @@ const UpdateQuiz = () => {
                             <SelectOptionInput
                               placeholder={
                                 formik.values?.questions[index]
-                                  ?.correctAnswer || "Select correct answer"
+                                  ?.correctAnswer ||
+                                t("quizzes.select_correct_answer")
                               }
                               wrapperProps={{
                                 className:
                                   formik.values?.questions[index]
                                     ?.correctAnswer,
                               }}
-                              label="correct answer"
+                              label={t("quizzes.correct_answer")}
                               options={tofOptions}
                               errorText={questionError?.correctAnswer}
                               onSelectOption={(e) =>
@@ -224,7 +222,7 @@ const UpdateQuiz = () => {
                                           />
 
                                           <SelectOptionInput
-                                            label="Correct answer"
+                                            label={t("quizzes.correct_answer")}
                                             wrapperProps={{
                                               className: JSON.stringify(
                                                 formik.values?.questions[index]

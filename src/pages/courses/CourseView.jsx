@@ -11,6 +11,7 @@ import { spritObject } from "../../utils/spritObject";
 import AllowedTo from "../../components/AllowedTo";
 import { roles } from "../../constants/enums";
 import Skeleton from "../../components/skeleton/Skeleton";
+import { useTranslation } from "react-i18next";
 
 const api = new APIClient(endPoints.courses);
 const CourseView = () => {
@@ -21,6 +22,7 @@ const CourseView = () => {
     queryKey: [endPoints.courses, id],
     queryFn: () => api.getOne(id),
   });
+  const { t } = useTranslation();
 
   if (isLoading)
     return (
@@ -42,20 +44,20 @@ const CourseView = () => {
           )}
 
           <div className="flex">
-            <h2>{"language?.course?.name"} :</h2>
+            <h2>{t("course.name")} :</h2>
             <p>{data?.name}</p>
           </div>
           <div className="flex">
-            <h2>{"language?.course?.code"} :</h2>
+            <h2>{t("course.code")} :</h2>
             <p>{data?.code}</p>
           </div>
           <div className="flex">
-            <h2>{"language?.course?.description"} :</h2>
+            <h2>{t("course.description")} :</h2>
             <p>{data?.description}</p>
           </div>
 
           <div className="flex">
-            <h2>{"language?.students?.teachers"} :</h2>
+            <h2>{t("students.teachers")} :</h2>
             <p>
               {spritObject(data?.teacherId, (e) => (
                 <Link
@@ -68,22 +70,26 @@ const CourseView = () => {
             </p>
           </div>
           <div className="flex">
-            <h2>{"language?.students?.created_at"} :</h2>
+            <h2>{t("students.created_at")} :</h2>
             <p>{dateFormatter(data?.createdAt, "fullDate")}</p>
           </div>
         </div>
       </div>
       <div className="course-pages">
-        <NavLink to={pagesRoute.courses.timeTable(id)}> time table </NavLink>
-        <NavLink to={pagesRoute.courses.exams(id)}> exams</NavLink>
-        <NavLink to={pagesRoute.courses.quiz(id)}> quiz</NavLink>
+        <NavLink to={pagesRoute.courses.timeTable(id)}>
+          {t("navBar.time_table")}
+        </NavLink>
+        <NavLink to={pagesRoute.courses.exams(id)}> {t("navBar.exam")}</NavLink>
+        <NavLink to={pagesRoute.courses.quiz(id)}>{t("navBar.quiz")}</NavLink>
         <AllowedTo roles={[roles.admin, roles.teacher]}>
           {(data?.teacherId?.some((e) => e?._id === profileId?._id) ||
             isAdmin) && (
             <>
-              <NavLink to={pagesRoute.courses.students(id)}> students</NavLink>
+              <NavLink to={pagesRoute.courses.students(id)}>
+                {t("navBar.students")}
+              </NavLink>
               <NavLink to={pagesRoute.courses.attendance(id)}>
-                attendance
+                {t("navBar.attendance")}
               </NavLink>
             </>
           )}

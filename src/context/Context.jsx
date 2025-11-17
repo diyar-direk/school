@@ -1,52 +1,22 @@
-import axios from "axios";
 import { createContext, useEffect, useState } from "react";
-const userLanguage = navigator.language || navigator.userLanguage;
-const userLang = userLanguage.startsWith("ar") ? "AR" : "EN";
+import { useTranslation } from "react-i18next";
 export const Context = createContext({});
 const Provider = ({ children }) => {
-  const [language, setLanguage] = useState(
-    localStorage.getItem("language") || userLang || "EN"
-  );
+  const { i18n } = useTranslation();
   const [isClosed, setIsClosed] = useState(
     JSON.parse(localStorage.getItem("isClosed")) || false
   );
-  const [selectedLang, setSelectedLang] = useState("");
 
   useEffect(() => {
-    const h2Active = document.querySelector(".languages h2.active");
-    const h2 = document.querySelectorAll(".languages h2");
-    const span = document.querySelector(".lang-span");
-    span && (span.textContent = language);
-    h2Active && h2Active.classList.remove("active");
-    localStorage.setItem("language", language);
-    if (h2) {
-      h2.forEach(
-        (e) => e.dataset.lang === language && e.classList.add("active")
-      );
-    }
-    if (language === "AR") document.body.classList.add("arabic");
+    if (i18n.language === "ar") document.body.classList.add("arabic");
     else document.body.classList.remove("arabic");
-  }, [language]);
-  const getLang = async () => {
-    try {
-      const data = await axios.get(`/${language && language}.json`);
-      setSelectedLang(data.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  useEffect(() => {
-    getLang();
-  }, [language]);
+  }, [i18n.language]);
 
   return (
     <Context.Provider
       value={{
         isClosed,
         setIsClosed,
-        language,
-        setLanguage,
-        selectedLang,
       }}
     >
       {children}

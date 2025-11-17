@@ -1,5 +1,3 @@
-import { useContext } from "react";
-import { Context } from "../../context/Context";
 import Input from "../../components/inputs/Input";
 import { useFormik } from "formik";
 import Button from "../../components/buttons/Button";
@@ -9,8 +7,8 @@ import * as yup from "yup";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../utils/axios";
 import { endPoints } from "../../constants/endPoints";
+import { useTranslation } from "react-i18next";
 const UpdatePassword = () => {
-  const context = useContext(Context);
   const { userId } = useParams();
 
   const nav = useNavigate();
@@ -42,33 +40,33 @@ const UpdatePassword = () => {
     onSuccess: () => nav(-1),
   });
 
-  const language = context?.selectedLang;
+  const { t } = useTranslation();
 
   return (
     <div className="container relative">
       <form onSubmit={formik.handleSubmit} className="relative dashboard-form">
         <div className="flex wrap ">
           <Input
-            title={language?.users?.password}
+            title={t("users.password")}
             onInput={formik.handleChange}
             value={formik.values.newPassword}
-            placeholder={language?.users?.password_placeholder}
+            placeholder={t("users.password_placeholder")}
             name="newPassword"
             errorText={formik.errors?.newPassword}
             type="password"
           />
           <Input
-            title={"language?.users?.passwordConf"}
+            title={t("users.passwordConf")}
             onInput={formik.handleChange}
             value={formik.values.confirmPassword}
-            placeholder={"language?.users?.password_placeholderConf"}
+            placeholder={t("users.password_placeholderConf")}
             name="confirmPassword"
             errorText={formik.errors?.confirmPassword}
             type="password"
           />
         </div>
         <Button type="submit" isSending={handleSubmit.isPending}>
-          {language?.exams?.save_btn}
+          {t("exams.save_btn")}
         </Button>
       </form>
     </div>

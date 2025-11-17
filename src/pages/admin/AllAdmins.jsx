@@ -1,6 +1,5 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Context } from "../../context/Context";
 import dateFormatter from "../../utils/dateFormatter";
 import Table from "../../components/table/Table";
 import Search from "../../components/table_toolbar/Search";
@@ -14,6 +13,7 @@ import Button from "../../components/buttons/Button";
 import { pagesRoute } from "./../../constants/pagesRoute";
 import Add from "../../components/table_toolbar/Add";
 import AllowedTo from "../../components/AllowedTo";
+import { useTranslation } from "react-i18next";
 
 const column = [
   {
@@ -49,7 +49,6 @@ const column = [
 ];
 const apiClient = new APIClient(endPoints.admins);
 const AllAdmins = () => {
-  const context = useContext(Context);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState({});
@@ -59,11 +58,11 @@ const AllAdmins = () => {
   });
   const [selectedItems, setSelectedItems] = useState(new Set());
 
-  const language = context?.selectedLang;
+  const { t } = useTranslation();
 
   return (
     <div className="container">
-      <h1 className="title">{language.admins && language.admins.all_admins}</h1>
+      <h1 className="title">{t("admins.all_admins")}</h1>
       <div className="table-container flex-1">
         <TableToolBar>
           <Search setSearch={setSearch} />

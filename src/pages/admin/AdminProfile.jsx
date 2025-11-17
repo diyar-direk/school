@@ -1,6 +1,4 @@
-import { useContext } from "react";
 import { Link } from "react-router-dom";
-import { Context } from "../../context/Context";
 import { useAuth } from "../../context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { endPoints } from "../../constants/endPoints";
@@ -8,10 +6,9 @@ import { countDocs } from "./api";
 import "../../components/profile.css";
 import { pagesRoute } from "../../constants/pagesRoute";
 import Skeleton from "./../../components/skeleton/Skeleton";
+import { useTranslation } from "react-i18next";
 const AdminProfile = () => {
-  const context = useContext(Context);
-  const language = context?.selectedLang;
-
+  const { t } = useTranslation();
   const { userDetails } = useAuth();
   const { profileId } = userDetails || {};
 
@@ -38,15 +35,15 @@ const AdminProfile = () => {
                 {`${data?.femaleTeacherCount + data?.maleTeacherCount}` ||
                   "..."}
               </p>
-              {language?.dashboard?.teachers}
+              {t("dashboard.teachers")}
             </h2>
             <div className="flex gap-20">
               <h3 className="center flex-direction">
-                {language?.dashboard?.female} <br />
+                {t("dashboard.female")} <br />
                 <span>{data?.femaleTeacherCount || "..."}</span>
               </h3>
               <h3 className="center flex-direction">
-                {language?.dashboard?.male} <br />
+                {t("dashboard.male")} <br />
                 <span>{data?.maleTeacherCount || "..."}</span>
               </h3>
             </div>
@@ -60,15 +57,15 @@ const AdminProfile = () => {
                 {`${data?.femaleStudentCount + data?.maleStudentCount}` ||
                   "..."}
               </p>
-              {language?.dashboard?.stundets}
+              {t("dashboard.students")}
             </h2>
             <div className="flex gap-20">
               <h3 className="center flex-direction">
-                {language?.dashboard?.female} <br />
+                {t("dashboard.female")} <br />
                 <span>{data?.femaleStudentCount || "..."}</span>
               </h3>
               <h3 className="center flex-direction">
-                {language?.dashboard?.male} <br />
+                {t("dashboard.male")} <br />
                 <span>{data?.maleStudentCount || "..."}</span>
               </h3>
             </div>
@@ -79,7 +76,7 @@ const AdminProfile = () => {
           <div className="flex-1">
             <h2 className="flex gap-10">
               <p> {data?.classCount || "..."}</p>
-              {language?.dashboard?.classes}
+              {t("dashboard.classes")}
             </h2>
           </div>
         </article>
@@ -89,7 +86,7 @@ const AdminProfile = () => {
           <div className="flex-1">
             <h2 className="flex gap-10">
               <p> {data?.courseCount || "..."}</p>
-              {"language?.dashboard?.course"}
+              {t("dashboard.courses")}
             </h2>
           </div>
         </article>
@@ -106,21 +103,21 @@ const AdminProfile = () => {
           </h2>
 
           <div className="flex">
-            <h2>{language?.dashboard?.first_name}</h2>
+            <h2>{t("dashboard.first_name")}</h2>
             <p> {profileId?.firstName} </p>
           </div>
 
           <div className="flex">
-            <h2>{language?.dashboard?.last_name}</h2>
+            <h2>{t("dashboard.last_name")}</h2>
             <p> {profileId?.lastName} </p>
           </div>
           <div className="flex">
-            <h2>{language?.dashboard?.role}</h2>
+            <h2>{t("dashboard.role")}</h2>
             <p> {userDetails?.role} </p>
           </div>
 
           <div className="flex">
-            <h2>{language?.dashboard?.email}</h2>
+            <h2>{t("dashboard.email")}</h2>
             <p className="email"> {profileId?.email} </p>
           </div>
         </div>

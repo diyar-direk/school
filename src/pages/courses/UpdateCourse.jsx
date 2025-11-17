@@ -1,5 +1,4 @@
-import { useCallback, useContext } from "react";
-import { Context } from "../../context/Context";
+import { useCallback } from "react";
 import Input from "../../components/inputs/Input";
 import { useFormik } from "formik";
 import Button from "../../components/buttons/Button";
@@ -10,9 +9,9 @@ import { courseSchema } from "../../schemas/course";
 import SelectInputApi from "../../components/inputs/SelectInputApi";
 import { useNavigate, useParams } from "react-router-dom";
 import Skeleton from "./../../components/skeleton/Skeleton";
+import { useTranslation } from "react-i18next";
 const apiClient = new APIClient(endPoints.courses);
 const UpdateCourse = () => {
-  const context = useContext(Context);
   const { id } = useParams();
   const nav = useNavigate();
   const { data, isLoading } = useQuery({
@@ -39,7 +38,7 @@ const UpdateCourse = () => {
     },
   });
 
-  const language = context?.selectedLang;
+  const { t } = useTranslation();
 
   const selectTeachers = useCallback(
     (value) => {
@@ -71,21 +70,21 @@ const UpdateCourse = () => {
   return (
     <div className="container relative">
       <form onSubmit={formik.handleSubmit} className="relative dashboard-form">
-        <h1>{language.exams && language.exams.please_complete_form}</h1>
+        <h1>{t("exams.please_complete_form")}</h1>
         <div className="flex wrap">
           <Input
-            title={"language?.course?.name"}
+            title={t("course.name")}
             onInput={formik.handleChange}
             value={formik.values.name}
-            placeholder={"language?.course?.name"}
+            placeholder={t("course.name")}
             name="name"
             errorText={formik.errors?.name}
           />
           <Input
-            title={"language?.course?.code"}
+            title={t("course.code")}
             onInput={formik.handleChange}
             value={formik.values.code}
-            placeholder={"language?.course?.code"}
+            placeholder={t("course.code")}
             name="code"
             errorText={formik.errors?.code}
           />
@@ -100,10 +99,10 @@ const UpdateCourse = () => {
             onIgnore={(e) => ignoreTeacher(e)}
           />
           <Input
-            title={"language?.course?.desc"}
+            title={t("course.desc")}
             onInput={formik.handleChange}
             value={formik.values.description}
-            placeholder={"language?.course?.desc"}
+            placeholder={t("course.desc")}
             name="description"
             errorText={formik.errors?.description}
             elementType="textarea"
@@ -111,7 +110,7 @@ const UpdateCourse = () => {
           />
         </div>
         <Button type="submit" isSending={handleSubmit.isPending}>
-          {language?.exams?.save_btn}
+          {t("exams.save_btn")}
         </Button>
       </form>
     </div>

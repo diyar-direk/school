@@ -1,5 +1,4 @@
-import { useContext, useState } from "react";
-import { Context } from "../../context/Context";
+import { useState } from "react";
 import Table from "../../components/table/Table";
 import TableToolBar from "../../components/table_toolbar/TableToolBar";
 import { useQuery } from "@tanstack/react-query";
@@ -17,6 +16,7 @@ import { formatInputsData } from "./../../utils/formatInputsData";
 import AllowedTo from "../../components/AllowedTo";
 import { Link } from "react-router-dom";
 import Button from "../../components/buttons/Button";
+import { useTranslation } from "react-i18next";
 
 const apiClient = new APIClient(endPoints.users);
 
@@ -50,7 +50,6 @@ const column = [
   },
 ];
 const AllUsers = () => {
-  const context = useContext(Context);
   const [page, setPage] = useState(1);
   const [selectedItems, setSelectedItems] = useState(new Set());
   const [sort, setSort] = useState({});
@@ -66,11 +65,11 @@ const AllUsers = () => {
         sort,
       }),
   });
-  const language = context?.selectedLang;
+  const { t } = useTranslation();
 
   return (
     <div className="container">
-      <h1 className="title">{language.users && language.users.all_users}</h1>
+      <h1 className="title">{t("users.all_users")}</h1>
       <div className="table-container">
         <TableToolBar>
           <Search setSearch={setSearch} />

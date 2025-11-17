@@ -1,5 +1,4 @@
-import { useCallback, useContext } from "react";
-import { Context } from "../../context/Context";
+import { useCallback } from "react";
 import Input from "../../components/inputs/Input";
 import { useFormik } from "formik";
 import Button from "../../components/buttons/Button";
@@ -10,10 +9,10 @@ import { courseSchema } from "../../schemas/course";
 import SelectInputApi from "../../components/inputs/SelectInputApi";
 import { courseStatus } from "../../constants/enums";
 import axiosInstance from "../../utils/axios";
+import { useTranslation } from "react-i18next";
 const apiClient = new APIClient(endPoints.courses);
 
 const AddCourse = () => {
-  const context = useContext(Context);
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -52,8 +51,7 @@ const AddCourse = () => {
       formik.resetForm();
     },
   });
-
-  const language = context?.selectedLang;
+  const { t } = useTranslation();
 
   const multiSelect = useCallback(
     (value, field) => {
@@ -78,24 +76,24 @@ const AddCourse = () => {
 
   return (
     <div className="container relative">
-      <h1 className="title">add course</h1>
+      <h1 className="title">{t("course.add_course")}</h1>
 
       <form onSubmit={formik.handleSubmit} className="relative dashboard-form">
-        <h1>{language.exams && language.exams.please_complete_form}</h1>
+        <h1>{t("exams.please_complete_form")}</h1>
         <div className="flex wrap">
           <Input
-            title={"language?.course?.name"}
+            title={t("course.name")}
             onInput={formik.handleChange}
             value={formik.values.name}
-            placeholder={"language?.course?.name"}
+            placeholder={t("course.name_placeholder")}
             name="name"
             errorText={formik.errors?.name}
           />
           <Input
-            title={"language?.course?.code"}
+            title={t("course.code")}
             onInput={formik.handleChange}
             value={formik.values.code}
-            placeholder={"language?.course?.code"}
+            placeholder={t("course.code_placeholder")}
             name="code"
             errorText={formik.errors?.code}
           />
@@ -110,10 +108,10 @@ const AddCourse = () => {
             onIgnore={(e) => ignoreSelect(e, "teacherId")}
           />
           <Input
-            title={"language?.course?.desc"}
+            title={t("course.desc")}
             onInput={formik.handleChange}
             value={formik.values.description}
-            placeholder={"language?.course?.desc"}
+            placeholder={t("course.desc_placeholder")}
             name="description"
             errorText={formik.errors?.description}
             elementType="textarea"
@@ -123,8 +121,8 @@ const AddCourse = () => {
         <div className="flex wrap" style={{ marginTop: "10px" }}>
           <SelectInputApi
             endPoint={endPoints.students}
-            label="students"
-            placeholder="students"
+            label={t("students")}
+            placeholder={t("students")}
             optionLabel={(e) => `${e.firstName} ${e.lastName}`}
             isArray
             onChange={(e) => multiSelect(e, "students")}
@@ -133,7 +131,7 @@ const AddCourse = () => {
           />
         </div>
         <Button type="submit" isSending={handleSubmit.isPending}>
-          {language?.exams?.save_btn}
+          {t("exams.save_btn")}
         </Button>
       </form>
     </div>

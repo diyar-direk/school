@@ -3,157 +3,166 @@ import { pagesRoute } from "../../constants/pagesRoute";
 
 const navbarLinks = [
   {
-    title: (lang) => lang?.my_profile,
+    title: "navBar.my_profile",
     type: "single",
     showIf: [roles.admin, roles.teacher, roles.student],
     icon: <i className="fa-regular fa-circle-user" />,
     to: (me) => me,
   },
+
   {
-    title: (lang) => lang.users,
+    title: "navBar.users",
     type: "multi",
     showIf: [roles.admin],
     icon: <i className="fa-solid fa-users" />,
     children: [
       {
-        title: (lang) => lang.all_users,
+        title: "navBar.all_users",
         showIf: [roles.admin],
         to: pagesRoute.user.page,
       },
       {
-        title: (lang) => lang.add_users,
+        title: "navBar.add_users",
         showIf: [roles.admin],
         to: pagesRoute.user.add,
       },
     ],
   },
+
   {
-    title: (lang) => lang.admins,
+    title: "navBar.admins",
     type: "multi",
     showIf: [roles.admin],
     icon: <i className="fa-solid fa-user-group" />,
     children: [
       {
-        title: (lang) => lang.all_admins,
+        title: "navBar.all_admins",
         showIf: [roles.admin],
         to: pagesRoute.admin.page,
       },
       {
-        title: (lang) => lang.add_admins,
+        title: "navBar.add_admins",
         showIf: [roles.admin],
         to: pagesRoute.admin.add,
       },
     ],
   },
+
   {
-    title: (lang) => lang.teachers,
+    title: "navBar.teachers",
     type: "multi",
     showIf: [roles.admin],
     icon: <i className="fa-solid fa-people-group" />,
     children: [
       {
-        title: (lang) => lang.all_teachers,
+        title: "navBar.all_teachers",
         showIf: [roles.admin, roles.teacher],
         to: pagesRoute.teacher.page,
       },
       {
-        title: (lang) => lang.add_teacher,
+        title: "navBar.add_teacher",
         showIf: [roles.admin],
         to: pagesRoute.teacher.add,
       },
     ],
   },
+
   {
-    title: (lang) => lang.students,
+    title: "navBar.students",
     type: "multi",
     showIf: [roles.admin],
     icon: <i className="fa-solid fa-children" />,
     children: [
       {
-        title: (lang) => lang.all_students,
+        title: "navBar.all_students",
         showIf: [roles.admin, roles.teacher],
         to: pagesRoute.student.page,
       },
       {
-        title: (lang) => lang.add_student,
+        title: "navBar.add_student",
         showIf: [roles.admin],
         to: pagesRoute.student.add,
       },
     ],
   },
+
   {
-    title: (lang) => "lang.timeTable",
+    title: "navBar.timeTable",
     type: "single",
     showIf: [roles.admin, roles.teacher, roles.student],
     icon: <i className="fa-solid fa-table-list" />,
     to: pagesRoute.timeTable.page,
   },
+
   {
-    title: (lang) => lang.exam,
+    title: "navBar.exam",
     type: "multi",
     showIf: [roles.admin, roles.teacher, roles.student],
     icon: <i className="fa-solid fa-list-check" />,
     children: [
       {
-        title: (lang) => lang.exam_schedule,
+        title: "navBar.exam_schedule",
         showIf: [roles.admin, roles.teacher, roles.student],
         to: pagesRoute.exam.page,
       },
       {
-        title: (lang) => lang.add_exam,
+        title: "navBar.add_exam",
         showIf: [roles.admin],
         to: pagesRoute.exam.add,
       },
       {
-        title: (lang) => lang.exam_results,
+        title: "navBar.exam_results",
         showIf: [roles.admin, roles.student],
         to: pagesRoute.examResult.page,
       },
       {
-        title: (lang) => lang.add_exam_results,
+        title: "navBar.add_exam_results",
         showIf: [roles.admin],
         to: pagesRoute.examResult.add,
       },
     ],
   },
+
   {
-    title: (lang) => lang.subjects,
+    title: "navBar.subjects",
     type: "multi",
     showIf: [roles.admin, roles.teacher, roles.student],
     icon: <i className="fa-solid fa-pen-nib" />,
     children: [
       {
-        title: (lang) => "lang.courses",
+        title: "navBar.courses",
         showIf: [roles.admin, roles.teacher, roles.student],
         to: pagesRoute.courses.page,
       },
       {
-        title: (lang) => "lang.add_course",
+        title: "navBar.add_course",
         showIf: [roles.admin],
         to: pagesRoute.courses.add,
       },
     ],
   },
+
   {
-    title: (lang) => lang.classes,
+    title: "navBar.classes",
     type: "single",
     showIf: [roles.admin, roles.teacher, roles.student],
     icon: <i className="fa-solid fa-school-flag" />,
     to: pagesRoute.class.page,
   },
+
   {
-    title: (lang) => lang.quiz,
+    title: "navBar.quiz",
     type: "multi",
     showIf: [roles.admin, roles.teacher, roles.student],
     icon: <i className="fa-solid fa-pencil" />,
     children: [
       {
-        title: (lang) => lang.all_quiz,
+        title: "navBar.all_quiz",
         showIf: [roles.admin, roles.teacher, roles.student],
         to: pagesRoute.quize.page,
       },
       {
-        title: (lang) => lang.add_quiz,
+        title: "navBar.add_quiz",
         showIf: [roles.admin, roles.teacher],
         to: pagesRoute.quize.add,
       },

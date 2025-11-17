@@ -1,6 +1,5 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Context } from "../../context/Context";
 import dateFormatter from "../../utils/dateFormatter";
 import Table from "../../components/table/Table";
 import Search from "../../components/table_toolbar/Search";
@@ -18,6 +17,7 @@ import SelectOptionInput from "../../components/inputs/SelectOptionInput";
 import { formatInputsData } from "./../../utils/formatInputsData";
 import AllowedTo from "../../components/AllowedTo";
 import { useAuth } from "../../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 const column = [
   {
@@ -67,7 +67,6 @@ const column = [
 ];
 const apiClient = new APIClient(endPoints.teachers);
 const AllTeachers = () => {
-  const context = useContext(Context);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState({});
@@ -86,11 +85,11 @@ const AllTeachers = () => {
   const [selectedItems, setSelectedItems] = useState(new Set());
   const { userDetails } = useAuth();
   const { role } = userDetails || "";
-  const language = context?.selectedLang;
+  const { t } = useTranslation();
 
   return (
     <div className="container">
-      <h1 className="title">{language?.teachers?.all_teachers}</h1>
+      <h1 className="title">{t("teachers.all_teachers")}</h1>
       <div className="table-container flex-1">
         <TableToolBar>
           <Search setSearch={setSearch} />

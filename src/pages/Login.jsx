@@ -1,6 +1,4 @@
-import { useContext } from "react";
 import "../components/form.css";
-import { Context } from "../context/Context";
 import { useNavigate } from "react-router-dom";
 import Input from "../components/inputs/Input";
 import Cookies from "js-cookie";
@@ -12,11 +10,10 @@ import { endPoints } from "./../constants/endPoints";
 import { useAuth } from "../context/AuthContext";
 import { pagesRoute } from "./../constants/pagesRoute";
 import { roles } from "../constants/enums";
+import { useTranslation } from "react-i18next";
 
 const Login = () => {
   const nav = useNavigate();
-  const context = useContext(Context);
-  const language = context?.selectedLang;
   const { setUserDetails } = useAuth();
   const formik = useFormik({
     initialValues: {
@@ -66,6 +63,7 @@ const Login = () => {
   });
 
   const token = Cookies.get("accessToken");
+  const { t } = useTranslation();
   if (token) return nav("/");
 
   return (
@@ -73,26 +71,26 @@ const Login = () => {
       <form onSubmit={formik.handleSubmit} className="login relative">
         <div className="flex wrap">
           <div className="forms flex flex-direction">
-            <h1>{language.login && language.login.login}</h1>
+            <h1>{t("login.login")}</h1>
 
             <Input
-              placeholder={language?.login?.user_name_placeholder}
-              title={language?.login?.user_name}
+              placeholder={t("login.user_name_placeholder")}
+              title={t("login.user_name")}
               name="username"
               icon={<i className="fa-solid fa-user" />}
               onChange={formik.handleChange}
               errorText={formik.errors?.username}
             />
             <Input
-              placeholder={language?.login?.password_placeholder}
+              placeholder={t("login.password_placeholder")}
               type="password"
-              title={language?.login?.password}
+              title={t("login.password")}
               name="password"
               icon={<i className="fa-solid fa-key" />}
               onChange={formik.handleChange}
               errorText={formik.errors?.password}
             />
-            <Button type="submit"> {language?.login?.submit_btn} </Button>
+            <Button type="submit"> {t("login.submit_btn")} </Button>
           </div>
           <div className="image">
             <img src={require("./loginimage.jpg")} alt="" />

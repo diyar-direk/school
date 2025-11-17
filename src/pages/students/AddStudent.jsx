@@ -1,5 +1,3 @@
-import { useContext } from "react";
-import { Context } from "../../context/Context";
 import Input from "../../components/inputs/Input";
 import { useFormik } from "formik";
 import Button from "../../components/buttons/Button";
@@ -11,11 +9,11 @@ import { genders } from "../../constants/enums";
 import { useNavigate } from "react-router-dom";
 import { studentSchema } from "./../../schemas/student";
 import dateFormatter from "./../../utils/dateFormatter";
+import { useTranslation } from "react-i18next";
 
 const apiClient = new APIClient(endPoints.students);
 
 const AddStudent = () => {
-  const context = useContext(Context);
   const nav = useNavigate();
   const formik = useFormik({
     initialValues: {
@@ -44,44 +42,42 @@ const AddStudent = () => {
     },
   });
 
-  const language = context?.selectedLang;
+  const { t } = useTranslation();
 
   return (
     <div className="container relative">
-      <h1 className="title">
-        {language.students && language.students.add_student_btn}
-      </h1>
+      <h1 className="title">{t("students.add_student_btn")}</h1>
       <form onSubmit={formik.handleSubmit} className="relative dashboard-form">
-        <h1>{language.exams && language.exams.please_complete_form}</h1>
+        <h1>{t("exams.please_complete_form")}</h1>
         <div className="flex wrap">
           <Input
-            title={language?.teachers?.first_name}
+            title={t("teachers.first_name")}
             onInput={formik.handleChange}
             value={formik.values.firstName}
-            placeholder={language?.teachers?.first_name_placeholder}
+            placeholder={t("teachers.first_name_placeholder")}
             name="firstName"
             errorText={formik.errors?.firstName}
           />
           <Input
-            title={language?.teachers?.middle_name}
+            title={t("teachers.middle_name")}
             onInput={formik.handleChange}
             value={formik.values.middleName}
-            placeholder={language?.teachers?.middle_name_placeholder}
+            placeholder={t("teachers.middle_name_placeholder")}
             name="middleName"
             errorText={formik.errors?.middleName}
           />
           <Input
-            title={language?.teachers?.last_name}
+            title={t("teachers.last_name")}
             onInput={formik.handleChange}
             value={formik.values.lastName}
-            placeholder={language?.teachers?.last_name_placeholder}
+            placeholder={t("teachers.last_name_placeholder")}
             name="lastName"
             errorText={formik.errors?.lastName}
           />
 
           <SelectOptionInput
             placeholder={
-              formik.values?.gender || language?.teachers?.gender_placeholder
+              formik.values?.gender || t("teachers.gender_placeholder")
             }
             label="gender"
             options={[
@@ -92,7 +88,7 @@ const AddStudent = () => {
             errorText={formik?.errors?.gender}
           />
           <Input
-            title={"language?.teachers?.birth_date"}
+            title={t("teachers.birth_date")}
             onInput={formik.handleChange}
             value={formik.values.dateOfBirth}
             name="dateOfBirth"
@@ -101,31 +97,31 @@ const AddStudent = () => {
           />
 
           <Input
-            title={language?.teachers?.phone_number}
+            title={t("teachers.phone_number")}
             onInput={formik.handleChange}
             value={formik.values?.phone}
-            placeholder={language?.teachers?.phone_number_placeholder}
+            placeholder={t("teachers.phone_number_placeholder")}
             name="phone"
             errorText={formik.errors?.phone}
           />
           <Input
-            title={language?.teachers?.email}
+            title={t("teachers.email")}
             onInput={formik.handleChange}
             value={formik.values.email}
-            placeholder={language?.teachers?.email_placeholder}
+            placeholder={t("teachers.email_placeholder")}
             name="email"
             errorText={formik.errors?.email}
           />
           <Input
-            title={"language?.teachers?.address"}
+            title={t("teachers.address")}
             onInput={formik.handleChange}
             value={formik.values.address}
-            placeholder={"language?.teachers?.address_placeholder"}
+            placeholder={t("teachers.address_placeholder")}
             name="address"
             errorText={formik.errors?.address}
           />
           <Input
-            title={"language?.teachers?.birth_date"}
+            title={t("teachers.birth_date")}
             onInput={formik.handleChange}
             value={formik.values.enrollmentDate}
             name="enrollmentDate"
@@ -133,32 +129,32 @@ const AddStudent = () => {
             errorText={formik.errors?.enrollmentDate}
           />
           <Input
-            title={"language?.teachers?.guardianName"}
+            title={t("teachers.guardianName")}
             onInput={formik.handleChange}
             value={formik.values.guardianName}
-            placeholder={"language?.teachers?.guardianName_placeholder"}
+            placeholder={t("teachers.guardianName_placeholder")}
             name="guardianName"
             errorText={formik.errors?.guardianName}
           />
           <Input
-            title={"language?.teachers?.guardianPhone"}
+            title={t("teachers.guardianPhone")}
             onInput={formik.handleChange}
             value={formik.values.guardianPhone}
-            placeholder={"language?.teachers?.guardianPhone_placeholder"}
+            placeholder={t("teachers.guardianPhone_placeholder")}
             name="guardianPhone"
             errorText={formik.errors?.guardianPhone}
           />
           <Input
-            title={"language?.teachers?.guardianRelationship"}
+            title={t("teachers.guardianRelationship")}
             onInput={formik.handleChange}
             value={formik.values.guardianRelationship}
-            placeholder={"language?.teachers?.guardianRelationship_placeholder"}
+            placeholder={t("teachers.guardianRelationship_placeholder")}
             name="guardianRelationship"
             errorText={formik.errors?.guardianRelationship}
           />
         </div>
         <Button type="submit" isSending={handleSubmit.isPending}>
-          {language?.exams?.save_btn}
+          {t("exams.save_btn")}
         </Button>
       </form>
     </div>

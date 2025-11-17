@@ -1,5 +1,4 @@
-import { useCallback, useContext, useMemo, useState } from "react";
-import { Context } from "../../context/Context";
+import { useCallback, useMemo, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import Table from "../../components/table/Table";
 import TableToolBar from "../../components/table_toolbar/TableToolBar";
@@ -14,10 +13,10 @@ import Button from "../../components/buttons/Button";
 import { useFormik } from "formik";
 import { classesSchema } from "../../schemas/classes";
 import Input from "../../components/inputs/Input";
+import { useTranslation } from "react-i18next";
 const apiClient = new APIClient(endPoints.classes);
 
 const Classes = () => {
-  const context = useContext(Context);
   const { userDetails } = useAuth();
   const [page, setPage] = useState(1);
   const isAdmin = userDetails?.isAdmin;
@@ -54,8 +53,7 @@ const Classes = () => {
   });
 
   const [selectedItems, setSelectedItems] = useState(new Set());
-
-  const language = context?.selectedLang;
+  const { t } = useTranslation();
 
   const column = useMemo(
     () => [
@@ -92,15 +90,15 @@ const Classes = () => {
 
   return (
     <div className="container">
-      <h1 className="title">{language.class && language.class.all_classes}</h1>
+      <h1 className="title">{t("class.all_classes")}</h1>
       <div className="flex align-start wrap subjects gap-20">
         {isAdmin && (
           <form className="table-form" onSubmit={formik.handleSubmit}>
-            <h1> {language.class && language.class.add_new_class}</h1>
+            <h1> {t("class.add_new_class")}</h1>
             <Input
-              title="name"
+              title={t("class.name")}
               errorText={formik?.errors?.name}
-              placeholder="enter class name"
+              placeholder={t("class.name_placeholder")}
               name="name"
               onChange={formik.handleChange}
               value={formik?.values?.name}

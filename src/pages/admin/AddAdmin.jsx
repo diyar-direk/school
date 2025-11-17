@@ -1,5 +1,3 @@
-import { useContext } from "react";
-import { Context } from "../../context/Context";
 import Input from "../../components/inputs/Input";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -7,9 +5,9 @@ import Button from "../../components/buttons/Button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import APIClient from "./../../utils/ApiClient";
 import { endPoints } from "../../constants/endPoints";
+import { useTranslation } from "react-i18next";
 const apiClient = new APIClient(endPoints.admins);
 const AddAdmin = () => {
-  const context = useContext(Context);
   const formik = useFormik({
     initialValues: {
       firstName: "",
@@ -34,42 +32,42 @@ const AddAdmin = () => {
     },
   });
 
-  const language = context?.selectedLang;
+  const { t } = useTranslation();
 
   return (
     <div className="container relative">
-      <h1 className="title">{language.admins && language.admins.add_admins}</h1>
+      <h1 className="title">{t("admins.add_admins")}</h1>
 
       <form onSubmit={formik.handleSubmit} className="relative dashboard-form">
-        <h1>{language.exams && language.exams.please_complete_form}</h1>
+        <h1>{t("exams.please_complete_form")}</h1>
         <div className="flex wrap ">
           <Input
-            title={language?.admins?.first_name}
+            title={t("admins.first_name")}
             onInput={formik.handleChange}
             value={formik.values.firstName}
-            placeholder={language?.admins?.first_name_placeholder}
+            placeholder={t("admins.first_name_placeholder")}
             name="firstName"
             errorText={formik.errors?.firstName}
           />
           <Input
-            title={language?.admins?.last_name}
+            title={t("admins.last_name")}
             onInput={formik.handleChange}
             value={formik.values.lastName}
-            placeholder={language?.admins?.last_name_placeholder}
+            placeholder={t("admins.last_name_placeholder")}
             name="lastName"
             errorText={formik.errors?.lastName}
           />
           <Input
-            title={language?.admins?.email}
+            title={t("admins.email")}
             onInput={formik.handleChange}
             value={formik.values.email}
-            placeholder={language?.admins?.email_placeholder}
+            placeholder={t("admins.email_placeholder")}
             name="email"
             errorText={formik.errors?.email}
           />
         </div>
         <Button type="submit" isSending={handleSubmit.isPending}>
-          {language?.exams?.save_btn}
+          {t("exams.save_btn")}
         </Button>
       </form>
     </div>

@@ -1,4 +1,4 @@
-import { useCallback, useContext, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { dayes, limit, roles } from "../../../constants/enums";
 import TableToolBar from "../../../components/table_toolbar/TableToolBar";
 import Table from "../../../components/table/Table";
@@ -12,10 +12,10 @@ import { useParams } from "react-router-dom";
 import "../../time_table/time-table.css";
 import AllowedTo from "../../../components/AllowedTo";
 import IconButton from "../../../components/buttons/IconButton";
-import { Context } from "../../../context/Context";
 import Button from "../../../components/buttons/Button";
 import AddTimeTable from "../components/AddTimeTable";
 import DeleteTimeTable from "../../time_table/DeleteTimeTable";
+import { useTranslation } from "react-i18next";
 
 const apiClient = new APIClient(endPoints["time-table"]);
 
@@ -26,9 +26,8 @@ const CourseTimeTable = () => {
   const [page, setPage] = useState(1);
   const [selectedItems, setSelectedItems] = useState(null);
   const date = new Date();
-  const context = useContext(Context);
   const [dayNumber, setDayNumber] = useState(date.getUTCDay() || 0);
-  const language = context?.selectedLang;
+  const { t } = useTranslation();
   const daysOfWeek = [
     dayes.Sunday,
     dayes.Monday,
@@ -129,7 +128,7 @@ const CourseTimeTable = () => {
         <h2>time table</h2>
         <div className="time-table">
           <h2 onClick={decrement}>prev</h2>
-          <h2 className="active">{language?.days?.[daysOfWeek[dayNumber]]}</h2>
+          <h2 className="active">{t(`days.${daysOfWeek[dayNumber]}`)}</h2>
           <h2 onClick={increment}>next</h2>
         </div>
         <AllowedTo roles={[roles.admin]}>

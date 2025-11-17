@@ -1,19 +1,22 @@
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import "./navbar.css";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Context } from "../../context/Context";
 import { useAuth } from "../../context/AuthContext";
 import useDarkMode from "../../hooks/useDarkMode";
 import navbarLinks from "./navbarLinks";
 import { pagesRoute } from "../../constants/pagesRoute";
+import { useTranslation } from "react-i18next";
 
 const Navbar = () => {
   const nav = useNavigate();
   const context = useContext(Context);
-  const language = context?.selectedLang;
   const { userDetails, logout } = useAuth();
+  const { t, i18n } = useTranslation();
+
   const name =
     userDetails?.profileId?.firstName + " " + userDetails?.profileId?.lastName;
+
   const { isAdmin, isTeacher } = userDetails || {};
 
   const myProfilePath = isAdmin
@@ -23,7 +26,6 @@ const Navbar = () => {
     : pagesRoute.student.view(userDetails?.profileId?._id);
 
   const location = useLocation();
-
   const [form, setForm] = useState("");
 
   window.addEventListener("click", () => {
@@ -31,6 +33,7 @@ const Navbar = () => {
       "nav .setting .lang + div.languages.active-div"
     );
     langDiv && langDiv.classList.remove("active-div");
+
     const linksDiv = document.querySelector(
       "aside.closed >div> div > .links.active"
     );
@@ -38,6 +41,7 @@ const Navbar = () => {
       linksDiv.classList.remove("active");
       document.querySelector("main").classList.remove("div-open");
     }
+
     const inpDiv = document.querySelector(
       "form.dashboard-form .selecte .inp.active"
     );
@@ -53,6 +57,7 @@ const Navbar = () => {
       ele.target !== e && e.parentElement.classList.remove("active");
     });
     ele.target.parentElement.classList.toggle("active");
+
     if (document.querySelector("aside.closed")) {
       const main = document.querySelector("main");
       main && main.classList.toggle("div-open");
@@ -66,22 +71,25 @@ const Navbar = () => {
       localStorage.setItem("isClosed", true);
       context?.setIsClosed(true);
     }
+
     const linksDiv = document.querySelectorAll("aside .links");
     const removeClass = document.querySelectorAll(
       "aside >div> div > .links > div.center"
     );
-    removeClass && removeClass.forEach((e) => e.classList.remove("active"));
-    linksDiv &&
-      linksDiv.forEach((e) => {
-        e.childNodes[1].childNodes.forEach((a) => {
-          if (a.classList.contains("active")) {
-            e.childNodes[0].classList.add("active");
-          }
-        });
+    removeClass.forEach((e) => e.classList.remove("active"));
+
+    linksDiv.forEach((e) => {
+      e.childNodes[1].childNodes.forEach((a) => {
+        if (a.classList?.contains("active")) {
+          e.childNodes[0].classList.add("active");
+        }
       });
+    });
+
     const nav = document.querySelector("nav.closed");
     const container = document.querySelector(".dashboard-container");
     nav && container && container.classList.add("closed");
+
     const activeArticle = document.querySelector(
       "aside >div> div > .links.active"
     );
@@ -95,11 +103,15 @@ const Navbar = () => {
     context?.setIsClosed(nav.classList.contains("closed"));
   };
 
-  const selectLang = (e) => {
-    context.setLanguage(e.target.dataset.lang);
-  };
+  const selectLang = useCallback(
+    (e) => {
+      i18n.changeLanguage(e);
+      localStorage.setItem("language", e);
+    },
+    [i18n]
+  );
 
-  const flattenNavbarLinks = (links, role, language) => {
+  const flattenNavbarLinks = (links, role) => {
     const result = [];
 
     const walk = (items) => {
@@ -111,7 +123,7 @@ const Navbar = () => {
           walk(item.children);
         } else {
           result.push({
-            name: item.title(language.navBar),
+            name: t(item.title),
             path:
               typeof item.to === "function" ? item.to(myProfilePath) : item.to,
           });
@@ -123,7 +135,7 @@ const Navbar = () => {
     return result;
   };
 
-  const pages = flattenNavbarLinks(navbarLinks, userDetails?.role, language);
+  const pages = flattenNavbarLinks(navbarLinks, userDetails?.role);
 
   const search = () => {
     let result = [];
@@ -143,7 +155,7 @@ const Navbar = () => {
     }
 
     if (result.length === 0) {
-      result.push(<p key={1}>{language?.navBar?.no_results}</p>);
+      result.push(<p key={1}>{t("navBar.no_results")}</p>);
     }
 
     return result;
@@ -178,7 +190,7 @@ const Navbar = () => {
               required
               onInput={(e) => setForm(e.target.value)}
               className="flex-1"
-              placeholder={language.navBar && language.navBar.search}
+              placeholder={t("navBar.search")}
             />
             <button
               onClick={(e) => {
@@ -187,14 +199,16 @@ const Navbar = () => {
               }}
               className="fa-solid fa-magnifying-glass"
             ></button>
+
             {form.length > 1 && <div className="results">{search()}</div>}
           </form>
+
           <div className="setting center">
             <Link to={myProfilePath} className="info gap-10 center">
               <i className="center photo fa-solid fa-user"></i>
               <article>
                 <h4>{name}</h4>
-                <p> {userDetails?.role} </p>
+                <p>{userDetails?.role}</p>
               </article>
             </Link>
 
@@ -202,6 +216,7 @@ const Navbar = () => {
               onClick={changeMode}
               className="fa-solid fa-moon fa-regular mode"
             ></i>
+
             <article className="relative">
               <div
                 onClick={(e) => {
@@ -213,33 +228,34 @@ const Navbar = () => {
                 className="lang center"
               >
                 <i className="fa-solid fa-earth-americas"></i>
-                <span className="lang-span"> {context?.language} </span>
+                <span className="lang-span">{i18n.language.toUpperCase()}</span>
                 <i className="fa-solid fa-chevron-down"></i>
               </div>
+
               <div className="languages">
                 <h2
-                  className={`${context?.language === "AR" ? "active" : ""}`}
-                  onClick={selectLang}
+                  className={`${i18n?.language === "ar" ? "active" : ""}`}
+                  onClick={() => selectLang("ar")}
                   data-lang="AR"
                 >
                   عربي
                 </h2>
                 <h2
-                  onClick={selectLang}
-                  className={`${context?.language === "EN" ? "active" : ""}`}
+                  onClick={() => selectLang("en")}
+                  className={`${i18n?.language === "en" ? "active" : ""}`}
                   data-lang="EN"
                 >
-                  english
+                  English
                 </h2>
                 <h2
-                  onClick={selectLang}
-                  className={`${context?.language === "KU" ? "active" : ""}`}
-                  data-lang="KU"
+                  onClick={() => selectLang("ku")}
+                  className={`${i18n?.language === "ku" ? "active" : ""}`}
                 >
-                  kurdish
+                  Kurdish
                 </h2>
               </div>
             </article>
+
             <h4 onClick={logout} className="c-pointer log-out center">
               <i className="fa-solid fa-right-from-bracket"></i>
             </h4>
@@ -256,6 +272,7 @@ const Navbar = () => {
               <p>for computer science</p>
             </div>
           </div>
+
           <i onClick={closeAside} className="fa-solid fa-bars-staggered"></i>
         </article>
 
@@ -275,7 +292,7 @@ const Navbar = () => {
                       className="w-100 justify-start center"
                     >
                       {link.icon}
-                      <h1>{link.title(language?.navBar)}</h1>
+                      <h1>{t(link.title)}</h1>
                     </NavLink>
                   );
                 else
@@ -283,17 +300,16 @@ const Navbar = () => {
                     <div className="links" key={link.title}>
                       <div onClick={openDiv} className="center">
                         {link.icon}
-                        <h1 className="flex-1">
-                          {link.title(language?.navBar)}
-                        </h1>
+                        <h1 className="flex-1">{t(link.title)}</h1>
                         <i className="arrow fa-solid fa-chevron-right" />
                       </div>
+
                       <article>
                         {link.children.map(
                           (child) =>
                             child.showIf.includes(userDetails?.role) && (
                               <NavLink to={child.to} key={child.to}>
-                                {child.title(language?.navBar)}
+                                {t(child.title)}
                               </NavLink>
                             )
                         )}
@@ -303,9 +319,10 @@ const Navbar = () => {
               }
             })}
           </div>
+
           <h3 onClick={logout} className="log-out center c-pointer aside">
             <i className="fa-solid fa-right-from-bracket"></i>
-            <span>{language.navBar && language.navBar.log_out}</span>
+            <span>{t("navBar.log_out")}</span>
           </h3>
         </div>
       </aside>

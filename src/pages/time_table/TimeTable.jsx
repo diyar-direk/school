@@ -1,5 +1,4 @@
-import { useCallback, useContext, useMemo, useState } from "react";
-import { Context } from "../../context/Context";
+import { useCallback, useMemo, useState } from "react";
 import { dayes, limit, roles } from "../../constants/enums";
 import TableToolBar from "../../components/table_toolbar/TableToolBar";
 import Table from "../../components/table/Table";
@@ -18,16 +17,16 @@ import { Link } from "react-router-dom";
 import { pagesRoute } from "../../constants/pagesRoute";
 import AllowedTo from "./../../components/AllowedTo";
 import { useAuth } from "../../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 const apiClient = new APIClient(endPoints["time-table"]);
 
 const TimeTable = () => {
-  const context = useContext(Context);
   const [filters, setFilters] = useState({});
   const date = new Date();
   const [dayNumber, setDayNumber] = useState(date.getUTCDay() || 0);
 
-  const language = context?.selectedLang;
+  const { t } = useTranslation();
 
   const daysOfWeek = [
     dayes.Sunday,
@@ -145,11 +144,9 @@ const TimeTable = () => {
       <div className="table-container flex-1">
         <TableToolBar>
           <div className="time-table">
-            <h2 onClick={decrement}>prev</h2>
-            <h2 className="active">
-              {language?.days?.[daysOfWeek[dayNumber]]}
-            </h2>
-            <h2 onClick={increment}>next</h2>
+            <h2 onClick={decrement}>{t("common.prev")}</h2>
+            <h2 className="active">{t(`days.${daysOfWeek[dayNumber]}`)}</h2>
+            <h2 onClick={increment}>{t("common.next")}</h2>
           </div>
           <AllowedTo roles={[roles.admin]}>
             <IconButton

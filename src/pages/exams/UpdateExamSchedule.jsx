@@ -1,5 +1,3 @@
-import { useContext } from "react";
-import { Context } from "../../context/Context";
 import Input from "../../components/inputs/Input";
 import { useFormik } from "formik";
 import Button from "../../components/buttons/Button";
@@ -13,9 +11,9 @@ import { formatInputsData } from "./../../utils/formatInputsData";
 import { useNavigate, useParams } from "react-router-dom";
 import Skeleton from "./../../components/skeleton/Skeleton";
 import { useAuth } from "../../context/AuthContext";
+import { useTranslation } from "react-i18next";
 const apiClient = new APIClient(endPoints.exams);
 const UpdateExamSchedule = () => {
-  const context = useContext(Context);
   const { userDetails } = useAuth();
   const { isTeacher, profileId } = userDetails || {};
   const nav = useNavigate();
@@ -45,7 +43,7 @@ const UpdateExamSchedule = () => {
     },
   });
 
-  const language = context?.selectedLang;
+  const { t } = useTranslation();
 
   if (isLoading)
     return (
@@ -57,13 +55,13 @@ const UpdateExamSchedule = () => {
   return (
     <div className="container relative">
       <form onSubmit={formik.handleSubmit} className="relative dashboard-form">
-        <h1>{language.exams && language.exams.please_complete_form}</h1>
+        <h1>{t("exams.please_complete_form")}</h1>
         <div className="flex wrap ">
           <Input
-            title={"language?.exam?.title"}
+            title={t("exam.title")}
             onInput={formik.handleChange}
             value={formik.values.title}
-            placeholder={"language?.exam?.title"}
+            placeholder={t("exam.title")}
             name="title"
             errorText={formik.errors?.title}
           />
@@ -77,7 +75,7 @@ const UpdateExamSchedule = () => {
             params={{ teacherId: isTeacher ? profileId?._id : null }}
           />
           <Input
-            title={"language?.admins?.last_name"}
+            title={t("exam.date")}
             onInput={formik.handleChange}
             value={formik.values.date}
             type="datetime-local"
@@ -85,26 +83,26 @@ const UpdateExamSchedule = () => {
             errorText={formik.errors?.date}
           />
           <Input
-            title={"language?.exam?.duration"}
+            title={t("exam.duration")}
             onInput={formik.handleChange}
             value={formik.values.duration}
-            placeholder={"language?.exam?.duration"}
+            placeholder={t("exam.duration")}
             name="duration"
             errorText={formik.errors?.duration}
             type="number"
           />
           <Input
-            title={"language?.exam?.totalMarks"}
+            title={t("exam.totalMarks")}
             onInput={formik.handleChange}
             value={formik.values.totalMarks}
-            placeholder={"language?.exam?.totalMarks"}
+            placeholder={t("exam.totalMarks")}
             name="totalMarks"
             errorText={formik.errors?.totalMarks}
             type="number"
           />
         </div>
         <Button type="submit" isSending={handleSubmit.isPending}>
-          {language?.exams?.save_btn}
+          {t("exams?.save_btn")}
         </Button>
       </form>
     </div>

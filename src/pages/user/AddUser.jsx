@@ -1,5 +1,4 @@
-import { useCallback, useContext } from "react";
-import { Context } from "../../context/Context";
+import { useCallback } from "react";
 import Input from "../../components/inputs/Input";
 import { useFormik } from "formik";
 import Button from "../../components/buttons/Button";
@@ -11,9 +10,9 @@ import SelectOptionInput from "../../components/inputs/SelectOptionInput";
 import { roles } from "../../constants/enums";
 import SelectInputApi from "./../../components/inputs/SelectInputApi";
 import { formatInputsData } from "../../utils/formatInputsData";
+import { useTranslation } from "react-i18next";
 const apiClient = new APIClient(endPoints.users);
 const AddUser = () => {
-  const context = useContext(Context);
   const formik = useFormik({
     initialValues: {
       username: "",
@@ -34,7 +33,7 @@ const AddUser = () => {
     },
   });
 
-  const language = context?.selectedLang;
+  const { t } = useTranslation();
 
   const selectRole = useCallback(
     (newRole) => {
@@ -47,40 +46,40 @@ const AddUser = () => {
 
   return (
     <div className="container relative">
-      <h1 className="title">{language.users && language.users.add_users}</h1>
+      <h1 className="title">{t("users.add_users")}</h1>
 
       <form onSubmit={formik.handleSubmit} className="relative dashboard-form">
-        <h1>{language.exams && language.exams.please_complete_form}</h1>
+        <h1>{t("exams.please_complete_form")}</h1>
         <div className="flex wrap ">
           <Input
-            title={language?.users?.user_name}
+            title={t("users.user_name")}
             onInput={formik.handleChange}
             value={formik.values.username}
-            placeholder={language?.users?.user_name_placeholder}
+            placeholder={t("users.user_name_placeholder")}
             name="username"
             errorText={formik.errors?.username}
           />
           <Input
-            title={language?.users?.password}
+            title={t("users.password")}
             onInput={formik.handleChange}
             value={formik.values.password}
-            placeholder={language?.users?.password_placeholder}
+            placeholder={t("users.password_placeholder")}
             name="password"
             errorText={formik.errors?.password}
             type="password"
           />
           <Input
-            title={"language?.users?.passwordConf"}
+            title={t("users.passwordConf")}
             onInput={formik.handleChange}
             value={formik.values.confirmPassword}
-            placeholder={"language?.users?.password_placeholderConf"}
+            placeholder={t("users.password_placeholderConf")}
             name="confirmPassword"
             errorText={formik.errors?.confirmPassword}
             type="password"
           />
           <SelectOptionInput
             placeholder={formik.values?.role || "select role"}
-            label={language?.users?.role}
+            label={t("users.role")}
             options={[
               { text: "admin", value: roles.admin },
               { text: "teacher", value: roles.teacher },
@@ -110,7 +109,7 @@ const AddUser = () => {
           />
         </div>
         <Button type="submit" isSending={handleSubmit.isPending}>
-          {language?.exams?.save_btn}
+          {t("exams.save_btn")}
         </Button>
       </form>
     </div>

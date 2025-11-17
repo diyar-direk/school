@@ -1,5 +1,3 @@
-import { useContext } from "react";
-import { Context } from "../../context/Context";
 import Input from "../../components/inputs/Input";
 import { useFormik } from "formik";
 import Button from "../../components/buttons/Button";
@@ -13,6 +11,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Skeleton from "../../components/skeleton/Skeleton";
 import AllowedTo from "../../components/AllowedTo";
 import { roles } from "../../constants/enums";
+import { useTranslation } from "react-i18next";
 const apiClient = new APIClient(endPoints["exam-results"]);
 const UpdateExamResult = () => {
   const { id } = useParams();
@@ -20,7 +19,6 @@ const UpdateExamResult = () => {
     queryKey: [endPoints["exam-results"], id],
     queryFn: () => apiClient.getOne(id),
   });
-  const context = useContext(Context);
   const nav = useNavigate();
   const formik = useFormik({
     initialValues: {
@@ -42,7 +40,7 @@ const UpdateExamResult = () => {
     },
   });
 
-  const language = context?.selectedLang;
+  const { t } = useTranslation();
 
   if (isLoading)
     return (
@@ -54,19 +52,19 @@ const UpdateExamResult = () => {
   return (
     <div className="container relative">
       <form onSubmit={formik.handleSubmit} className="relative dashboard-form">
-        <h1>{language.exams && language.exams.please_complete_form}</h1>
+        <h1>{t("exams.please_complete_form")}</h1>
         <div className="flex wrap">
           <AllowedTo roles={[roles.admin]}>
             <SelectInputApi
               endPoint={endPoints.students}
-              label="student"
+              label={t("student.student")}
               optionLabel={(opt) =>
                 `${opt?.firstName} ${opt?.middleName} ${opt?.lastName}`
               }
               placeholder={
                 formik.values.studentId
                   ? `${formik.values.studentId?.firstName} ${formik.values.studentId?.middleName} ${formik.values.studentId?.lastName}`
-                  : "select student"
+                  : t("student.select_student")
               }
               onChange={(opt) => formik.setFieldValue("studentId", opt)}
               errorText={formik.errors?.studentId}
@@ -82,17 +80,17 @@ const UpdateExamResult = () => {
           </AllowedTo>
 
           <Input
-            title={"language?.exam?.score"}
+            title={t("exam.score")}
             onInput={formik.handleChange}
             value={formik.values.score}
-            placeholder={"language?.exam?.score"}
+            placeholder={t("exam.score")}
             name="score"
             errorText={formik.errors?.score}
             type="number"
           />
         </div>
         <Button type="submit" isSending={handleSubmit.isPending}>
-          {language?.exams?.save_btn}
+          {t("exams.save_btn")}
         </Button>
       </form>
     </div>

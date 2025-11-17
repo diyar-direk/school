@@ -1,7 +1,5 @@
-import { useContext } from "react";
 import "../../components/profile.css";
 import { Link, useParams } from "react-router-dom";
-import { Context } from "../../context/Context";
 import { useAuth } from "../../context/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import APIClient from "./../../utils/ApiClient";
@@ -12,6 +10,7 @@ import TeacherCourse from "./TeacherCourse";
 import AllowedTo from "../../components/AllowedTo";
 import { roles } from "../../constants/enums";
 import Skeleton from "../../components/skeleton/Skeleton";
+import { useTranslation } from "react-i18next";
 const apiClient = new APIClient(endPoints.teachers);
 const TeacherProfile = () => {
   const { id } = useParams();
@@ -20,11 +19,10 @@ const TeacherProfile = () => {
     queryFn: () => apiClient.getOne(id),
   });
 
-  const context = useContext(Context);
   const { userDetails } = useAuth();
   const { isAdmin } = userDetails || false;
 
-  const language = context?.selectedLang;
+  const { t } = useTranslation();
 
   if (isLoading)
     return (
@@ -41,7 +39,7 @@ const TeacherProfile = () => {
           <i className=" photo fa-solid fa-user" />
           {isAdmin && (
             <Link to={pagesRoute.teacher.update(id)} className="center gap-10">
-              {language?.teachers?.edit_btn}
+              {t("teachers.edit_btn")}
               <i className="fa-regular fa-pen-to-square" />
             </Link>
           )}
@@ -56,40 +54,40 @@ const TeacherProfile = () => {
           )}
 
           <div className="flex">
-            <h2>{language?.teachers?.first_name}:</h2>
+            <h2>{t("teachers.first_name")}:</h2>
             <p> {data?.firstName} </p>
           </div>
           <div className="flex">
-            <h2>{language?.teachers?.middle_name}:</h2>
+            <h2>{t("teachers.middle_name")}:</h2>
             <p>{data?.middleName}</p>
           </div>
           <div className="flex">
-            <h2>{language?.teachers?.last_name}:</h2>
+            <h2>{t("teachers.last_name")}:</h2>
             <p> {data?.lastName} </p>
           </div>
           <div className="flex">
-            <h2>{language?.teachers?.gender}:</h2>
+            <h2>{t("teachers.gender")}:</h2>
             <p>{data?.gender}</p>
           </div>
 
           <div className="flex">
-            <h2>{language?.teachers?.email}:</h2>
+            <h2>{t("teachers.email")}:</h2>
             <p className="email"> {data?.email} </p>
           </div>
 
           <div className="flex">
-            <h2>{language?.teachers?.phone_number}:</h2>
+            <h2>{t("teachers.phone_number")}:</h2>
             <p>{data?.phoneNumber}</p>
           </div>
           <AllowedTo roles={[roles.admin]}>
             <div className="flex">
-              <h2>{"language?.teachers?.created_at"}:</h2>
+              <h2>{t("teachers.created_at")}:</h2>
               <p>{dateFormatter(data?.createdAt, "fullDate")}</p>
             </div>
           </AllowedTo>
         </div>
       </div>
-      <h1 className="title"> courses </h1>
+      <h1 className="title"> {t("teachers.courses")} </h1>
       <TeacherCourse />
     </div>
   );

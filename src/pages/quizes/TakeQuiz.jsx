@@ -1,6 +1,5 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Context } from "../../context/Context";
 import "./quiz.css";
 import { useAuth } from "../../context/AuthContext";
 import axiosInstance from "../../utils/axios";
@@ -16,9 +15,9 @@ import {
 import Button from "../../components/buttons/Button";
 import { pagesRoute } from "../../constants/pagesRoute";
 import Skeleton from "../../components/skeleton/Skeleton";
+import { useTranslation } from "react-i18next";
 const TakeQuiz = () => {
   const { id } = useParams();
-  const context = useContext(Context);
   const { userDetails } = useAuth();
   const { profileId } = userDetails || {};
   const [time, setTime] = useState(0);
@@ -59,7 +58,7 @@ const TakeQuiz = () => {
   const name = `${profileId?.firstName} ${profileId?.middleName} ${profileId?.lastName}`;
   const [remainingTime, setRemainingTime] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const language = context?.selectedLang;
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!time) return;
@@ -161,10 +160,10 @@ const TakeQuiz = () => {
       <div className="container relative">
         <ConfirmPopUp
           isOpen={isOpen}
-          heading={language?.take_quiz?.confirm_sending}
+          heading={t("take_quiz.confirm_sending")}
           onConfirm={formik.handleSubmit}
-          confirmText={language?.take_quiz?.submit}
-          cancelText={language?.take_quiz?.cancel}
+          confirmText={t("take_quiz.submit")}
+          cancelText={t("take_quiz.cancel")}
           onClose={() => setIsOpen(false)}
         />
 
@@ -175,12 +174,12 @@ const TakeQuiz = () => {
               <h2 className="text-capitalize">{name}</h2>
               <h3 className="text-capitalize">
                 {data?.duration}
-                {language?.take_quiz?.minutes}
+                {t("take_quiz.minutes")}
               </h3>
             </div>
           </div>
           <h2 className="time gap-10 center text-capitalize">
-            {language?.take_quiz?.remainig_time}
+            {t("take_quiz.remainig_time")}
             <span> {remainingTime} </span>
           </h2>
 
@@ -257,7 +256,7 @@ const TakeQuiz = () => {
           ))}
 
           <Button onClick={() => setIsOpen(true)}>
-            {language?.take_quiz?.finish_this_quiz}
+            {t("take_quiz.finish_this_quiz")}
           </Button>
         </>
       </div>
